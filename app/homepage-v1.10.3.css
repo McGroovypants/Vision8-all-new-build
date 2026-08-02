@@ -33,7 +33,8 @@
   */
   animation: none;
   opacity: 0;
-  transform: scale(1.06);
+  filter: blur(var(--media-blur, 0));
+  transform: scale(calc(var(--media-scale, 1) + 0.04));
   transition:
     opacity var(--editor-media-fade, 900ms) cubic-bezier(0.22, 0.7, 0.25, 1),
     transform var(--media-drift) cubic-bezier(0.16, 0.8, 0.3, 1);
@@ -41,7 +42,7 @@
 
 .stage-media-stack .stage-media-layer.active {
   opacity: var(--editor-media-opacity);
-  transform: scale(1);
+  transform: scale(var(--media-scale, 1));
 }
 
 /*
@@ -51,7 +52,7 @@
 */
 .fan-cycle .stage-media-stack .stage-media-layer {
   opacity: 0;
-  transform: scale(1.06);
+  transform: scale(calc(var(--media-scale, 1) + 0.04));
   transition: none;
 }
 
@@ -101,12 +102,12 @@
   The apex rings are left alone: they are the pulse, not the logo.
 */
 .fan-core img {
-  opacity: 0.7;
+  opacity: 1;
 }
 
 @keyframes line-draw {
   from { clip-path: inset(100% 0 0); opacity: 0; }
-  to { clip-path: inset(0); opacity: 0.7; }
+  to { clip-path: inset(0); opacity: 0.82; }
 }
 
 /*
@@ -124,7 +125,7 @@
   still registers when the fan sequence ends.
 */
 .fan-cycle .stage-media-stack .stage-media-layer.active {
-  opacity: 0.5;
+  opacity: 0.58;
 }
 
 .fan-cycle .stage-wash {
@@ -151,4 +152,65 @@
     radial-gradient(circle at 50% 38%, rgba(4, 151, 134, 0.13), transparent 32%),
     radial-gradient(circle at 50% 38%, rgba(3, 4, 4, 0.18), rgba(3, 4, 4, 0.6) 48%, rgba(3, 4, 4, 0.92) 88%),
     linear-gradient(to bottom, rgba(3, 4, 4, 0.36), rgba(3, 4, 4, 0.12) 44%, rgba(3, 4, 4, 0.9));
+}
+
+/* v1.10.13: seven-arm geometry, line-only intro and quieter media hierarchy. */
+.site-header nav a:hover,
+.site-header nav button:hover {
+  color: var(--teal-bright);
+}
+
+.fan-branch.line-active .fan-line {
+  width: 2px;
+  background: var(--teal-bright);
+  box-shadow: 0 0 16px rgba(11, 183, 163, 0.55);
+}
+
+.branch-motion,
+.branch-ai {
+  --branch-base-height: min(23vw, 40vh, 300px);
+}
+
+.branch-photography,
+.branch-websites {
+  --branch-base-height: min(25vw, 43vh, 330px);
+}
+
+.branch-audio,
+.branch-real-estate {
+  --branch-base-height: min(27vw, 46vh, 355px);
+}
+
+.branch-filming {
+  --branch-base-height: min(29vw, 49vh, 370px);
+}
+
+.stage-wash,
+.active-websites .stage-wash,
+.active-ai .stage-wash,
+.active-real-estate .stage-wash {
+  background:
+    radial-gradient(circle at 50% 43%, rgba(3, 4, 4, 0.7) 0, rgba(3, 4, 4, 0.38) 23%, rgba(3, 4, 4, 0.58) 52%, rgba(3, 4, 4, 0.9) 90%),
+    linear-gradient(to bottom, rgba(3, 4, 4, 0.32), rgba(3, 4, 4, 0.08) 44%, rgba(3, 4, 4, 0.88));
+}
+
+@media (max-width: 720px) {
+  .branch-motion,
+  .branch-ai {
+    --branch-base-height: min(29vw, 24vh, 150px);
+  }
+
+  .branch-photography,
+  .branch-websites {
+    --branch-base-height: min(34vw, 27vh, 172px);
+  }
+
+  .branch-audio,
+  .branch-real-estate {
+    --branch-base-height: min(39vw, 29vh, 190px);
+  }
+
+  .branch-filming {
+    --branch-base-height: min(44vw, 31vh, 205px);
+  }
 }

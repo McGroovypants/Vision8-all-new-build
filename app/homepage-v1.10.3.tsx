@@ -4,7 +4,7 @@ import Image from "next/image";
 import type { ChangeEvent, CSSProperties, ElementType } from "react";
 import { useEffect, useRef, useState } from "react";
 
-type DivisionId = "home" | "filming" | "photography" | "motion" | "websites" | "ai" | "real-estate";
+type DivisionId = "home" | "filming" | "photography" | "motion" | "audio" | "websites" | "ai" | "real-estate";
 type MediaType = "image" | "video";
 type TextStyleKey = "header" | "fan" | "kicker" | "headline" | "body";
 type TextTag = "p" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
@@ -19,6 +19,10 @@ type DivisionRecord = {
   mediaType: MediaType;
   mediaUrl: string;
   href?: string;
+  ctaLabel?: string;
+  mediaPosition?: string;
+  mediaScale?: number;
+  mediaBlur?: number;
   underlineWidth?: number;
   fanOffsetX?: number;
   fanOffsetY?: number;
@@ -89,8 +93,8 @@ const CLOUD = "https://res.cloudinary.com/deyb4o5qz";
 const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_whfcvy.png`;
 const VIDEO_SITE = "https://mcgroovypants.github.io/V8-website-2026/";
 const PEOPLE = `${VIDEO_SITE}#team`;
-const LENSWORKS = "https://lensworks.co.nz/";
-const BUILD = "v1.10.12";
+const OPENING_IMAGE = `${CLOUD}/image/upload/f_auto,q_auto,w_2200/v1785713703/Full_Moon_Risin_shot_doxnzk.jpg`;
+const BUILD = "v1.10.14";
 
 // Keyed by build on purpose. The persist effect writes every record, mediaUrl
 // included, on first visit whether or not the editor was opened, and the load
@@ -109,6 +113,7 @@ const IMG = "f_auto,q_auto,w_1800";
 const fanOrder: Exclude<DivisionId, "home">[] = [
   "motion",
   "photography",
+  "audio",
   "filming",
   "real-estate",
   "websites",
@@ -128,9 +133,12 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     label: "Home",
     kicker: "Creative thinking / Hands-on making",
     headline: "Think it through. Make it work.",
-    body: "Six connected divisions, shaped around what the project actually needs.",
+    body: "Seven connected divisions, shaped around what the project actually needs.",
     mediaType: "image",
-    mediaUrl: `${CLOUD}/video/upload/f_jpg,w_1800,q_auto,so_20/Vision8_sky_and_water_Reel_1_uzx4vi`,
+    mediaUrl: OPENING_IMAGE,
+    mediaPosition: "46% 48%",
+    mediaScale: 1.08,
+    mediaBlur: 1.5,
   },
   motion: {
     id: "motion",
@@ -140,6 +148,11 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     body: "Motion graphics, animation and explainers.",
     mediaType: "image",
     mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785664543/Screenshot_2026-08-02_at_9.38.08_PM_u9ta1b.png`,
+    href: VIDEO_SITE,
+    ctaLabel: "Find out more",
+    mediaPosition: "72% center",
+    mediaScale: 1.1,
+    mediaBlur: 2,
   },
   photography: {
     id: "photography",
@@ -149,6 +162,22 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     body: "People, places, campaigns and events.",
     mediaType: "image",
     mediaUrl: `${CLOUD}/image/upload/${IMG}/v1778472411/Screen_Shot_2019-02-15_at_3.41.50_PM_qxffmz.jpg`,
+    href: "/photography",
+    ctaLabel: "View photography",
+    mediaPosition: "28% center",
+    mediaScale: 1.08,
+    mediaBlur: 2,
+  },
+  audio: {
+    id: "audio",
+    label: "Audio Division",
+    kicker: "Music composition & audio engineering",
+    headline: "From first note to final master.",
+    body: "Professional musicians, sound design, audio mixing and mastering.",
+    mediaType: "image",
+    mediaUrl: "",
+    href: "/audio",
+    ctaLabel: "Find out more",
   },
   filming: {
     id: "filming",
@@ -159,16 +188,24 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     mediaType: "image",
     mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785665173/Adventuresmart_still_7_kbz7fl.png`,
     href: VIDEO_SITE,
+    ctaLabel: "Find out more",
+    mediaPosition: "68% center",
+    mediaScale: 1.1,
+    mediaBlur: 2,
   },
   "real-estate": {
     id: "real-estate",
     label: "Real Estate Media",
     kicker: "Real estate media",
-    headline: "Property media through Lensworks.",
+    headline: "Property stories, ready to move.",
     body: "Photography and video for property marketing.",
     mediaType: "image",
     mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785656289/Real_estate_shot_rrts1z.jpg`,
-    href: LENSWORKS,
+    href: "/real-estate-media",
+    ctaLabel: "Explore real estate media",
+    mediaPosition: "72% center",
+    mediaScale: 1.1,
+    mediaBlur: 2,
   },
   websites: {
     id: "websites",
@@ -178,6 +215,11 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     body: "Structure, design and practical website builds.",
     mediaType: "image",
     mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785662591/Octacle_website_shot_bjyjec.png`,
+    href: "/websites",
+    ctaLabel: "View website work",
+    mediaPosition: "72% center",
+    mediaScale: 1.12,
+    mediaBlur: 2,
   },
   ai: {
     id: "ai",
@@ -187,6 +229,11 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     body: "Useful AI tools, custom apps and focused automation.",
     mediaType: "image",
     mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785666643/AI_Solutions_waczmv.png`,
+    href: "/ai-solutions",
+    ctaLabel: "Explore AI solutions",
+    mediaPosition: "72% center",
+    mediaScale: 1.12,
+    mediaBlur: 2,
   },
 };
 
@@ -205,7 +252,7 @@ const defaultStyles: EditorStyles = {
   kicker: { scale: 100, color: "#0bb7a3", brightness: 100, fontFamily: defaultFont },
   headline: { scale: 100, color: "#f3f4ef", brightness: 100, fontFamily: defaultFont },
   body: { scale: 100, color: "#f3f4ef", brightness: 74, fontFamily: defaultFont },
-  mediaOpacity: 80,
+  mediaOpacity: 55,
   mediaFadeMs: 900,
   googleFontUrl: "",
   logoScale: 100,
@@ -261,12 +308,13 @@ const styleLabels: Array<{ key: TextStyleKey; label: string }> = [
 ];
 
 const fanGeometry: Record<Exclude<DivisionId, "home">, { angle: number; length: number }> = {
-  motion: { angle: -65, length: 300 },
-  photography: { angle: -39, length: 330 },
-  filming: { angle: -13, length: 355 },
-  "real-estate": { angle: 13, length: 355 },
-  websites: { angle: 39, length: 330 },
-  ai: { angle: 65, length: 300 },
+  motion: { angle: -69, length: 300 },
+  photography: { angle: -46, length: 330 },
+  audio: { angle: -23, length: 355 },
+  filming: { angle: 0, length: 370 },
+  "real-estate": { angle: 23, length: 355 },
+  websites: { angle: 46, length: 330 },
+  ai: { angle: 69, length: 300 },
 };
 
 type OffsetKey = "kicker" | "headline" | "body";
@@ -442,7 +490,12 @@ function StageMedia({ record, active }: { record: DivisionRecord; active: boolea
     <div
       key={`${record.id}-${record.mediaUrl}`}
       className={`stage-media-layer stage-image has-image${activeClass}`}
-      style={{ backgroundImage: `url(${record.mediaUrl})` }}
+      style={{
+        backgroundImage: `url(${record.mediaUrl})`,
+        backgroundPosition: record.mediaPosition ?? "center",
+        "--media-scale": `${record.mediaScale ?? 1}`,
+        "--media-blur": `${record.mediaBlur ?? 0}px`,
+      } as CSSProperties}
       aria-hidden="true"
     />
   );
@@ -644,9 +697,9 @@ function EditorPanel({
             bodyOffsetY: clamp(y, -300, 300),
           })}
         />
-        {selectedId === "real-estate" && (
+        {record.href && (
           <NudgeControl
-            label="Visit Lensworks link"
+            label="Find out more link"
             x={record.ctaOffsetX ?? 0}
             y={record.ctaOffsetY ?? 0}
             onChange={(x, y) => onRecordChange(selectedId, {
@@ -842,7 +895,7 @@ export function HomepageV1103() {
   const [records, setRecords] = useState(defaultRecords);
   const [headerCopy, setHeaderCopy] = useState(defaultHeaderCopy);
   const [styles, setStyles] = useState(defaultStyles);
-  const [activeId, setActiveId] = useState<DivisionId>("filming");
+  const [activeId, setActiveId] = useState<DivisionId>("home");
   const [litId, setLitId] = useState<DivisionId>("home");
   const [skipped, setSkipped] = useState(false);
   const [cycleCancelled, setCycleCancelled] = useState(false);
@@ -928,14 +981,16 @@ export function HomepageV1103() {
     }
 
     const startDelay = skipped ? 0 : 3250;
-    const finalStepTime = startDelay + ((fanSequence.length - 1) * 540);
+    const stepTime = 140;
+    const finalStepTime = startDelay + ((fanSequence.length - 1) * stepTime);
     const timers = fanSequence.map((id, index) => window.setTimeout(() => {
       setLitId(id);
-      if (index === fanSequence.length - 1) {
-        setActiveId("filming");
-      }
-    }, startDelay + (index * 540)));
-    const revealTimer = window.setTimeout(() => setIsCycling(false), finalStepTime + 80);
+    }, startDelay + (index * stepTime)));
+    const revealTimer = window.setTimeout(() => {
+      setActiveId("filming");
+      setLitId("filming");
+      setIsCycling(false);
+    }, finalStepTime + stepTime);
 
     return () => [...timers, revealTimer].forEach((timer) => window.clearTimeout(timer));
   }, [cycleCancelled, skipped]);
@@ -1085,37 +1140,26 @@ export function HomepageV1103() {
         <div className="fan" aria-label="Vision8 divisions" onMouseLeave={returnToDefault}>
           {fanOrder.map((id) => {
             const division = records[id];
-            const activeClass = litId === id ? " active" : "";
-            const nodeClass = `fan-node${activeClass}`;
-            const shared = {
-              onMouseEnter: () => activate(id),
-              onFocus: () => activate(id),
-              onClick: cancelCycle,
-            };
+            const lineClass = litId === id ? " line-active" : "";
+            const nodeClass = `fan-node${!isCycling && activeId === id ? " active" : ""}`;
 
             return (
               <div
                 key={id}
-                className={`fan-branch branch-${id}${activeClass}`}
+                className={`fan-branch branch-${id}${lineClass}`}
                 style={fanBranchStyle(id, division)}
               >
                 <span className="fan-line" aria-hidden="true" />
-                {division.href ? (
-                  <a className={nodeClass} href={division.href} {...shared}>
-                    <span>{division.label}</span>
-                  </a>
-                ) : (
-                  <button
-                    type="button"
-                    className={nodeClass}
-                    aria-pressed={activeId === id}
-                    onClick={() => activate(id)}
-                    onMouseEnter={() => activate(id)}
-                    onFocus={() => activate(id)}
-                  >
-                    <span>{division.label}</span>
-                  </button>
-                )}
+                <button
+                  type="button"
+                  className={nodeClass}
+                  aria-pressed={activeId === id}
+                  onClick={() => activate(id)}
+                  onMouseEnter={() => activate(id)}
+                  onFocus={() => activate(id)}
+                >
+                  <span>{division.label}</span>
+                </button>
               </div>
             );
           })}
@@ -1137,16 +1181,16 @@ export function HomepageV1103() {
           <HeadlineTag className="stage-headline editable-offset" style={textOffsetStyle(active, "headline")}>{active.headline}</HeadlineTag>
           <div className="copy-row">
             <BodyTag className="stage-body editable-offset" style={textOffsetStyle(active, "body")}>{active.body}</BodyTag>
-            {active.id === "real-estate" && (
+            {active.href && (
               <a
                 className="editable-cta"
                 style={{
                   "--offset-x": `${active.ctaOffsetX ?? 0}px`,
                   "--offset-y": `${active.ctaOffsetY ?? 0}px`,
                 } as CSSProperties}
-                href={LENSWORKS}
+                href={active.href}
               >
-                Visit Lensworks <b aria-hidden="true">→</b>
+                {active.ctaLabel ?? "Find out more"} <b aria-hidden="true">→</b>
               </a>
             )}
           </div>
@@ -1182,4 +1226,3 @@ export function HomepageV1103() {
     </main>
   );
 }
-
