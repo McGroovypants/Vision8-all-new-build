@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vision8 - Boutique Video Agency, Wellington NZ</title>
+<meta name="description" content="Vision8 is a boutique video agency based in Wellington, New Zealand. We specialise in creating authentic, memorable videos to communicate your vision.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+/* ============ RESET & BASE ============ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:hidden}
+:root{
+  --bg:#0a0a0a;
+  --bg-card:#141414;
+  --bg-card-hover:#1a1a1a;
+  --text:#f0f0f0;
+  --text-muted:#999;
+  --accent:#4E7A8F;
+  --accent-hover:#5d8da3;
+  --white:#fff;
+  --radius:12px;
+  --transition:0.3s ease;
+  --max-w:1200px;
+}
+
+
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a{color:var(--accent);text-decoration:none;transition:color var(--transition)}
+a:hover{color:var(--accent-hover)}
+img{max-width:100%;height:auto;display:block}
+.container{max-width:var(--max-w);margin:0 auto;padding:0 24px}
+
+/* ============ HEADER ============ */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  background:#000;
+  border-bottom:1px solid rgba(255,255,255,0.16);
+  transition:background var(--transition),transform 0.3s ease;
+}
+.header-inner{
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+  width:100%;max-width:none;margin:0;padding:8px 24px;
+}
+.logo{width:100%;max-width:180px;height:auto}
+.logo-link{display:flex;grid-column:1;align-items:center;justify-self:start;flex-shrink:0}
+nav{grid-column:3;justify-self:end}
+/* video services introduction */
+.video-services-intro{padding-top:148px}
+@media(max-width:768px){.video-services-intro{padding-top:116px}}
+.build-version{
+  position:fixed;right:12px;bottom:12px;z-index:1100;
+  padding:4px 8px;border:1px solid rgba(255,255,255,0.3);border-radius:999px;
+  background:rgba(10,10,10,0.78);color:rgba(255,255,255,0.88);
+  font:600 11px/1 'Inter',system-ui,sans-serif;letter-spacing:0.04em;
+}
+nav{display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+nav a{
+  color:rgba(255,255,255,0.75);font-size:1.35rem;font-weight:500;
+  letter-spacing:0.02em;transition:color var(--transition);
+  text-transform:uppercase;
+}
+nav a:hover,nav a.active{color:#fff}
+.nav-cta{
+  background:rgba(255,255,255,0.5);color:#1a1a1a!important;
+  padding:10px 24px;border-radius:100px;font-weight:600;
+  font-size:1.1rem;letter-spacing:0.03em;
+  transition:background var(--transition),transform var(--transition);
+}
+.nav-cta:hover{background:rgba(255,255,255,0.75);transform:translateY(-1px);color:#1a1a1a!important}
+
+/* mobile nav */
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;padding:8px}
+.nav-toggle span{display:block;width:24px;height:2px;background:var(--white);margin:5px 0;transition:var(--transition)}
+@media(max-width:768px){
+  .header-inner{padding:8px 16px;min-height:68px}
+  .logo{max-width:150px}
+  .nav-toggle{display:block;grid-column:3;justify-self:end;position:relative;z-index:1002}
+  nav{
+    position:fixed;top:0;right:-100%;width:280px;height:100vh;
+    flex-direction:column;justify-content:center;gap:24px;
+    background:rgba(10,10,10,0.98);padding:40px;
+    transition:right var(--transition);
+  }
+  nav.open{right:0}
+  nav a{font-size:1.2rem}
+  section{padding:36px 0}
+  .section-header{margin-bottom:24px}
+  .section-title{font-size:clamp(1.6rem,5vw,2.4rem)}
+  .section-label{font-size:1.1rem}
+  .section-subtitle{font-size:1.05rem;margin-bottom:24px}
+  header.header-hidden{transform:none}
+}
+
+/* ============ SECTIONS ============ */
+section{padding:80px 0}
+.section-label{
+  text-transform:uppercase;font-size:1.6rem;font-weight:600;
+  letter-spacing:0.15em;color:var(--accent);margin-bottom:4px;
+}
+.section-title{
+  font-size:clamp(2.8rem,7vw,5rem);font-weight:700;
+  margin-bottom:24px;line-height:1.1;
+}
+.section-subtitle{
+  font-size:1.4rem;color:var(--text-muted);
+  max-width:700px;line-height:1.7;margin-bottom:48px;
+}
+.section-header{text-align:center;margin-bottom:40px}
+.logo-carousel{overflow:hidden;padding:40px 0;position:relative;background:#fff}
+.logo-carousel::before,.logo-carousel::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:2;pointer-events:none}
+.logo-carousel::before{left:0;background:linear-gradient(90deg,#fff 0%,transparent 100%)}
+.logo-carousel::after{right:0;background:linear-gradient(270deg,#fff 0%,transparent 100%)}
+.logo-track{display:flex;gap:60px;align-items:center;animation:logoScroll 40s linear infinite;width:max-content}
+.logo-track img{height:60px;width:auto;opacity:0.85;filter:grayscale(0%);transition:opacity 0.3s}
+.logo-track img:hover{opacity:1}
+@keyframes logoScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.section-header .section-subtitle{margin:0 auto 48px}
+
+/* ============ SERVICES GRID ============ */
+#services{background:var(--bg)}
+.services-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:24px;
+}
+.service-card{
+  background:var(--bg-card);border-radius:var(--radius);
+  overflow:hidden;position:relative;
+  transition:transform var(--transition),box-shadow var(--transition);
+  border:1px solid rgba(255,255,255,0.04);
+}
+.service-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 20px 60px rgba(0,0,0,0.4);
+  border-color:rgba(255,255,255,0.08);
+}
+.card-video-wrap{
+  position:relative;width:100%;padding-top:56.25%;
+  background:#111;overflow:hidden;
+}
+.card-video-wrap video{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  object-fit:cover;opacity:1;transition:opacity 0.6s ease;
+}
+.card-video-wrap .placeholder{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#1a1a1a 0%,#222 100%);
+  color:var(--text-muted);font-size:0.8rem;letter-spacing:0.1em;
+  text-transform:uppercase;transition:opacity 0.6s ease;
+}
+.card-video-wrap.has-poster .placeholder{opacity:0;pointer-events:none}
+.card-body{padding:24px}
+.card-body h3{font-size:1.15rem;font-weight:600;margin-bottom:8px}
+.card-body p{font-size:0.9rem;color:var(--text-muted);line-height:1.6;margin-bottom:16px}
+.card-link{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:0.85rem;font-weight:600;color:var(--accent);
+  text-transform:uppercase;letter-spacing:0.05em;
+}
+.card-link:hover{color:var(--accent-hover)}
+.card-link svg{width:16px;height:16px;transition:transform var(--transition)}
+.card-link:hover svg{transform:translateX(3px)}
+
+/* ============ SERVICE DETAIL MODAL ============ */
+.service-modal-overlay{
+  position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.85);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  opacity:0;pointer-events:none;transition:opacity 0.3s ease;
+}
+.service-modal-overlay.open{opacity:1;pointer-events:auto}
+.service-modal{
+  background:var(--bg-card);border-radius:var(--radius);max-width:900px;width:100%;
+  max-height:90vh;overflow-y:auto;position:relative;
+  transform:translateY(30px);transition:transform 0.3s ease;
+}
+.service-modal-overlay.open .service-modal{transform:translateY(0)}
+.service-modal-close{
+  position:absolute;top:16px;right:16px;z-index:2;
+  background:rgba(0,0,0,0.5);border:none;color:#fff;width:40px;height:40px;
+  border-radius:50%;font-size:1.4rem;cursor:pointer;display:flex;
+  align-items:center;justify-content:center;transition:background 0.2s;
+}
+.service-modal-close:hover{background:rgba(0,0,0,0.8)}
+.service-modal video{width:100%;display:block;border-radius:var(--radius) var(--radius) 0 0}
+.service-modal-body{padding:32px 40px 40px}
+.service-modal-body h2{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:700;margin-bottom:8px}
+.service-modal-body .modal-subtitle{
+  font-size:1.1rem;color:var(--accent);font-weight:600;margin-bottom:20px;line-height:1.4;
+}
+.service-modal-body .modal-text{font-size:1rem;line-height:1.8;color:var(--text-muted)}
+.service-modal-body .modal-text p{margin-bottom:16px}
+.service-modal-body .modal-cta{
+  display:inline-flex;align-items:center;gap:8px;margin-top:16px;
+  background:var(--accent);color:#fff;padding:12px 28px;border-radius:var(--radius);
+  font-weight:600;text-decoration:none;transition:background 0.2s;
+}
+.service-modal-body .modal-cta:hover{background:var(--accent-hover)}
+@media(max-width:600px){
+  .service-modal-body{padding:24px 20px 28px}
+}
+
+@media(max-width:900px){.services-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:580px){.services-grid{grid-template-columns:1fr}}
+@media(max-width:900px) and (orientation:landscape){.services-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* ============ ABOUT ============ */
+#about{background:var(--bg)}
+#about .section-title{font-size:clamp(1.9rem,5vw,3.5rem)}
+.about-text{text-align:center;margin:0 auto}
+.about-text .section-subtitle{max-width:none;width:100%;margin:0 0 24px;font-size:1.15rem;line-height:1.7;text-align:center}
+
+/* ============ TEAM ============ */
+#team{background:var(--bg)}
+.team-grid{
+  display:flex;flex-direction:column;gap:64px;
+}
+.team-card{
+  display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;
+  opacity:0;transform:translateX(-80px);
+  transition:opacity 0.8s ease 0.5s,transform 0.8s ease 0.5s;
+}
+.team-card:nth-child(even){transform:translateX(80px)}
+.team-card.visible{opacity:1;transform:translateX(0)}
+.team-card:nth-child(even):not(.placeholder){direction:rtl}
+.team-card:nth-child(even) > *{direction:ltr}
+.team-photo{
+  width:80%;aspect-ratio:3/4;
+  border-radius:var(--radius);overflow:hidden;
+  background:linear-gradient(135deg,#e8e8e8,#ddd);
+}
+.team-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.team-photo .placeholder-text{color:var(--text-muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em}
+.team-info{padding:0}
+.team-info h3{font-size:1.6rem;font-weight:700;margin-bottom:4px}
+.team-info .role{font-size:1rem;color:var(--accent);font-weight:600;margin-bottom:20px}
+.team-info p{font-size:1rem;color:var(--text-muted);line-height:1.8}
+@media(max-width:768px){
+  .team-card{grid-template-columns:1fr;gap:24px}
+  .team-card:nth-child(even){direction:ltr}
+  .team-info h3{font-size:1.3rem}
+}
+
+/* ============ TESTIMONIALS ============ */
+#testimonials{background:var(--bg)}
+.testimonials-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:32px;
+}
+.testimonial-card{
+  background:var(--bg-card);border-radius:var(--radius);padding:32px;
+  border:1px solid rgba(255,255,255,0.04);position:relative;
+}
+.testimonial-card::before{
+  content:'\201C';position:absolute;top:16px;left:24px;
+  font-size:5rem;color:var(--accent);opacity:0.25;line-height:1;font-family:Georgia,serif;
+  pointer-events:none;
+}
+.testimonial-card::after{
+  content:'\201D';position:absolute;bottom:24px;right:24px;
+  font-size:5rem;color:var(--accent);opacity:0.25;line-height:1;font-family:Georgia,serif;
+  pointer-events:none;
+}
+.testimonial-card blockquote{
+  font-size:0.95rem;line-height:1.7;color:var(--text);
+  font-style:italic;margin-bottom:20px;position:relative;z-index:1;
+  padding-top:3.5rem;padding-right:2.5rem;padding-bottom:2rem;
+}
+.testimonial-author{font-size:0.85rem;font-weight:600}
+.testimonial-role{font-size:0.8rem;color:var(--text-muted)}
+
+/* ============ CLIENTS ============ */
+#clients{background:var(--bg)}
+.clients-text{text-align:center;max-width:700px;margin:0 auto}
+
+/* ============ CONTACT ============ */
+#contact{
+  background:var(--bg);
+  text-align:center;
+}
+.contact-links{
+  display:flex;gap:32px;justify-content:center;flex-wrap:wrap;margin-top:32px;
+}
+.contact-link{
+  display:flex;align-items:center;gap:12px;
+  background:var(--bg-card);padding:20px 32px;border-radius:var(--radius);
+  border:1px solid rgba(255,255,255,0.04);
+  transition:border-color var(--transition),transform var(--transition);
+}
+.contact-link:hover{border-color:var(--accent);transform:translateY(-2px)}
+.contact-link svg{width:24px;height:24px;color:var(--accent);flex-shrink:0}
+.contact-link span{color:var(--text);font-weight:500}
+
+/* ============ PHOTO SLIDESHOW ============ */
+.photo-slideshow{position:relative;overflow:hidden}
+.photo-slideshow .slide{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  object-fit:cover;opacity:0;
+  transition:opacity 1.2s ease-in-out;
+}
+.photo-slideshow .slide.active{opacity:1}
+
+/* ============ FOOTER ============ */
+footer{
+  padding:40px 0;text-align:center;
+  border-top:1px solid rgba(255,255,255,0.06);
+}
+footer p{font-size:0.85rem;color:var(--text-muted)}
+
+/* ============ ANIMATIONS ============ */
+.fade-in{opacity:0;transform:translateY(30px);transition:opacity 0.6s ease,transform 0.6s ease}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+.fade-in:nth-child(2){transition-delay:0.1s}
+.fade-in:nth-child(3){transition-delay:0.2s}
+.fade-in:nth-child(4){transition-delay:0.3s}
+.fade-in:nth-child(5){transition-delay:0.4s}
+
+/* ============ MOBILE OVERRIDES (must come last to win cascade) ============ */
+@media(max-width:768px){
+  section{padding:36px 0 !important}
+  .section-header{margin-bottom:20px !important}
+  .section-title{font-size:clamp(1.6rem,5vw,2.4rem) !important;white-space:normal !important}
+  .section-label{font-size:1.1rem !important}
+  .section-subtitle{font-size:1.05rem !important;margin-bottom:16px !important}
+  .logo-track img{height:60px !important}
+  .logo{max-width:200px !important}
+  header.header-hidden{transform:translateY(-100%) !important}
+  html,body{overflow-x:hidden !important}
+  .services-grid{grid-template-columns:1fr !important}
+}
+</style>
+<!--deploy-1784608574135--><!--deploy-1784608796744--></head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header>
+  <div class="header-inner">
+    <a href="#" class="logo-link" aria-label="Vision8 home">
+      <img class="logo" data-v8-img="logo" src="https://res.cloudinary.com/deyb4o5qz/image/upload/v1784608757/Vision8_logo_2026_mzb4xq.png" alt="Vision8">
+    </a>
+    <button class="nav-toggle" aria-label="Toggle navigation" onclick="document.querySelector('nav').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </button>
+    <nav>
+      <a href="#services" class="active">Home</a>
+      <a href="#services">Services</a>
+      <a href="#team">Team</a>
+      <a href="#contact" class="nav-cta">Contact Us</a>
+    </nav>
+  </div>
+</header>
+<div class="build-version" aria-label="Website build version">Build v1.1.8</div>
+
+
+<!-- ============ SERVICES ============ -->
+<section id="services">
+  <div class="container">
+    <div class="section-header">
+      <p class="section-label">What We Do</p>
+      <h2 class="section-title">Everything video. Exceptionally done.</h2>
+      <p class="section-subtitle">From aerial filming to animation, we offer a comprehensive range of video services to bring your vision to life.</p>
+    </div>
+    <div class="services-grid" id="services-grid">
+
+      <!-- 1. Air & Sea Filming -->
+      <div class="service-card fade-in" data-v8-service="air-sea" data-modal-title="Air &amp; Sea Filming" data-modal-subtitle="Cinematic aerial and underwater filming that brings a distinctive edge to any production." data-modal-text="With certified CAA drone pilots and expertise in helicopter and UAV operations, Vision8 delivers epic aerial vistas and expert subject tracking. Our knowledge of flight rules and regulations enables us to undertake complex projects safely and effectively.||Beneath the surface, our diving and photography expertise brings vibrant underwater life to every production. From marine environments to rough weather boat shoots, we plan and execute quality filming for both aerial and underwater photography." data-modal-video="https://res.cloudinary.com/deyb4o5qz/video/upload/w_1280,q_auto/Vision8_sky_and_water_Reel_1_uzx4vi.mp4" data-modal-poster="https://res.cloudinary.com/deyb4o5qz/video/upload/w_1280,q_auto,so_0/Vision8_sky_and_water_Reel_1_uzx4vi.jpg">
+        <div class="card-video-wrap">
+          <video muted="" loop="" playsinline="" preload="none" poster="https://res.cloudinary.com/deyb4o5qz/video/upload/w_720,q_auto,so_0/Vision8_sky_and_water_Reel_1_uzx4vi.jpg" data-v8-video="air-sea" data-src="https://res.cloudinary.com/deyb4o5qz/video/upload/w_720,q_auto/Vision8_sky_and_water_Reel_1_uzx4vi.mp4">
+          </video>
+        </div>
+        <div class="card-body">
+          <h3 data-v8-field="service-title-1">Air &amp; Sea Filming</h3>
+          <p data-v8-field="service-desc-1">Aerial and underwater filming add both unique and cinematic views that elevate any story.</p>
+          <a href="#" class="card-link" data-open-modal="">Find out more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"></path></svg></a>
+        </div>
+      </div>
+
+      <!-- 2. Marketing & Engagement -->
+      <div class="service-card fade-in" data-v8-service="marketing" data-modal-title="Marketing &amp; Engagement" data-modal-subtitle="Strategic, imaginative campaigns from concept to delivery for marketing teams." data-modal-text="Vision8 has deep experience working with clients and agencies, using visual storytelling techniques to create memorable and emotive marketing, branding, and engagement campaigns across multiple media channels.||Using professional gear, smart production management, and quality control systems, Vision8 seamlessly partners with management teams or comms and marketing departments to instantly add value." data-modal-video="https://res.cloudinary.com/deyb4o5qz/video/upload/w_1280,q_auto/Vision8_Corp_Comms_Reels_1_czh0mh.mp4" data-modal-poster="https://res.cloudinary.com/deyb4o5qz/video/upload/w_1280,q_auto,so_0/Vision8_Corp_Comms_Reels_1_czh0mh.jpg">
+        <div class="card-video-wrap">
+          <video muted="" loop="" playsinline="" preload="none" poster="https://res.cloudinary.com/deyb4o5qz/video/upload/w_720,q_auto,so_0/Vision8_Corp_Comms_Reels_1_czh0mh.jpg" data-v8-video="marketing" data-src="https://res.cloudinary.com/deyb4o5qz/video/upload/w_720,q_auto/Vision8_Corp_Comms_Reels_1_czh0mh.mp4">
+          </video>
+        </div>
+        <div class="card-body">
+          <h3 data-v8-field="service-title-2">Marketing &amp; Engagement Videos</h3>
+          <p data-v8-field="service-desc-2">From concept to delivery, we provide marketing teams with campaigns that are strategic, imaginative, and cost-effective.</p>
+          <a href="#" class="card-link" data-open-modal="">Find out more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"></path></svg></a>
+        </div>
+      </div>
+
+      <!-- 3. Te Ao Maori & Pasifika -->
+      <div class="service-card fade-in" data-v8-service="te-ao-maori" data-modal-title="Te Ao Māori &amp; Pasifika" data-modal-subtitle="Honouring Indigenous culture by understanding the importance of doing things the right way." data-modal-text="Vision8 works in partnership with Tangata whenua, Kaihautu, and Tautai to get to the heart of any story before it is told. This ensures stories are shared in a way that honours their origins, whether for Whakaata Māori, TVNZ, international broadcasters, or online audiences.||The team consults with government ministries, NGOs, and Māori and Pasifika organisations to tell stories that resonate with many audiences." data-modal-video="https://res.cloudinary.com/deyb4o5qz/video/upload/w_1280,q_auto/Vision8_Te_Ao_Maori_Reel_1_ck0nsf.mp4" data-modal-poster="https://res.cloudinary.com/deyb4o5qz/video/upload/w_1280,q_auto,so_0/Vision8_Te_Ao_Maori_Reel_1_ck0nsf.jpg">
+        <div class="card-video-wrap">
+          <video muted="" loop="" playsinline="" preload="none" poster="https://res.cloudinary.com/deyb4o5qz/video/upload/w_720,q_auto,so_0/Vision8_Te_Ao_Maori_Reel_1_ck0nsf.jpg" data-v8-video="te-ao-maori" data-src="https://res.cloudinary.com/deyb4o5qz/video/upload/w_720,q_auto/Vision8_Te_Ao_Maori_Reel_1_ck0nsf.mp4">
+          </video>
+        </div>
+        <div class="card-body">
+          <h3 data-v8-field="service-title-3">Te Ao Maori &amp; Pasifika</h3>
+          <p data-v8-field="service-desc-3">Honouring Indigenous culture means understanding the importance of doing things the right way.</p>
+          <a href="#" class="card-link" data-open-modal="">Find out more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"></path></svg></a>
+        </div>
+      </div>
+
+      <!-- 4. Corporate Comms -->
+      <div class="service-card fade-in" data-v8-service="corporate" data-modal-title="Corporate Comms Videos" data-modal-subtitle="Engaging video makes learning quicker, easier, and more memorable." data-modal-text="Every industry needs ongoing support and training for staff and managers. Vision8 has extensive experience working with HR and Comms teams to create engaging and informative videos for Health and Safety, HR induction, specific training, culture change, and professional development.||Whether you need a series of short training modules or a single high-impact internal campaign, our team will guide you from concept through to delivery, ensuring your message is clear, professional, and memorable." data-modal-video="https://res.cloudinary.com/deyb4o5qz/video/upload/w_1280,q_auto/Vision8_Corp_Comms_Reels_1_czh0mh.mp4" data-modal-poster="https://res.cloudinary.com/deyb4o5qz/video/upload/w_1280,q_auto,so_0/Vision8_Corp_Comms_Reels_1_czh0mh.jpg">
+        <div class="card-video-wrap">
+          <video muted="" loop="" playsinline="" preload="none" poster="https://res.cloudinary.com/deyb4o5qz/video/upload/w_720,q_auto,so_0/Vision8_Corp_Comms_Reels_1_czh0mh.jpg" data-v8-video="corporate" data-src="https://res.cloudinary.com/deyb4o5qz/video/upload/w_720,q_auto/Vision8_Corp_Comms_Reels_1_czh0mh.mp4">
+          </video>
+        </div>
+        <div class="card-body">
+          <h3 data-v8-field="service-title-4">Corporate Comms Videos</h3>
+          <p data-v8-field="service-desc-4">Staff learn faster with engaging video. Bring out the best in your organisation with great corporate communications.</p>
+          <a href="#" class="card-link" data-open-modal="">Find out more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"></path></svg></a>
+        </div>
+      </div>
+
+      <!-- 5. Food Filming -->
+      <div class="service-card fade-in" data-v8-service="food" data-modal-title="Food Filming &amp; Styling" data-modal-subtitle="Transforming the taste and vibrancy of food into mouthwatering visuals." data-modal-text="Experience filming food matters. It takes expertise in timing, lighting, focus, and a knowledge of food styling to capture dishes at their best.||Vision8 brings experience and quality control to any food shoot. Andy and his team have directed food content for NZ Beef &amp; Lamb, McDonald's TV commercials, Nadia's Kitchen, Kai Ora, and many other food clients." data-modal-video="https://res.cloudinary.com/deyb4o5qz/video/upload/w_1280,q_auto/Vision8_Food_Reel_1_pn4hog.mp4" data-modal-poster="https://res.cloudinary.com/deyb4o5qz/video/upload/w_1280,q_auto,so_0/Vision8_Food_Reel_1_pn4hog.jpg">
+        <div class="card-video-wrap">
+          <video muted="" loop="" playsinline="" preload="none" poster="https://res.cloudinary.com/deyb4o5qz/video/upload/w_720,q_auto,so_0/Vision8_Food_Reel_1_pn4hog.jpg" data-v8-video="food" data-src="https://res.cloudinary.com/deyb4o5qz/video/upload/w_720,q_auto/Vision8_Food_Reel_1_pn4hog.mp4">
+          </video>
+        </div>
+        <div class="card-body">
+          <h3 data-v8-field="service-title-5">Food Filming &amp; Styling</h3>
+          <p data-v8-field="service-desc-5">Capturing the taste, colour, and scrumptiousness of food on camera is an art form.</p>
+          <a href="#" class="card-link" data-open-modal="">Find out more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"></path></svg></a>
+        </div>
+      </div>
+
+      <!-- 6. Motion Graphics & Animation -->
+      <div class="service-card fade-in" data-v8-service="motion" data-modal-title="Motion Graphics &amp; Animation" data-modal-subtitle="Polished motion graphics that give branding, logos, and titles a professional edge." data-modal-text="Motion graphics along with 2D and 3D animation increase watch time and retention. They elevate storytelling, clarify complex ideas, and enhance brand identity.||Vision8 has been an industry leader in creating visuals for broadcast TV and corporate video for over 20 years, delivering polished animated content that makes brands stand out." data-modal-video="https://res.cloudinary.com/deyb4o5qz/video/upload/w_1280,q_auto/Vision8_Animation_Motion_Gfx_h0emew.mp4" data-modal-poster="https://res.cloudinary.com/deyb4o5qz/video/upload/w_1280,q_auto,so_0/Vision8_Animation_Motion_Gfx_h0emew.jpg">
+        <div class="card-video-wrap">
+          <video muted="" loop="" playsinline="" preload="none" poster="https://res.cloudinary.com/deyb4o5qz/video/upload/w_720,q_auto,so_0/Vision8_Animation_Motion_Gfx_h0emew.jpg" data-v8-video="motion" data-src="https://res.cloudinary.com/deyb4o5qz/video/upload/w_720,q_auto/Vision8_Animation_Motion_Gfx_h0emew.mp4">
+          </video>
+        </div>
+        <div class="card-body">
+          <h3 data-v8-field="service-title-6">Motion Graphics &amp; Animation</h3>
+          <p data-v8-field="service-desc-6">Motion graphics and animation add professionalism and a winning edge to branding, logos, and titles.</p>
+          <a href="#" class="card-link" data-open-modal="">Find out more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"></path></svg></a>
+        </div>
+      </div>
+
+      <!-- 7. Explainer Videos -->
+      <div class="service-card fade-in" data-v8-service="explainer" data-modal-title="Explainer Videos" data-modal-subtitle="Clarify complex topics with explainer videos that make stories easier to understand." data-modal-text="Explainer videos create powerful visual explanations of complex things, machinery, and working models. They turn difficult concepts into clear, engaging narratives anyone can follow.||Vision8 has a longstanding reputation for building excellent quality explainer videos using a combination of 2D, 3D, motion graphics, animation, AI generation, and editing." data-modal-video="https://res.cloudinary.com/deyb4o5qz/video/upload/w_1280,q_auto/Vision_8_Explainer_videos_reel_nkyotq.mp4" data-modal-poster="https://res.cloudinary.com/deyb4o5qz/video/upload/w_1280,q_auto,so_0/Vision_8_Explainer_videos_reel_nkyotq.jpg">
+        <div class="card-video-wrap">
+          <video muted="" loop="" playsinline="" preload="none" poster="https://res.cloudinary.com/deyb4o5qz/video/upload/w_720,q_auto,so_0/Vision_8_Explainer_videos_reel_nkyotq.jpg" data-v8-video="explainer" data-src="https://res.cloudinary.com/deyb4o5qz/video/upload/w_720,q_auto/Vision_8_Explainer_videos_reel_nkyotq.mp4">
+          </video>
+        </div>
+        <div class="card-body">
+          <h3 data-v8-field="service-title-7">Explainer Videos</h3>
+          <p data-v8-field="service-desc-7">Create precise, detailed working models or clarify complex topics with explainer videos that make stories easier to understand.</p>
+          <a href="#" class="card-link" data-open-modal="">Find out more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"></path></svg></a>
+        </div>
+      </div>
+
+      <!-- 8. Testimonial Videos -->
+      <div class="service-card fade-in" data-v8-service="testimonials" data-modal-title="Testimonial Videos" data-modal-subtitle="Your clients, customers, and staff are the best ambassadors of your brand." data-modal-text="Vision8 has vast experience filming interviews and capturing testimonies from the people who matter most. We work hard to get everyday people comfortable on camera, drawing out compelling stories that connect.||We then edit the best content into visual gold — telling your story, enhancing your reputation, and letting authentic voices carry your message." data-modal-video="https://res.cloudinary.com/deyb4o5qz/video/upload/w_1280,q_auto/Vision8_Testimonials_Reels_V1_udukwv.mp4" data-modal-poster="https://res.cloudinary.com/deyb4o5qz/video/upload/w_1280,q_auto,so_0/Vision8_Testimonials_Reels_V1_udukwv.jpg">
+        <div class="card-video-wrap">
+          <video muted="" loop="" playsinline="" preload="none" poster="https://res.cloudinary.com/deyb4o5qz/video/upload/w_720,q_auto,so_0/Vision8_Testimonials_Reels_V1_udukwv.jpg" data-v8-video="testimonials" data-src="https://res.cloudinary.com/deyb4o5qz/video/upload/w_720,q_auto/Vision8_Testimonials_Reels_V1_udukwv.mp4">
+          </video>
+        </div>
+        <div class="card-body">
+          <h3 data-v8-field="service-title-8">Testimonial Videos</h3>
+          <p data-v8-field="service-desc-8">Your clients, customers, staff, stakeholders, and of course, you, are the best ambassadors of your brand and message.</p>
+          <a href="#" class="card-link" data-open-modal="">Find out more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"></path></svg></a>
+        </div>
+      </div>
+
+      <!-- 9. Photography -->
+      <div class="service-card fade-in" data-v8-service="photography" data-modal-title="Photography" data-modal-subtitle="Capture stunning images with experienced photographers on every shoot." data-modal-text="While Vision8's primary focus is creating great video, all team members are experienced photographers. Whether it's events, internal communications, headshots, promotional shots, or website images, it makes sense to capture quality photos alongside video.||With quality camera technology and super sharp lenses, we always get the best out of any situation to create lasting images and capture the greatest of memories." data-modal-video="" data-modal-poster="">
+        <div class="card-video-wrap photo-slideshow">
+          <img class="slide active" src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_720,q_auto,f_auto/Screen_Shot_2019-02-15_at_9.19.24_PM_gdnovh.jpg" alt="Vision8 Photography" loading="lazy">
+          <img class="slide" src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_720,q_auto,f_auto/IMGC9782_boak3q.jpg" alt="Vision8 Photography" loading="lazy">
+          <img class="slide" src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_720,q_auto,f_auto/IMGC9363_umqh6w.jpg" alt="Vision8 Photography" loading="lazy">
+          <img class="slide" src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_720,q_auto,f_auto/IMGC5128_ytgjzo.jpg" alt="Vision8 Photography" loading="lazy">
+          <img class="slide" src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_720,q_auto,f_auto/Screen_Shot_2019-02-15_at_3.41.50_PM_qxffmz.jpg" alt="Vision8 Photography" loading="lazy">
+          <img class="slide" src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_720,q_auto,f_auto/IMGC3958_mjejjt.jpg" alt="Vision8 Photography" loading="lazy">
+          <img class="slide" src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_720,q_auto,f_auto/IMG_3032_pxlra9.jpg" alt="Vision8 Photography" loading="lazy">
+          <img class="slide" src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_720,q_auto,f_auto/IMGC2113_jnz2av.jpg" alt="Vision8 Photography" loading="lazy">
+          <img class="slide" src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_720,q_auto,f_auto/IMGC3827_dvjomu.jpg" alt="Vision8 Photography" loading="lazy">
+          <img class="slide" src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_720,q_auto,f_auto/IMGC9760_cpsekf.jpg" alt="Vision8 Photography" loading="lazy">
+        </div>
+        <div class="card-body">
+          <h3 data-v8-field="service-title-9">Photography</h3>
+          <p data-v8-field="service-desc-9">Capture stunning images with our experienced photographers.</p>
+          <a href="#" class="card-link" data-open-modal="">Find out more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"></path></svg></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ TEAM ============ -->
+<section id="team">
+  <div class="container">
+    <div class="section-header">
+      <p class="section-label">Our People</p>
+      <h2 class="section-title">Meet the Team</h2>
+      <p class="section-subtitle">A seasoned crew with decades of combined experience in video, design, sound, and storytelling.</p>
+    </div>
+    <div class="team-grid">
+
+      <div class="team-card fade-in" data-v8-team="andy">
+        <div class="team-photo">
+          <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_600,q_auto,f_auto/Andy_tazlv6.jpg" alt="Andy McGrath" loading="lazy">
+        </div>
+        <div class="team-info">
+          <h3 data-v8-field="team-name-1">Andy McGrath</h3>
+          <div class="role" data-v8-field="team-role-1">Director / Producer / Chef</div>
+          <p data-v8-field="team-bio-1">Andy is renowned for making videos easy, fun and memorable. An experienced TV industry Director/Cameraman, Series Editor, music composer and former owner of Auckland-based film and motion graphics company Afterglow Films, Andy brings together skills from over 25 years of crafting professional video and television.</p>
+        </div>
+      </div>
+
+      <div class="team-card fade-in" data-v8-team="gary">
+        <div class="team-photo">
+          <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_600,q_auto,f_auto/Gary_ygfld4.jpg" alt="Gary Leano" loading="lazy">
+        </div>
+        <div class="team-info">
+          <h3 data-v8-field="team-name-3">Gary Leano</h3>
+          <div class="role" data-v8-field="team-role-3">Graphic FX Director / Hot Sauce</div>
+          <p data-v8-field="team-bio-3">Gary has spent decades at the top of his game providing specialist motion graphics, animation, and compositing for advertising, branding and promos for broadcasters like Sky Sport, TVNZ, TV3, Whakaata Maori, and a huge range of Vision8 client projects.</p>
+        </div>
+      </div>
+
+      <div class="team-card fade-in" data-v8-team="kat">
+        <div class="team-photo">
+          <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_600,q_auto,f_auto/Kat_ljp1ow.jpg" alt="Kat Greagar" loading="lazy">
+        </div>
+        <div class="team-info">
+          <h3 data-v8-field="team-name-4">Kat Greagar</h3>
+          <div class="role" data-v8-field="team-role-4">Photography / Underwater Camera / Stylish Sauce</div>
+          <p data-v8-field="team-bio-4">Kat has over 20 years of experience in commercial and creative photography, creative design, sales management, and branding. Her lifelong connection with the moana provides Vision8 with an unsurpassed underwater camera experience.</p>
+        </div>
+      </div>
+
+      <div class="team-card fade-in" data-v8-team="jeramiah">
+        <div class="team-photo">
+          <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_600,q_auto,f_auto/Jeramiah_abo1wn.jpg" alt="Jeramiah Ross" loading="lazy">
+        </div>
+        <div class="team-info">
+          <h3 data-v8-field="team-name-5">Jeramiah Ross</h3>
+          <div class="role" data-v8-field="team-role-5">Audio Design / Composition / Saucy Sounds</div>
+          <p data-v8-field="team-bio-5">A genius in the sound studio, Jeramiah has provided sound design and music composition for award-winning creative companies, including Weta Workshop, Dreamworks, RESN, PIKPOK, Activision, and Magic Leap. He composed the soundtrack for the 'Send Yourself to Wellington' campaign and scored the video game Shatter.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIALS ============ -->
+<section id="testimonials">
+  <div class="container">
+    <div class="section-header">
+      <p class="section-label">Client Love</p>
+      <h2 class="section-title">What Our Clients Say</h2>
+    </div>
+    <div class="testimonials-grid">
+
+      <div class="testimonial-card fade-in">
+        <blockquote data-v8-field="testimonial-1">Vision8 were great to work with. By spending the time with me initially, talking and listening, the team very quickly understood our vision and what we were wanting to achieve by making the Horleys Video.</blockquote>
+        <div class="testimonial-author" data-v8-field="testimonial-author-1">Paula Bowden</div>
+        <div class="testimonial-role" data-v8-field="testimonial-role-1">General Manager, Horleys Intelligent Nutrition</div>
+      </div>
+
+      <div class="testimonial-card fade-in">
+        <blockquote data-v8-field="testimonial-2">It was Vision8 that set GS1 NZ on its journey of using video as a medium to tell both our story and those of our customers, and we've never looked back.</blockquote>
+        <div class="testimonial-author" data-v8-field="testimonial-author-2">Gary Hartley</div>
+        <div class="testimonial-role" data-v8-field="testimonial-role-2">General Manager, GS1 NZ</div>
+      </div>
+
+      <div class="testimonial-card fade-in">
+        <blockquote data-v8-field="testimonial-3">The Vision8 team are extremely professional, providing a fantastic service and product. A real joy to work with.</blockquote>
+        <div class="testimonial-author" data-v8-field="testimonial-author-3">Rob McCann</div>
+        <div class="testimonial-role" data-v8-field="testimonial-role-3">White Ribbon Manager</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ CLIENTS ============ -->
+<section id="clients">
+  <div class="container">
+    <div class="section-header">
+      <p class="section-label">Our Clients</p>
+      <h2 class="section-title">Who We Work With</h2>
+      <p class="section-subtitle">We collaborate with a diverse range of clients from small startups to large enterprises, across private, public, and Government sectors. No matter your industry or scale, we're here to help you achieve your goals.</p>
+    </div>
+    <div class="logo-carousel">
+      <div class="logo-track">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/water_safety_vgusg0.png" alt="Water Safety NZ" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/waka_kotahi_rx8zli.png" alt="Waka Kotahi" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/Univ_Ak_futhfv.png" alt="University of Auckland" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/Urban_a9ea9q.png" alt="Urban" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/tui_q454zv.png" alt="Tui" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/TRM_ny7a6q.png" alt="TRM" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/Tiaki_wqbhxd.png" alt="Tiaki" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/stats_rb6geq.png" alt="Stats NZ" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/stats_2_jgkr2l.png" alt="Stats NZ 2" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/silk_ytl1ty.png" alt="Silk" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/ospri_so5lzc.png" alt="OSPRI" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/NZSAR_zepmht.png" alt="NZSAR" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/Oceania_x3bd1a.png" alt="Oceania" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/MFAT_qk6g7f.png" alt="MFAT" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/MFB_ctcftu.png" alt="MFB" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/MB2_wuwsvz.png" alt="Maritime NZ" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/NZSTA_syekk4.png" alt="NZSTA" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/BB_xhpe11.png" alt="BB" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/Ak_Ccikl_vnwuhw.png" alt="Auckland Council" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/MB_mh35y6.png" alt="MB" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/GS1_lc9w1d.png" alt="GS1" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/Chamber_zji5mt.png" alt="Chamber of Commerce" loading="lazy">
+        <img src="https://res.cloudinary.com/deyb4o5qz/image/upload/w_200,q_auto,f_auto/coastguard_lvmlsy.png" alt="Coastguard" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section id="contact">
+  <div class="container">
+    <p class="section-label">Get in Touch</p>
+    <h2 class="section-title">Let's Create Something Great</h2>
+    <p class="section-subtitle" style="margin:0 auto 32px;text-align:center">Ready to bring your story to life? We'd love to hear from you.</p>
+    <div class="contact-links">
+      <a href="mailto:info@vision8.co.nz" class="contact-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m2 4 10 8 10-8"></path></svg>
+        <span data-v8-field="contact-email">info@vision8.co.nz</span>
+      </a>
+      <a href="tel:+6421579205" class="contact-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+        <span data-v8-field="contact-phone">+64 21 579 205</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <p>Te Whanganui-a-Tara, Aotearoa / Wellington, New Zealand</p>
+    <p style="margin-top:8px;font-size:0.8rem;color:#555">© 2025 Vision8. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- ============ JAVASCRIPT ============ -->
+<script>
+(function(){
+  'use strict';
+
+  // Header hide on scroll (mobile)
+  (function(){
+    const hdr = document.querySelector('header');
+    let lastY = 0;
+    window.addEventListener('scroll', function(){
+      const y = window.scrollY;
+      if (y > 120 && y > lastY) hdr.classList.add('header-hidden');
+      else hdr.classList.remove('header-hidden');
+      lastY = y;
+    }, {passive:true});
+  })();
+
+  // Clone logo track for seamless infinite scroll
+  const logoTrack = document.querySelector('.logo-track');
+  if (logoTrack) {
+    const logos = logoTrack.innerHTML;
+    logoTrack.innerHTML = logos + logos;
+  }
+
+  /* ---- Mark cards with poster frames ---- */
+  document.querySelectorAll('.card-video-wrap video[poster]').forEach(function(v){
+    v.closest('.card-video-wrap')?.classList.add('has-poster');
+  });
+
+  /* ---- VIDEO MANAGER: Intersection Observer + max 3 playing ---- */
+  const MAX_PLAYING = 6;
+  const playingVideos = new Set();
+
+  function startVideo(video) {
+    if (playingVideos.has(video)) return;
+    // lazy-load src
+    if (!video.src && video.dataset.src && video.dataset.src !== 'PLACEHOLDER_VIDEO_URL') {
+      video.src = video.dataset.src;
+    }
+    if (!video.src) return; // skip placeholders
+    const p = video.play();
+    if (p) p.catch(()=>{});
+    video.classList.add('playing');
+    video.closest('.card-video-wrap')?.classList.add('is-playing');
+    playingVideos.add(video);
+  }
+
+  function stopVideo(video) {
+    video.pause();
+    video.classList.remove('playing');
+    video.closest('.card-video-wrap')?.classList.remove('is-playing');
+    playingVideos.delete(video);
+  }
+
+  function enforceLimit() {
+    if (playingVideos.size <= MAX_PLAYING) return;
+    const arr = [...playingVideos];
+    while (arr.length > MAX_PLAYING) {
+      stopVideo(arr.shift());
+    }
+  }
+
+  const visibleCards = new Set();
+
+  const videoObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const video = entry.target;
+      if (entry.isIntersecting) {
+        visibleCards.add(video);
+      } else {
+        visibleCards.delete(video);
+        stopVideo(video);
+      }
+    });
+    // After processing all entries, start the top-most visible cards (up to MAX)
+    const viewportCenter = window.innerHeight / 2;
+    const sorted = [...visibleCards].sort((a, b) => {
+      const ra = a.getBoundingClientRect();
+      const rb = b.getBoundingClientRect();
+      const distA = Math.abs((ra.top + ra.bottom) / 2 - viewportCenter);
+      const distB = Math.abs((rb.top + rb.bottom) / 2 - viewportCenter);
+      return distA - distB;
+    });
+    // Stop any playing that aren't in the top MAX visible
+    const toPlay = new Set(sorted.slice(0, MAX_PLAYING));
+    playingVideos.forEach(v => { if (!toPlay.has(v)) stopVideo(v); });
+    toPlay.forEach(v => startVideo(v));
+  }, { threshold: 0.01, rootMargin: '1200px 0px' });
+
+  document.querySelectorAll('.card-video-wrap video').forEach(v => videoObserver.observe(v));
+
+  /* Re-evaluate playing videos on scroll so bottom-row cards get their turn */
+  let scrollTick = false;
+  window.addEventListener('scroll', () => {
+    if (scrollTick) return;
+    scrollTick = true;
+    requestAnimationFrame(() => {
+      scrollTick = false;
+      if (visibleCards.size === 0) return;
+      const viewportCenter = window.innerHeight / 2;
+      const sorted = [...visibleCards].sort((a, b) => {
+        const ra = a.getBoundingClientRect();
+        const rb = b.getBoundingClientRect();
+        return Math.abs((ra.top + ra.bottom) / 2 - viewportCenter) - Math.abs((rb.top + rb.bottom) / 2 - viewportCenter);
+      });
+      const toPlay = new Set(sorted.slice(0, MAX_PLAYING));
+      playingVideos.forEach(v => { if (!toPlay.has(v)) stopVideo(v); });
+      toPlay.forEach(v => startVideo(v));
+    });
+  }, { passive: true });
+
+  /* ---- FADE-IN OBSERVER ---- */
+  const fadeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        fadeObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
+  document.querySelectorAll('.team-card').forEach(el => fadeObserver.observe(el));
+
+  /* ---- SMOOTH NAV HIGHLIGHTING ---- */
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('nav a[href^="#"]');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 200) current = s.id;
+    });
+    navLinks.forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+    });
+  });
+
+  /* ---- CLOSE MOBILE NAV ON LINK CLICK ---- */
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      document.querySelector('nav').classList.remove('open');
+    });
+  });
+
+  /* ---- PHOTO SLIDESHOW (dissolve) ---- */
+  document.querySelectorAll('.photo-slideshow').forEach(wrap => {
+    const slides = wrap.querySelectorAll('.slide');
+    if (slides.length < 2) return;
+    let current = 0;
+    setInterval(() => {
+      slides[current].classList.remove('active');
+      current = (current + 1) % slides.length;
+      slides[current].classList.add('active');
+    }, 3000);
+  });
+
+})();
+</script>
+
+<!-- Service Detail Modal -->
+<div class="service-modal-overlay" id="serviceModal">
+  <div class="service-modal">
+    <button class="service-modal-close" aria-label="Close">×</button>
+    <video id="modalVideo" muted="" loop="" playsinline=""></video>
+    <div class="service-modal-body">
+      <h2 id="modalTitle"></h2>
+      <p class="modal-subtitle" id="modalSubtitle"></p>
+      <div class="modal-text" id="modalText"></div>
+      <a href="#contact" class="modal-cta" id="modalCta">Get in touch <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"></path></svg></a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const overlay = document.getElementById('serviceModal');
+  const modalVideo = document.getElementById('modalVideo');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalSubtitle = document.getElementById('modalSubtitle');
+  const modalText = document.getElementById('modalText');
+
+  // open modal from any card-link with data-open-modal
+  document.addEventListener('click', function(e) {
+    const link = e.target.closest('[data-open-modal]');
+    if (!link) return;
+    e.preventDefault();
+    const card = link.closest('.service-card');
+    if (!card) return;
+
+    modalTitle.textContent = card.dataset.modalTitle || '';
+    modalSubtitle.textContent = card.dataset.modalSubtitle || '';
+
+    // paragraphs split by ||
+    const text = card.dataset.modalText || '';
+    modalText.innerHTML = text.split('||').map(p => '<p>' + p.trim() + '</p>').join('');
+
+    // video
+    if (card.dataset.modalVideo) {
+      modalVideo.poster = card.dataset.modalPoster || '';
+      modalVideo.src = card.dataset.modalVideo;
+      modalVideo.style.display = 'block';
+      modalVideo.play().catch(()=>{});
+    } else {
+      modalVideo.style.display = 'none';
+    }
+
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  });
+
+  // close modal
+  function closeModal() {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+    modalVideo.pause();
+    modalVideo.removeAttribute('src');
+  }
+
+  overlay.querySelector('.service-modal-close').addEventListener('click', closeModal);
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) closeModal();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+  });
+
+  // close modal if CTA is clicked
+  document.getElementById('modalCta').addEventListener('click', closeModal);
+})();
+</script>
+
+
+
+</body></html>
