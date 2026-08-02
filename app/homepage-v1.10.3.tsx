@@ -91,7 +91,12 @@ const VIDEO_SITE = "https://mcgroovypants.github.io/V8-website-2026/";
 const PEOPLE = `${VIDEO_SITE}#team`;
 const LENSWORKS = "https://lensworks.co.nz/";
 const STORAGE_KEY = "vision8-homepage-editor-v1.9.0";
-const BUILD = "v1.10.3";
+const BUILD = "v1.10.4";
+
+// Cloudinary delivery transform applied to every still: auto format, auto
+// quality, capped at 1800px. Supplied URLs are raw originals, and the PNGs are
+// multi-megabyte without this.
+const IMG = "f_auto,q_auto,w_1800";
 
 const fanOrder: Exclude<DivisionId, "home">[] = [
   "motion",
@@ -126,7 +131,7 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     headline: "Make complex things clear.",
     body: "Motion graphics, animation and explainers.",
     mediaType: "image",
-    mediaUrl: `${CLOUD}/video/upload/f_jpg,w_1800,q_auto,so_5/Vision8_Animation_Motion_Gfx_h0emew`,
+    mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785655915/Screen_Shot_2020-10-13_at_10.11.51_AM_nmm2kj.png`,
   },
   photography: {
     id: "photography",
@@ -135,7 +140,7 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     headline: "Still work with purpose.",
     body: "People, places, campaigns and events.",
     mediaType: "image",
-    mediaUrl: `${CLOUD}/image/upload/f_auto,q_auto,w_1800/IMGC9782_boak3q`,
+    mediaUrl: `${CLOUD}/image/upload/${IMG}/v1778472411/Screen_Shot_2019-02-15_at_3.41.50_PM_qxffmz.jpg`,
   },
   filming: {
     id: "filming",
@@ -144,7 +149,7 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     headline: "Ideas through to delivery.",
     body: "Concept, production, filming, editing and delivery.",
     mediaType: "image",
-    mediaUrl: `${CLOUD}/video/upload/f_jpg,w_1800,q_auto,so_14/Vision8_2025_Reel_HEADER_2_j12y5e`,
+    mediaUrl: `${CLOUD}/image/upload/${IMG}/v1778472414/Screen_Shot_2019-02-15_at_9.19.24_PM_gdnovh.jpg`,
     href: VIDEO_SITE,
   },
   "real-estate": {
@@ -154,7 +159,7 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     headline: "Property media through Lensworks.",
     body: "Photography and video for property marketing.",
     mediaType: "image",
-    mediaUrl: "",
+    mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785656289/Real_estate_shot_rrts1z.jpg`,
     href: LENSWORKS,
   },
   websites: {
@@ -173,7 +178,7 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     headline: "Useful tools, built for the job.",
     body: "Useful AI tools, custom apps and focused automation.",
     mediaType: "image",
-    mediaUrl: "",
+    mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785656126/CG_pic_of_Gallery_b10pua.png`,
   },
 };
 
