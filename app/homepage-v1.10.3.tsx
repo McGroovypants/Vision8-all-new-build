@@ -90,7 +90,7 @@ const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_
 const VIDEO_SITE = "https://mcgroovypants.github.io/V8-website-2026/";
 const PEOPLE = `${VIDEO_SITE}#team`;
 const LENSWORKS = "https://lensworks.co.nz/";
-const BUILD = "v1.10.5";
+const BUILD = "v1.10.12";
 
 // Keyed by build on purpose. The persist effect writes every record, mediaUrl
 // included, on first visit whether or not the editor was opened, and the load
@@ -139,7 +139,7 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     headline: "Make complex things clear.",
     body: "Motion graphics, animation and explainers.",
     mediaType: "image",
-    mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785655915/Screen_Shot_2020-10-13_at_10.11.51_AM_nmm2kj.png`,
+    mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785664543/Screenshot_2026-08-02_at_9.38.08_PM_u9ta1b.png`,
   },
   photography: {
     id: "photography",
@@ -157,7 +157,7 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     headline: "Ideas through to delivery.",
     body: "Concept, production, filming, editing and delivery.",
     mediaType: "image",
-    mediaUrl: `${CLOUD}/image/upload/${IMG}/v1778472414/Screen_Shot_2019-02-15_at_9.19.24_PM_gdnovh.jpg`,
+    mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785665173/Adventuresmart_still_7_kbz7fl.png`,
     href: VIDEO_SITE,
   },
   "real-estate": {
@@ -177,7 +177,7 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     headline: "Useful digital experiences.",
     body: "Structure, design and practical website builds.",
     mediaType: "image",
-    mediaUrl: "",
+    mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785662591/Octacle_website_shot_bjyjec.png`,
   },
   ai: {
     id: "ai",
@@ -186,7 +186,7 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     headline: "Useful tools, built for the job.",
     body: "Useful AI tools, custom apps and focused automation.",
     mediaType: "image",
-    mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785656126/CG_pic_of_Gallery_b10pua.png`,
+    mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785666643/AI_Solutions_waczmv.png`,
   },
 };
 
@@ -205,7 +205,7 @@ const defaultStyles: EditorStyles = {
   kicker: { scale: 100, color: "#0bb7a3", brightness: 100, fontFamily: defaultFont },
   headline: { scale: 100, color: "#f3f4ef", brightness: 100, fontFamily: defaultFont },
   body: { scale: 100, color: "#f3f4ef", brightness: 74, fontFamily: defaultFont },
-  mediaOpacity: 34,
+  mediaOpacity: 80,
   mediaFadeMs: 900,
   googleFontUrl: "",
   logoScale: 100,
@@ -851,6 +851,12 @@ export function HomepageV1103() {
   const [editorId, setEditorId] = useState<DivisionId>("filming");
   const [uploadNames, setUploadNames] = useState<Partial<Record<DivisionId, string>>>({});
   const [loaded, setLoaded] = useState(false);
+  // True only after the user changes something through the editor. The persist
+  // effect used to write every record unprompted on first visit, so whatever
+  // defaults were in memory at that moment, including mid-HMR stale ones, got
+  // pinned into localStorage and masked later deploys. Nothing is written until
+  // the user actually edits.
+  const dirty = useRef(false);
   const blobUrls = useRef<string[]>([]);
   const active = records[activeId];
   const KickerTag = (active.kickerTag ?? "p") as ElementType;
@@ -899,7 +905,7 @@ export function HomepageV1103() {
   }, []);
 
   useEffect(() => {
-    if (!loaded) return;
+    if (!loaded || !dirty.current) return;
     const persistedRecords = { ...records };
     editorOrder.forEach((id) => {
       if (persistedRecords[id].mediaUrl.startsWith("blob:")) {
@@ -1019,18 +1025,22 @@ export function HomepageV1103() {
   }
 
   function updateRecord(id: DivisionId, patch: Partial<DivisionRecord>) {
+    dirty.current = true;
     setRecords((current) => ({ ...current, [id]: { ...current[id], ...patch } }));
   }
 
   function updateStyle(key: TextStyleKey, patch: Partial<TextControl>) {
+    dirty.current = true;
     setStyles((current) => ({ ...current, [key]: { ...current[key], ...patch } }));
   }
 
   function handleMediaOpacity(value: number) {
+    dirty.current = true;
     setStyles((current) => ({ ...current, mediaOpacity: value }));
   }
 
   function updateSettings(patch: Partial<GlobalEditorSettings>) {
+    dirty.current = true;
     setStyles((current) => ({ ...current, ...patch }));
   }
 
@@ -1050,6 +1060,7 @@ export function HomepageV1103() {
     blobUrls.current.forEach((url) => URL.revokeObjectURL(url));
     blobUrls.current = [];
     window.localStorage.removeItem(STORAGE_KEY);
+    dirty.current = false;
     setRecords(defaultRecords);
     setHeaderCopy(defaultHeaderCopy);
     setStyles(defaultStyles);
@@ -1159,7 +1170,10 @@ export function HomepageV1103() {
           onStyleChange={updateStyle}
           onMediaOpacityChange={handleMediaOpacity}
           onSettingsChange={updateSettings}
-          onHeaderChange={(key, value) => setHeaderCopy((current) => ({ ...current, [key]: value }))}
+          onHeaderChange={(key, value) => {
+            dirty.current = true;
+            setHeaderCopy((current) => ({ ...current, [key]: value }));
+          }}
           onUpload={handleUpload}
           onReset={resetEditor}
         />

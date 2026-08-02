@@ -87,3 +87,68 @@
     transition: none;
   }
 }
+
+/*
+  Central logo and fan lines dropped roughly 30%: both were competing with the
+  background images once media opacity came up to 80%.
+
+  The lines need the keyframe redefined rather than an `opacity` declaration.
+  `line-draw` in homepage-v1.8.1.css animates opacity to 1 with fill-mode both,
+  and a finished animation holds the properties it animated, so a plain rule
+  would be ignored. Same trap as the dissolve fault. Redefining the keyframe is
+  the only reliable way to lower it; the last definition of a name wins.
+
+  The apex rings are left alone: they are the pulse, not the logo.
+*/
+.fan-core img {
+  opacity: 0.7;
+}
+
+@keyframes line-draw {
+  from { clip-path: inset(100% 0 0); opacity: 0; }
+  to { clip-path: inset(0); opacity: 0.7; }
+}
+
+/*
+  Intro backdrop. The stage used to sit on flat black through the whole opening
+  sequence: .fan-cycle holds every media layer at opacity 0, and homepage-v1.9.0
+  .css line 112 paints .fan-cycle .stage-wash solid #030404 over the top. Two
+  separate blackouts, both needed clearing.
+
+  The landing division is Video and its layer already carries .active from first
+  render, so lifting that one layer gives the fan something to light against.
+  The logo overlay above it runs `intro-exit 3.2s`, so it fades off to reveal a
+  backdrop that is already in place: one continuous move, no second fade needed.
+
+  Held below the settled value so the crossfade up to --editor-media-opacity
+  still registers when the fan sequence ends.
+*/
+.fan-cycle .stage-media-stack .stage-media-layer.active {
+  opacity: 0.5;
+}
+
+.fan-cycle .stage-wash {
+  background:
+    radial-gradient(circle at 50% 38%, rgba(3, 4, 4, 0.18), rgba(3, 4, 4, 0.6) 48%, rgba(3, 4, 4, 0.92) 88%),
+    linear-gradient(to bottom, rgba(3, 4, 4, 0.36), rgba(3, 4, 4, 0.12) 44%, rgba(3, 4, 4, 0.9));
+}
+
+/*
+  homepage-v1.8.1.css line 189 washes Real Estate Media, Websites and AI
+  Solutions with `linear-gradient(to bottom, #050606, #030404)`. Solid hex, no
+  alpha, on a wash layer sitting at z-index 1 above the media stack. Those three
+  divisions were flat colour panels when that rule was written and had no
+  imagery to hide. Once images were set in v1.10.4 the wash painted them out
+  completely, at any media opacity, which read as three broken images.
+
+  The teal accent is kept. The base is restored to the same translucent stack
+  every other division uses, so the image shows through.
+*/
+.active-websites .stage-wash,
+.active-ai .stage-wash,
+.active-real-estate .stage-wash {
+  background:
+    radial-gradient(circle at 50% 38%, rgba(4, 151, 134, 0.13), transparent 32%),
+    radial-gradient(circle at 50% 38%, rgba(3, 4, 4, 0.18), rgba(3, 4, 4, 0.6) 48%, rgba(3, 4, 4, 0.92) 88%),
+    linear-gradient(to bottom, rgba(3, 4, 4, 0.36), rgba(3, 4, 4, 0.12) 44%, rgba(3, 4, 4, 0.9));
+}
