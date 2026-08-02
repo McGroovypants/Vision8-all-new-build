@@ -1,0 +1,134 @@
+@import "./homepage-v1.8.1.css";
+
+.v182-shell {
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--black);
+}
+
+.site-header nav {
+  font-size: 1.15rem;
+}
+
+.fan {
+  --core-width: clamp(190px, 19vw, 258px);
+  --core-height: clamp(68px, 6.76vw, 92px);
+}
+
+.fan-branch {
+  bottom: calc(var(--core-height) + 7px);
+  left: 50%;
+}
+
+.fan-line {
+  top: 40px;
+}
+
+.fan-node {
+  background: transparent;
+}
+
+.branch-motion {
+  --angle: -65deg;
+  --counter-angle: 65deg;
+  height: min(23vw, 40vh, 300px);
+}
+
+.branch-filming {
+  --angle: -17deg;
+  --counter-angle: 17deg;
+  height: min(27vw, 46vh, 355px);
+}
+
+.branch-real-estate {
+  --angle: 17deg;
+  --counter-angle: -17deg;
+  height: min(27vw, 46vh, 355px);
+}
+
+.branch-websites {
+  --angle: 41deg;
+  --counter-angle: -41deg;
+  height: min(25vw, 43vh, 330px);
+}
+
+.branch-ai {
+  --angle: 65deg;
+  --counter-angle: -65deg;
+  height: min(23vw, 40vh, 300px);
+}
+
+.fan-core {
+  width: var(--core-width);
+}
+
+.active-photography .stage-copy > p {
+  font-size: 1.32rem;
+}
+
+.active-photography .copy-row span {
+  font-size: clamp(1.01rem, 1.32vw, 1.2rem);
+}
+
+@media (max-width: 980px) {
+  .site-header nav {
+    font-size: 0.94rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .site-header nav {
+    font-size: clamp(0.68rem, 2.4vw, 0.76rem);
+  }
+
+  .fan {
+    --core-width: 164px;
+    --core-height: 59px;
+  }
+
+  .fan-branch {
+    bottom: calc(var(--core-height) + 6px);
+  }
+
+  .fan-line {
+    top: 35px;
+  }
+
+  .branch-motion,
+  .branch-ai {
+    height: min(31vw, 25vh, 155px);
+  }
+
+  .branch-photography,
+  .branch-websites {
+    height: min(36vw, 28vh, 178px);
+  }
+
+  .branch-filming,
+  .branch-real-estate {
+    height: min(42vw, 31vh, 205px);
+  }
+}
+
+@media (max-height: 700px) {
+  .site-header nav {
+    font-size: clamp(0.7rem, 1.2vw, 0.84rem);
+  }
+
+  .fan {
+    --core-width: 184px;
+    --core-height: 66px;
+  }
+
+  .fan-branch {
+    bottom: calc(var(--core-height) + 6px);
+  }
+}
+
+@media (max-width: 720px) and (max-height: 700px) {
+  .fan {
+    --core-width: 164px;
+    --core-height: 59px;
+  }
+}

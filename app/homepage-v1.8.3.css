@@ -1,0 +1,78 @@
+@import "./homepage-v1.8.2.css";
+
+.branch-motion {
+  --angle: -65deg;
+  --counter-angle: 65deg;
+}
+
+.branch-photography {
+  --angle: -39deg;
+  --counter-angle: 39deg;
+}
+
+.branch-filming {
+  --angle: -13deg;
+  --counter-angle: 13deg;
+}
+
+.branch-real-estate {
+  --angle: 13deg;
+  --counter-angle: -13deg;
+}
+
+.branch-websites {
+  --angle: 39deg;
+  --counter-angle: -39deg;
+}
+
+.branch-ai {
+  --angle: 65deg;
+  --counter-angle: -65deg;
+}
+
+.fan-node {
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fan-line {
+  top: 46px;
+}
+
+.stage-copy,
+.stage-copy > p,
+.stage-copy h1,
+.copy-row,
+.copy-row span {
+  padding-left: 0;
+  text-align: left;
+}
+
+.copy-row {
+  display: block;
+  margin-top: 6px;
+}
+
+.copy-row span {
+  display: block;
+}
+
+.copy-row a {
+  margin-top: 6px;
+}
+
+@media (max-width: 720px) {
+  .fan-node {
+    height: 44px;
+  }
+
+  .fan-line {
+    top: 40px;
+  }
+
+  .copy-row {
+    margin-top: 4px;
+  }
+}

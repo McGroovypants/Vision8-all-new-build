@@ -1,0 +1,34 @@
+@import "./homepage-v1.9.1.css";
+
+.fan-core-ring-static {
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+
+.fan-core.pulse-ready .fan-core-ring-static {
+  opacity: 0.56;
+  transition-delay: 240ms;
+}
+
+.fan-core.pulse-ready .fan-core-ring-pulse {
+  animation: core-pulse 3.4s ease-out 240ms infinite;
+}
+
+.stage-media-stack .stage-media-layer {
+  transition-duration: 2000ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fan-core-ring-static {
+    transition: none;
+  }
+
+  .fan-core.pulse-ready .fan-core-ring-pulse {
+    animation: none;
+    opacity: 0;
+  }
+
+  .stage-media-stack .stage-media-layer {
+    transition: none;
+  }
+}

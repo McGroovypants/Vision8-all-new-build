@@ -1,0 +1,23 @@
+@import "./homepage-v1.10.1.css";
+
+.v1102-shell {
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--black);
+}
+
+.fan-core img {
+  transform:
+    translate(var(--editor-logo-x, 0), var(--editor-logo-y, 0))
+    scale(var(--editor-logo-scale, 1));
+  transform-origin: center;
+}
+
+.nudge-control {
+  padding-top: 8px;
+}
+
+.nudge-values {
+  margin-top: 4px;
+}

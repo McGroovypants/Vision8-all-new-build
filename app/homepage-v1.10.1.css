@@ -1,0 +1,75 @@
+@import "./homepage-v1.10.0.css";
+
+.v1101-shell {
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--black);
+}
+
+.editable-header-item,
+.editable-cta {
+  transform: translate(var(--offset-x, 0), var(--offset-y, 0));
+}
+
+.stage-copy > .stage-kicker {
+  margin: 0 0 9px;
+  color: var(--editor-kicker-color);
+  font-family: var(--editor-kicker-font);
+  font-size: var(--editor-kicker-size);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.active-photography .stage-copy > .stage-kicker {
+  font-size: var(--editor-photo-kicker-size);
+}
+
+.stage-copy .stage-headline {
+  margin: 0;
+  color: var(--editor-headline-color);
+  font-family: var(--editor-headline-font);
+  font-size: clamp(var(--editor-headline-min), var(--editor-headline-vw), var(--editor-headline-max));
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.copy-row .stage-body {
+  display: block;
+  margin: 0;
+  color: var(--editor-body-color);
+  font-family: var(--editor-body-font);
+  font-size: clamp(var(--editor-body-min), var(--editor-body-vw), var(--editor-body-max));
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+.active-photography .copy-row .stage-body {
+  font-size: clamp(var(--editor-photo-body-min), var(--editor-photo-body-vw), var(--editor-photo-body-max));
+}
+
+.copy-row .editable-cta {
+  font-family: var(--editor-body-font);
+}
+
+.header-editor-item {
+  margin-bottom: 18px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.font-current {
+  margin: -5px 0 10px;
+  color: var(--teal-bright);
+  font-size: 0.66rem;
+}
+
+@media (max-width: 720px) {
+  .stage-copy .stage-headline {
+    max-width: 14ch;
+  }
+}
