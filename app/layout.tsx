@@ -5,7 +5,7 @@ const favicon =
   "https://res.cloudinary.com/deyb4o5qz/image/upload/v1785634833/new_vision8_logo_-_favicon_ofao6i.png";
 
 export const metadata: Metadata = {
-  title: "Vision8 homepage v1.10.4",
+  title: "Vision8 homepage v1.10.5",
   description:
     "A private local review of the fanned Vision8 homepage direction.",
   icons: {

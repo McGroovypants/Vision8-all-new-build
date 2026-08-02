@@ -90,8 +90,16 @@ const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_
 const VIDEO_SITE = "https://mcgroovypants.github.io/V8-website-2026/";
 const PEOPLE = `${VIDEO_SITE}#team`;
 const LENSWORKS = "https://lensworks.co.nz/";
-const STORAGE_KEY = "vision8-homepage-editor-v1.9.0";
-const BUILD = "v1.10.4";
+const BUILD = "v1.10.5";
+
+// Keyed by build on purpose. The persist effect writes every record, mediaUrl
+// included, on first visit whether or not the editor was opened, and the load
+// effect merges saved records over the defaults. A fixed key therefore pinned
+// whatever media existed when a browser first loaded the site, and no later
+// deploy could change it. Keying by build means a new build always shows what
+// is actually in the source. Editor tuning does not survive a version bump,
+// which is correct while defaults are still moving.
+const STORAGE_KEY = `vision8-homepage-editor-${BUILD}`;
 
 // Cloudinary delivery transform applied to every still: auto format, auto
 // quality, capped at 1800px. Supplied URLs are raw originals, and the PNGs are
