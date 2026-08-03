@@ -113,18 +113,11 @@
 }
 
 /*
-  Intro backdrop. The stage used to sit on flat black through the whole opening
-  sequence: .fan-cycle holds every media layer at opacity 0, and homepage-v1.9.0
-  .css line 112 paints .fan-cycle .stage-wash solid #030404 over the top. Two
-  separate blackouts, both needed clearing.
-
-  The landing division is Video and its layer already carries .active from first
-  render, so lifting that one layer gives the fan something to light against.
-  The logo overlay above it runs `intro-exit 3.2s`, so it fades off to reveal a
-  backdrop that is already in place: one continuous move, no second fade needed.
-
-  Held below the settled value so the crossfade up to --editor-media-opacity
-  still registers when the fan sequence ends.
+  Video remains the active media layer from the fan sequence through the settled
+  Video state. The separate opening-media-fade animation holds it at black until
+  the original 3.2-second logo intro finishes, then fades it up over three
+  seconds. Keeping the same layer active prevents a second image transition when
+  the fast fan lands on its solid Video line.
 */
 .fan-cycle .stage-media-stack .stage-media-layer.active {
   opacity: var(--editor-media-opacity);
@@ -196,14 +189,19 @@
     linear-gradient(to bottom, rgba(3, 4, 4, 0.32), rgba(3, 4, 4, 0.08) 44%, rgba(3, 4, 4, 0.88));
 }
 
-/* v1.10.16: dissolve the black intro over the lake image for exactly 3 seconds. */
-.logo-intro {
-  animation: intro-exit 3s ease forwards;
+/* v1.10.17: keep the original logo intro, then fade Video up with the fan. */
+.opening-media-fade .stage-media-stack .stage-media-layer.active {
+  opacity: 0;
+  animation: opening-media-fade 3s ease 3.25s forwards;
 }
 
-@keyframes intro-exit {
-  from { opacity: 1; visibility: visible; }
-  to { opacity: 0; visibility: hidden; pointer-events: none; }
+.opening-media-fade.intro-was-skipped .stage-media-stack .stage-media-layer.active {
+  animation-delay: 0s;
+}
+
+@keyframes opening-media-fade {
+  from { opacity: 0; }
+  to { opacity: var(--editor-media-opacity); }
 }
 
 @media (max-width: 720px) {
@@ -229,5 +227,12 @@
 
   .branch-filming {
     --branch-base-height: min(44vw, 31vh, 205px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .opening-media-fade .stage-media-stack .stage-media-layer.active {
+    opacity: var(--editor-media-opacity);
+    animation: none;
   }
 }

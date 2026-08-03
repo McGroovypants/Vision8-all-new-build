@@ -97,7 +97,7 @@ const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_
 const VIDEO_SITE = "https://mcgroovypants.github.io/V8-website-2026/";
 const PEOPLE = `${VIDEO_SITE}#team`;
 const VIDEO_IMAGE = `${CLOUD}/image/upload/f_auto,q_auto,w_1800/v1785665173/Adventuresmart_still_7_kbz7fl.png`;
-const BUILD = "v1.10.16";
+const BUILD = "v1.10.17";
 
 // Keyed by build on purpose. The persist effect writes every record, mediaUrl
 // included, on first visit whether or not the editor was opened, and the load
@@ -915,6 +915,7 @@ export function HomepageV1103() {
   const [skipped, setSkipped] = useState(false);
   const [cycleCancelled, setCycleCancelled] = useState(false);
   const [isCycling, setIsCycling] = useState(true);
+  const [openingMediaDone, setOpeningMediaDone] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
   const [editorId, setEditorId] = useState<DivisionId>("filming");
   const [uploadNames, setUploadNames] = useState<Partial<Record<DivisionId, string>>>({});
@@ -1011,6 +1012,17 @@ export function HomepageV1103() {
   }, [cycleCancelled, skipped]);
 
   useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setOpeningMediaDone(true);
+      return;
+    }
+
+    const fadeDelay = skipped ? 0 : 3250;
+    const timer = window.setTimeout(() => setOpeningMediaDone(true), fadeDelay + 3000);
+    return () => window.clearTimeout(timer);
+  }, [skipped]);
+
+  useEffect(() => {
     const elementId = "vision8-editor-google-font";
     const existing = document.getElementById(elementId) as HTMLLinkElement | null;
     const fontUrl = styles.googleFontUrl.trim();
@@ -1065,6 +1077,7 @@ export function HomepageV1103() {
   function cancelCycle() {
     setCycleCancelled(true);
     setIsCycling(false);
+    setOpeningMediaDone(true);
   }
 
   function activate(id: DivisionId) {
@@ -1144,7 +1157,7 @@ export function HomepageV1103() {
       <LogoIntro skipped={skipped} onSkip={() => setSkipped(true)} />
       <Header copy={headerCopy} styles={styles} onHome={selectHome} />
 
-      <section className={`home-stage active-${active.id}${isCycling ? " fan-cycle" : ""}`}>
+      <section className={`home-stage active-${active.id}${isCycling ? " fan-cycle" : ""}${!openingMediaDone ? " opening-media-fade" : ""}${skipped ? " intro-was-skipped" : ""}`}>
         <div className="stage-media-stack" aria-hidden="true">
           {editorOrder.map((id) => (
             <StageMedia key={id} record={records[id]} active={(isCycling ? "filming" : activeId) === id} />
