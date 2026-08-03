@@ -54,6 +54,11 @@
 
 .site-header .header-right a {
   font-weight: 700;
+  color: var(--teal-bright);
+}
+
+.site-header .header-right a:hover {
+  color: var(--white);
 }
 
 /*

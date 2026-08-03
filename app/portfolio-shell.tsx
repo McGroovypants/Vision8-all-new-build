@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 const CLOUD = "https://res.cloudinary.com/deyb4o5qz";
 const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_whfcvy.png`;
-const BUILD = "v1.10.21";
+const BUILD = "v1.10.22";
 
 export function PageHeader() {
   return (
