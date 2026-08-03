@@ -1,12 +1,12 @@
 # Vision8 website
 
-Next.js on Vite (`vinext`), deployed to Cloudflare Workers. A single-screen fan homepage with eight divisions, plus holding routes for each division.
+Next.js on Vite (`vinext`), deployed to Cloudflare Workers. A single-screen fan homepage with seven divisions, a built-out Video page and People page, plus holding routes for the rest.
 
 This file is how to work in the repo. It does not hold current state. **State lives in the newest `vision8-handover-v1.10.*.md` in the parent folder**, one level up from this git root.
 
 ## Start here
 
-1. Read the newest `../vision8-handover-v1.10.*.md` and `../manifest.md`.
+1. Read the newest `../vision8-handover-v1.10.*.md` and `../manifest.md`. Not every build has a handover; v1.10.18 to v1.10.22 were commits only.
 2. Establish the current build from `BUILD` in `app/homepage-v1.10.3.tsx`.
 3. Read the actual file before editing it. Never edit from memory, a summary, or this document.
 
@@ -30,6 +30,9 @@ npm run lint
 | `app/portfolio-shell.tsx` | Shared shell for every holding route |
 | `app/portfolio-pages.css` | Styles for holding routes only |
 | `app/reel-player.tsx` | Real estate reel, muted autoplay, user-enabled sound |
+| `app/video/page.tsx`, `app/video/video-services.tsx` | The Video page: nine service cards, row-based playback, detail dialog |
+| `app/about/page.tsx` | People |
+| `app/portfolio-pages.css` | Styles for the Video, People and holding routes |
 | `app/<division>/page.tsx` | Holding routes: `photography`, `audio`, `real-estate-media`, `websites`, `ai-solutions` |
 | `worker/index.ts` | Cloudflare Worker entry point |
 | `build/sites-vite-plugin.ts`, `.openai/hosting.json` | Imported by `vite.config.ts` |
@@ -47,9 +50,11 @@ These have each cost a session. Read before styling or debugging anything visual
 
 **4. `BUILD` drives the localStorage key.** `STORAGE_KEY` is `vision8-homepage-editor-${BUILD}`. The editor merges saved records over source defaults, so a stale key can pin old media and mask a correct deploy. **Bump `BUILD` in `app/homepage-v1.10.3.tsx` whenever defaults change.** It is the only place; the page titles no longer carry a version, deliberately, because they went stale and misled diagnosis. Persistence is guarded by a `dirty` ref, so loads and reloads no longer write unprompted, but bump anyway.
 
-**5. Files that look like debris are load-bearing.** `build/sites-vite-plugin.ts`, `.openai/hosting.json`, `worker/index.ts`. All three look like starter leftovers. Verify the import graph before calling anything unused.
+**5. Query state on the homepage must be resolved on the server.** `/?skipintro=1` skips the logo intro. Reading `window.location.search` inside `homepage-v1.10.3.tsx` to do this **fails silently**: the server renders the intro, React keeps its markup on hydration, and the only sign is a console warning about mismatched attributes. `app/page.tsx` reads `searchParams` and passes the flag down. Any future URL-driven homepage state must go the same way.
 
-**6. Caches mask deploys.** Hard refresh with Cmd+Shift+R. VSCode's embedded browser keeps its own cache and its own localStorage and has lagged a full session behind; treat Chrome as the reference.
+**6. Files that look like debris are load-bearing.** `build/sites-vite-plugin.ts`, `.openai/hosting.json`, `worker/index.ts`. All three look like starter leftovers. Verify the import graph before calling anything unused.
+
+**7. Caches mask deploys.** Hard refresh with Cmd+Shift+R. VSCode's embedded browser keeps its own cache and its own localStorage and has lagged a full session behind; treat Chrome as the reference.
 
 ## Verify, do not assume
 
