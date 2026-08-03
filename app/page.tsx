@@ -9,6 +9,10 @@ export const metadata: Metadata = {
     "A single-screen fanned homepage direction for Vision8.",
 };
 
-export default function Home() {
-  return <HomepageV1103 />;
+// The skip is resolved on the server and passed down. Reading the query in the
+// client component instead produced a hydration mismatch: the server rendered
+// the intro, React kept its markup, and the skip silently did nothing.
+export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const params = await searchParams;
+  return <HomepageV1103 skipIntro={"skipintro" in params} />;
 }

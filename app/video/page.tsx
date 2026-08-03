@@ -13,13 +13,12 @@ export default function VideoPage() {
       <PageHeader />
       <section className="video-section">
         <div className="video-intro">
-          <p>What we do</p>
           <h1>Everything video</h1>
           <span>From aerial filming to animation, we offer a comprehensive range of video services to bring your vision to life.</span>
         </div>
         <VideoServices />
       </section>
-      <p className="portfolio-build">Build v1.10.22</p>
+      <p className="portfolio-build">Build v1.10.23</p>
     </main>
   );
 }

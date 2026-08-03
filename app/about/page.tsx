@@ -13,7 +13,7 @@ const people = [
   {
     name: "Gary Leano",
     role: "Graphic FX Director / Hot Sauce",
-    image: `${CLOUD}/image/upload/w_900,q_auto,f_auto/Gary_ygfld4.jpg`,
+    image: `${CLOUD}/image/upload/w_900,q_auto,f_auto/v1785752269/Gary_for_website_svohzo.jpg`,
     bio: "Gary provides specialist motion graphics, animation and compositing for advertising, branding and promos, alongside a wide range of Vision8 client projects.",
   },
   {
@@ -58,7 +58,7 @@ export default function AboutPage() {
           ))}
         </div>
       </section>
-      <p className="portfolio-build">Build v1.10.22</p>
+      <p className="portfolio-build">Build v1.10.23</p>
     </main>
   );
 }

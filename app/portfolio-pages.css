@@ -158,9 +158,39 @@
   padding: clamp(24px, 3vw, 46px) 0 84px;
 }
 
+/* Tighter top on Video only: that padding is part of the fold budget, and the
+   headline was grown into it. */
+.video-section {
+  padding-top: clamp(6px, 1vw, 14px);
+}
+
+/*
+  The media height is budgeted from the viewport rather than from card width,
+  because card width alone cannot control it: at a 1200px container a 16/9 row
+  is ~262px, so three rows plus the intro overrun a 900px viewport badly.
+
+  The divisor is 2.5, not 3, deliberately. Fitting three whole rows forced the
+  frames small enough that the type had to shrink with them. Budgeting for two
+  and a half rows gives noticeably larger frames and leaves part of row three
+  showing above the fold, which is the signal that there is more to scroll to.
+
+  --video-chrome is everything above the grid: the 72px header, the section top
+  padding and the intro block. --video-caption is the caption band at its
+  tallest, the three-line case, since a grid row stretches to its tallest card.
+*/
+.video-page {
+  --video-chrome: 215px;
+  --video-caption: 148px;
+  --video-rows-visible: 2.5;
+  --video-floor: 120px;
+}
+
+/*
+  No max-width. The intro line is a single sentence and the brief is that it
+  reads on one line; constraining this to 780px was the only thing wrapping it.
+*/
 .video-intro {
-  max-width: 780px;
-  margin: 0 auto clamp(22px, 2.4vw, 34px);
+  margin: 0 auto clamp(10px, 1.1vw, 16px);
   text-align: center;
 }
 
@@ -192,48 +222,158 @@
   line-height: 1.55;
 }
 
-.video-service-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(14px, 1.6vw, 24px);
+/*
+  Video only; About keeps the inherited display size. 30% up on the previous
+  clamp, paid for out of the section padding above rather than out of the grid.
+*/
+.video-intro h1 {
+  font-size: clamp(2.21rem, 3.77vw, 3.38rem);
 }
 
+/*
+  Bigger, but still capped so the sentence holds one line at every width the
+  three-column grid is used at, and pulled up closer to the headline.
+*/
+.video-intro span {
+  margin-top: 6px;
+  font-size: clamp(1rem, 1.35vw, 1.2rem);
+}
+
+/*
+  Height-aware, not width-aware. On a short window the intro is the only place
+  left to find room, and without this the two full rows plus the intro push row
+  three completely off screen, losing the signal that there is more below.
+*/
+@media (max-height: 860px) {
+  .video-page {
+    --video-chrome: 168px;
+    /* Larger card copy pushed row three down to a sliver here. The floor gives
+       some of it back, since the frames are already cropped at this height. */
+    --video-floor: 104px;
+  }
+
+  .video-section {
+    padding-top: 6px;
+  }
+
+  .video-intro {
+    margin-bottom: 9px;
+  }
+
+  .video-intro h1 {
+    font-size: clamp(1.95rem, 3.12vw, 2.6rem);
+  }
+
+  .video-intro span {
+    margin-top: 9px;
+  }
+}
+
+.video-service-grid {
+  --video-gap: clamp(14px, 1.6vw, 24px);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--video-gap);
+}
+
+/* Rounded corners carried over from the GitHub Pages cards. overflow clips the
+   media to the radius, which square corners did not need. */
 .video-service-card {
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   border: 1px solid var(--line);
+  border-radius: 10px;
   background: rgba(255, 255, 255, 0.025);
 }
 
+/*
+  16/9 is the natural frame and wins on a tall screen. max-height is the fold
+  budget: on a short screen the frame crops wider rather than row three vanishing
+  entirely. object-fit keeps the centre of every reel. --video-floor keeps the
+  frames a usable size once the budget goes negative, at the cost of showing
+  less of row three there.
+*/
 .video-service-card video,
 .video-service-card img {
   display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
+  max-height: max(
+    var(--video-floor),
+    calc(
+      (100svh - var(--video-chrome) - (2 * var(--video-gap))) / var(--video-rows-visible)
+      - var(--video-caption)
+    )
+  );
   object-fit: cover;
   background: #080a0a;
 }
 
+/*
+  Fixed band: the caption height is a term in the fold budget above, so it is
+  held rather than left to follow its content. Title, then two lines of copy,
+  then the link, with deliberate space below it before the card edge. The bottom padding is the largest of the three so the
+  stack has somewhere to breathe rather than sitting hard on the border.
+*/
 .video-service-caption {
+  min-height: var(--video-caption);
+  flex: 1;
   display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 8px 14px;
-  padding: 12px 14px;
+  flex-direction: column;
+  padding: 12px 16px 18px;
+}
+
+/*
+  Bottom right of the card, not under the copy. Descriptions run to two or three
+  lines, so following the text put the links at different heights across a row,
+  and on a three-line card the link sat hard against the last line. Anchoring it
+  to the far corner keeps the row reading as a row and clears that clutter. The
+  right inset matches the left, so it reads as the same margin.
+*/
+.video-service-caption button {
+  align-self: flex-end;
+  margin-top: auto;
+  padding-top: 12px;
+  white-space: nowrap;
+}
+
+/*
+  Card copy carried over from the GitHub Pages build. Two lines, held to two so
+  the caption band stays a fixed term in the fold budget above.
+*/
+.video-service-caption p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  /*
+    Three, not two. At this size the two longest descriptions need a third line,
+    and a two-line clamp cut them mid-word. Three is enough for every card, so
+    the clamp is a guard rather than something that fires.
+  */
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  margin: 7px 0 0;
+  color: rgba(243, 244, 239, 0.7);
+  font-size: clamp(0.88rem, 1.1vw, 1rem);
+  line-height: 1.45;
 }
 
 .video-service-caption h2 {
   margin: 0;
-  font-size: clamp(0.88rem, 1.18vw, 1.08rem);
+  font-size: clamp(0.96rem, 1.28vw, 1.18rem);
   font-weight: 600;
 }
 
+/* Teal, as on the GitHub Pages cards, brightening to white on hover. */
 .video-service-caption button {
   padding: 0;
   border: 0;
   color: var(--teal-bright);
   background: transparent;
   cursor: pointer;
-  font: 600 clamp(0.64rem, 0.8vw, 0.72rem)/1 var(--font);
+  font: 600 clamp(0.72rem, 0.92vw, 0.84rem)/1 var(--font);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -242,28 +382,68 @@
   color: var(--white);
 }
 
+/* Arrow, as on the homepage CTA, nudging right on hover. */
+.video-service-caption button b {
+  display: inline-block;
+  margin-left: 4px;
+  font-weight: inherit;
+  transition: transform 0.3s ease;
+}
+
+.video-service-caption button:hover b {
+  transform: translateX(3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .video-service-caption button b {
+    transition: none;
+  }
+}
+
+/*
+  As wide as the card grid behind it, so opening a card covers the grid rather
+  than floating over a corner of it. `margin: auto` is required: the reset zeroes
+  margins on every element, and a dialog relies on auto margins to centre itself,
+  so without this it renders hard against the top left.
+*/
 .video-detail {
-  width: min(760px, calc(100% - 36px));
-  max-height: min(84svh, 780px);
+  width: min(1200px, calc(100% - (2 * var(--gutter))));
+  max-height: 92svh;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   padding: 0;
   border: 1px solid var(--line);
+  border-radius: 12px;
   color: var(--white);
   background: #090b0b;
 }
 
+/* Dark enough that the grid behind reads as hidden rather than dimmed. */
 .video-detail::backdrop {
-  background: rgba(0, 0, 0, 0.78);
+  background: rgba(0, 0, 0, 0.94);
 }
 
+/*
+  Capped so the copy below always fits inside the dialog. At full width a 16/9
+  frame is 675px tall, which together with the title and description overran the
+  92svh ceiling and the overflow rule clipped the last line of copy.
+*/
 .video-detail video,
 .video-detail img {
   display: block;
+  flex: 0 1 auto;
+  min-height: 0;
   width: 100%;
   aspect-ratio: 16 / 9;
+  max-height: 62svh;
   object-fit: cover;
 }
 
 .video-detail-copy {
+  flex: 0 0 auto;
+  overflow-y: auto;
   padding: clamp(22px, 4vw, 40px);
 }
 
@@ -273,10 +453,12 @@
   line-height: 1;
 }
 
+/* Roughly 30% up on the inherited 1rem. */
 .video-detail-copy p {
   margin: 0;
   color: rgba(243, 244, 239, 0.72);
-  line-height: 1.65;
+  font-size: clamp(1.05rem, 1.45vw, 1.3rem);
+  line-height: 1.6;
 }
 
 .video-detail-close {
@@ -474,13 +656,14 @@
   background: rgba(255, 255, 255, 0.025);
 }
 
+/* Left, not right: on a scrolling page the right edge sits under the scrollbar. */
 .portfolio-build {
   position: fixed;
-  right: 16px;
+  left: 16px;
   bottom: 12px;
   z-index: 60;
   margin: 0;
-  color: rgba(255, 255, 255, 0.42);
+  color: rgba(255, 255, 255, 0.5);
   font-size: 0.58rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -527,6 +710,15 @@
 
   .video-service-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /*
+    The fold budget assumes the three-column grid. Below this the page scrolls
+    anyway, so the frames go back to their natural 16/9.
+  */
+  .video-service-card video,
+  .video-service-card img {
+    max-height: none;
   }
 
   .person-card,

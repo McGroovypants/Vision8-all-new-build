@@ -3,16 +3,21 @@ import type { ReactNode } from "react";
 
 const CLOUD = "https://res.cloudinary.com/deyb4o5qz";
 const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_whfcvy.png`;
-const BUILD = "v1.10.22";
+const BUILD = "v1.10.23";
+
+// Returning to the homepage from an internal page should not replay the 3.2s
+// logo intro; it is an opening, not a transition. The homepage reads this and
+// starts in its settled state.
+const HOME = "/?skipintro=1";
 
 export function PageHeader() {
   return (
     <header className="portfolio-header">
-      <a className="portfolio-brand" href="/" aria-label="Vision8 home">
+      <a className="portfolio-brand" href={HOME} aria-label="Vision8 home">
         <Image src={LOGO} alt="Vision8" width={1976} height={704} priority unoptimized />
       </a>
       <nav aria-label="Primary navigation">
-        <a href="/">Home</a>
+        <a href={HOME}>Home</a>
         <a href="/about">About us</a>
         <a href="/video">Our mahi</a>
       </nav>

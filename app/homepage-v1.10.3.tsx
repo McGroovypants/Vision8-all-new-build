@@ -97,7 +97,7 @@ const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_
 const VIDEO_SITE = "/video";
 const PEOPLE = "/about";
 const VIDEO_IMAGE = `${CLOUD}/image/upload/f_auto,q_auto,w_1800/v1785665173/Adventuresmart_still_7_kbz7fl.png`;
-const BUILD = "v1.10.22";
+const BUILD = "v1.10.23";
 
 // Keyed by build on purpose. The persist effect writes every record, mediaUrl
 // included, on first visit whether or not the editor was opened, and the load
@@ -259,7 +259,8 @@ const defaultHeaderCopy: HeaderCopy = {
 const defaultFont = '"Helvetica Neue", Helvetica, Arial, sans-serif';
 
 const defaultStyles: EditorStyles = {
-  header: { scale: 110, color: "#f3f4ef", brightness: 100, fontFamily: defaultFont },
+  /* Scale 100 puts the homepage nav at 1.15rem, the same size the Vision8 pages use. */
+  header: { scale: 100, color: "#f3f4ef", brightness: 100, fontFamily: defaultFont },
   fan: { scale: 100, color: "#f3f4ef", brightness: 70, fontFamily: defaultFont },
   kicker: { scale: 100, color: "#0bb7a3", brightness: 100, fontFamily: defaultFont },
   headline: { scale: 100, color: "#f3f4ef", brightness: 100, fontFamily: defaultFont },
@@ -909,13 +910,16 @@ function EditorPanel({
   );
 }
 
-export function HomepageV1103() {
+export function HomepageV1103({ skipIntro = false }: { skipIntro?: boolean } = {}) {
   const [records, setRecords] = useState(defaultRecords);
   const [headerCopy, setHeaderCopy] = useState(defaultHeaderCopy);
   const [styles, setStyles] = useState(defaultStyles);
   const [activeId, setActiveId] = useState<DivisionId>("home");
   const [litId, setLitId] = useState<DivisionId>("home");
-  const [skipped, setSkipped] = useState(false);
+  // Seeded from the server so the intro is skipped in the very first render.
+  // Reading the query here on the client instead mismatched hydration and was
+  // silently dropped.
+  const [skipped, setSkipped] = useState(skipIntro);
   const [cycleCancelled, setCycleCancelled] = useState(false);
   const [isCycling, setIsCycling] = useState(true);
   const [openingMediaDone, setOpeningMediaDone] = useState(false);
@@ -1181,16 +1185,20 @@ export function HomepageV1103() {
                 style={fanBranchStyle(id, division)}
               >
                 <span className="fan-line" aria-hidden="true" />
-                <button
-                  type="button"
+                {/*
+                  A link, not a button. Hovering still selects the division and
+                  swaps the stage behind it, but the label itself was inert on
+                  click, so the only way through to a division was the small CTA
+                  in the stage copy.
+                */}
+                <a
                   className={nodeClass}
-                  aria-pressed={activeId === id}
-                  onClick={() => activate(id)}
+                  href={division.href}
                   onMouseEnter={() => activate(id)}
                   onFocus={() => activate(id)}
                 >
                   <span>{division.label}</span>
-                </button>
+                </a>
               </div>
             );
           })}
