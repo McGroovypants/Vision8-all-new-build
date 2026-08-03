@@ -43,7 +43,7 @@ export function PortfolioShell({
       </section>
 
       <div className="portfolio-content">{children}</div>
-      <p className="portfolio-build">Build v1.10.17</p>
+      <p className="portfolio-build">Build v1.10.18</p>
     </main>
   );
 }

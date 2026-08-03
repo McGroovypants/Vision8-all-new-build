@@ -97,7 +97,7 @@ const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_
 const VIDEO_SITE = "https://mcgroovypants.github.io/V8-website-2026/";
 const PEOPLE = `${VIDEO_SITE}#team`;
 const VIDEO_IMAGE = `${CLOUD}/image/upload/f_auto,q_auto,w_1800/v1785665173/Adventuresmart_still_7_kbz7fl.png`;
-const BUILD = "v1.10.17";
+const BUILD = "v1.10.18";
 
 // Keyed by build on purpose. The persist effect writes every record, mediaUrl
 // included, on first visit whether or not the editor was opened, and the load
@@ -144,7 +144,7 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     mediaMobilePosition: "55% top",
     mediaMobileSize: "auto 118%",
     mediaScale: 1,
-    mediaBlur: 2,
+    mediaBlur: 0,
   },
   motion: {
     id: "motion",
@@ -156,8 +156,9 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785664543/Screenshot_2026-08-02_at_9.38.08_PM_u9ta1b.png`,
     href: VIDEO_SITE,
     ctaLabel: "Find out more",
-    mediaPosition: "72% center",
-    mediaScale: 1.1,
+    mediaPosition: "center 520px",
+    mediaMobilePosition: "center 250px",
+    mediaScale: 1,
     mediaBlur: 2,
   },
   photography: {
@@ -176,7 +177,7 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
   },
   audio: {
     id: "audio",
-    label: "Audio Division",
+    label: "Audio",
     kicker: "Music composition & audio engineering",
     headline: "From first note to final master.",
     body: "Professional musicians, sound design, audio mixing and mastering.",
@@ -203,7 +204,7 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     mediaMobilePosition: "55% top",
     mediaMobileSize: "auto 118%",
     mediaScale: 1,
-    mediaBlur: 2,
+    mediaBlur: 0,
   },
   "real-estate": {
     id: "real-estate",
@@ -226,25 +227,25 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     headline: "Useful digital experiences.",
     body: "Structure, design and practical website builds.",
     mediaType: "image",
-    mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785662591/Octacle_website_shot_bjyjec.png`,
+    mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785737246/websites_2_pic_hysw74.png`,
     href: "/websites",
     ctaLabel: "View website work",
-    mediaPosition: "72% center",
-    mediaScale: 1.12,
+    mediaPosition: "center",
+    mediaScale: 1,
     mediaBlur: 2,
   },
   ai: {
     id: "ai",
-    label: "AI Solutions",
-    kicker: "AI solutions",
+    label: "Tech Solutions",
+    kicker: "Tech solutions",
     headline: "Useful tools, built for the job.",
     body: "Useful AI tools, custom apps and focused automation.",
     mediaType: "image",
-    mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785666643/AI_Solutions_waczmv.png`,
+    mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785737528/AI_Solutions2_d892np.png`,
     href: "/ai-solutions",
     ctaLabel: "Explore AI solutions",
-    mediaPosition: "72% center",
-    mediaScale: 1.12,
+    mediaPosition: "center",
+    mediaScale: 1,
     mediaBlur: 2,
   },
 };

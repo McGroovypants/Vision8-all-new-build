@@ -22,18 +22,21 @@ async function render(pathname = "/") {
   );
 }
 
-test("server-renders the Vision8 v1.10.17 homepage", async () => {
+test("server-renders the Vision8 v1.10.18 homepage", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /Vision8 homepage/);
-  assert.match(html, /Build <!-- -->v1\.10\.17/);
-  assert.match(html, /Audio Division/);
+  assert.match(html, /Build <!-- -->v1\.10\.18/);
+  assert.match(html, /Audio/);
+  assert.match(html, /Tech Solutions/);
   assert.match(html, /Seven connected divisions/);
   assert.match(html, /Adventuresmart_still_7_kbz7fl/);
   assert.match(html, /mixer_rtl9gg/);
+  assert.match(html, /websites_2_pic_hysw74/);
+  assert.match(html, /AI_Solutions2_d892np/);
   assert.match(html, /opening-media-fade/);
   assert.doesNotMatch(html, /Full_Moon_Risin_shot_doxnzk/);
   assert.doesNotMatch(html, /Lensworks/);
@@ -55,7 +58,7 @@ for (const [pathname, expected] of routes) {
 
     const html = await response.text();
     assert.match(html, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.match(html, /Build v1\.10\.17/);
+    assert.match(html, /Build v1\.10\.18/);
     assert.match(html, />Home</);
     assert.match(html, />About us</);
     assert.match(html, />Our mahi</);

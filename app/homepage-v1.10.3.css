@@ -35,6 +35,7 @@
   opacity: 0;
   background-position: var(--media-position, center);
   background-size: var(--media-size, cover);
+  background-repeat: no-repeat;
   filter: blur(var(--media-blur, 0));
   transform: scale(calc(var(--media-scale, 1) + 0.04));
   transition:
