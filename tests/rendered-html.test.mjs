@@ -22,14 +22,14 @@ async function render(pathname = "/") {
   );
 }
 
-test("server-renders the Vision8 v1.10.20 homepage", async () => {
+test("server-renders the Vision8 v1.10.21 homepage", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /Vision8 homepage/);
-  assert.match(html, /Build <!-- -->v1\.10\.20/);
+  assert.match(html, /Build <!-- -->v1\.10\.21/);
   assert.match(html, /aria-label="Vision8 home"/);
   assert.match(html, /Audio/);
   assert.match(html, /Tech Solutions/);
@@ -44,6 +44,8 @@ test("server-renders the Vision8 v1.10.20 homepage", async () => {
 });
 
 const routes = [
+  ["/video", "Everything video"],
+  ["/about", "Meet the team"],
   ["/photography", "Still work with purpose."],
   ["/audio", "From first note to final master."],
   ["/real-estate-media", "Vision8 Real Estate Media"],
@@ -59,7 +61,7 @@ for (const [pathname, expected] of routes) {
 
     const html = await response.text();
     assert.match(html, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.match(html, /Build v1\.10\.18/);
+    assert.match(html, /Build (?:<!-- -->)?v1\.10\.21/);
     assert.match(html, />Home</);
     assert.match(html, />About us</);
     assert.match(html, />Our mahi</);
@@ -73,4 +75,12 @@ test("real-estate holding page is honest about missing final media", async () =>
   assert.match(html, /Real estate reel source to be added/);
   assert.match(html, /final real-estate reel URL is still required/);
   assert.doesNotMatch(html, /Lensworks/);
+});
+
+test("internal Video and About navigation replace the external GitHub page", async () => {
+  const response = await render();
+  const html = await response.text();
+  assert.match(html, /href="\/video"/);
+  assert.match(html, /href="\/about"/);
+  assert.doesNotMatch(html, /mcgroovypants\.github\.io\/V8-website-2026/);
 });

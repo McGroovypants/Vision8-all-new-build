@@ -3,7 +3,23 @@ import type { ReactNode } from "react";
 
 const CLOUD = "https://res.cloudinary.com/deyb4o5qz";
 const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_whfcvy.png`;
-const VIDEO_SITE = "https://mcgroovypants.github.io/V8-website-2026/";
+const BUILD = "v1.10.21";
+
+export function PageHeader() {
+  return (
+    <header className="portfolio-header">
+      <a className="portfolio-brand" href="/" aria-label="Vision8 home">
+        <Image src={LOGO} alt="Vision8" width={1976} height={704} priority unoptimized />
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="/">Home</a>
+        <a href="/about">About us</a>
+        <a href="/video">Our mahi</a>
+      </nav>
+      <a className="portfolio-contact" href="mailto:hello@vision8.co.nz">Contact</a>
+    </header>
+  );
+}
 
 export function PortfolioShell({
   eyebrow,
@@ -20,14 +36,7 @@ export function PortfolioShell({
 }) {
   return (
     <main className="portfolio-shell">
-      <header className="portfolio-header">
-        <nav aria-label="Primary navigation">
-          <a href="/">Home</a>
-          <a href={`${VIDEO_SITE}#team`}>About us</a>
-          <a href={VIDEO_SITE}>Our mahi</a>
-        </nav>
-        <a href="mailto:hello@vision8.co.nz">Contact</a>
-      </header>
+      <PageHeader />
 
       <section className="portfolio-hero">
         {heroImage && <div className="portfolio-hero-image" style={{ backgroundImage: `url(${heroImage})` }} aria-hidden="true" />}
@@ -37,13 +46,10 @@ export function PortfolioShell({
           <h1>{title}</h1>
           <span>{intro}</span>
         </div>
-        <a className="portfolio-home-mark" href="/" aria-label="Vision8 homepage">
-          <Image src={LOGO} alt="Vision8" width={1976} height={704} priority unoptimized />
-        </a>
       </section>
 
       <div className="portfolio-content">{children}</div>
-      <p className="portfolio-build">Build v1.10.18</p>
+      <p className="portfolio-build">Build {BUILD}</p>
     </main>
   );
 }
