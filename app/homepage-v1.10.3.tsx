@@ -21,9 +21,11 @@ type DivisionRecord = {
   href?: string;
   ctaLabel?: string;
   mediaPosition?: string;
+  mediaSize?: string;
+  mediaMobilePosition?: string;
+  mediaMobileSize?: string;
   mediaScale?: number;
   mediaBlur?: number;
-  mediaBrightness?: number;
   underlineWidth?: number;
   fanOffsetX?: number;
   fanOffsetY?: number;
@@ -94,8 +96,8 @@ const CLOUD = "https://res.cloudinary.com/deyb4o5qz";
 const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_whfcvy.png`;
 const VIDEO_SITE = "https://mcgroovypants.github.io/V8-website-2026/";
 const PEOPLE = `${VIDEO_SITE}#team`;
-const OPENING_IMAGE = `${CLOUD}/image/upload/f_auto,q_auto,w_2200/v1785713703/Full_Moon_Risin_shot_doxnzk.jpg`;
-const BUILD = "v1.10.15";
+const VIDEO_IMAGE = `${CLOUD}/image/upload/f_auto,q_auto,w_1800/v1785665173/Adventuresmart_still_7_kbz7fl.png`;
+const BUILD = "v1.10.16";
 
 // Keyed by build on purpose. The persist effect writes every record, mediaUrl
 // included, on first visit whether or not the editor was opened, and the load
@@ -136,11 +138,13 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     headline: "Think it through. Make it work.",
     body: "Seven connected divisions, shaped around what the project actually needs.",
     mediaType: "image",
-    mediaUrl: OPENING_IMAGE,
-    mediaPosition: "46% 48%",
-    mediaScale: 1.08,
-    mediaBlur: 1.5,
-    mediaBrightness: 1.4,
+    mediaUrl: VIDEO_IMAGE,
+    mediaPosition: "left top",
+    mediaSize: "125% auto",
+    mediaMobilePosition: "55% top",
+    mediaMobileSize: "auto 118%",
+    mediaScale: 1,
+    mediaBlur: 2,
   },
   motion: {
     id: "motion",
@@ -177,9 +181,12 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     headline: "From first note to final master.",
     body: "Professional musicians, sound design, audio mixing and mastering.",
     mediaType: "image",
-    mediaUrl: "",
+    mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785722851/mixer_rtl9gg.jpg`,
     href: "/audio",
     ctaLabel: "Find out more",
+    mediaPosition: "50% 58%",
+    mediaScale: 1.04,
+    mediaBlur: 1.5,
   },
   filming: {
     id: "filming",
@@ -188,11 +195,14 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     headline: "Ideas through to delivery.",
     body: "Concept, production, filming, editing and delivery.",
     mediaType: "image",
-    mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785665173/Adventuresmart_still_7_kbz7fl.png`,
+    mediaUrl: VIDEO_IMAGE,
     href: VIDEO_SITE,
     ctaLabel: "Find out more",
-    mediaPosition: "0% center",
-    mediaScale: 1.22,
+    mediaPosition: "left top",
+    mediaSize: "125% auto",
+    mediaMobilePosition: "55% top",
+    mediaMobileSize: "auto 118%",
+    mediaScale: 1,
     mediaBlur: 2,
   },
   "real-estate": {
@@ -491,13 +501,15 @@ function StageMedia({ record, active }: { record: DivisionRecord; active: boolea
   return (
     <div
       key={`${record.id}-${record.mediaUrl}`}
-      className={`stage-media-layer stage-image has-image${activeClass}`}
+      className={`stage-media-layer stage-image stage-${record.id} has-image${activeClass}`}
       style={{
         backgroundImage: `url(${record.mediaUrl})`,
-        backgroundPosition: record.mediaPosition ?? "center",
+        "--media-position": record.mediaPosition ?? "center",
+        "--media-size": record.mediaSize ?? "cover",
+        "--media-mobile-position": record.mediaMobilePosition ?? record.mediaPosition ?? "center",
+        "--media-mobile-size": record.mediaMobileSize ?? record.mediaSize ?? "cover",
         "--media-scale": `${record.mediaScale ?? 1}`,
         "--media-blur": `${record.mediaBlur ?? 0}px`,
-        "--media-brightness": `${record.mediaBrightness ?? 1}`,
       } as CSSProperties}
       aria-hidden="true"
     />
@@ -1135,7 +1147,7 @@ export function HomepageV1103() {
       <section className={`home-stage active-${active.id}${isCycling ? " fan-cycle" : ""}`}>
         <div className="stage-media-stack" aria-hidden="true">
           {editorOrder.map((id) => (
-            <StageMedia key={id} record={records[id]} active={activeId === id} />
+            <StageMedia key={id} record={records[id]} active={(isCycling ? "filming" : activeId) === id} />
           ))}
         </div>
         <div className="stage-wash" aria-hidden="true" />
