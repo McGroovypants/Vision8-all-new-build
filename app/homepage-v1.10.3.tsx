@@ -23,6 +23,7 @@ type DivisionRecord = {
   mediaPosition?: string;
   mediaScale?: number;
   mediaBlur?: number;
+  mediaBrightness?: number;
   underlineWidth?: number;
   fanOffsetX?: number;
   fanOffsetY?: number;
@@ -94,7 +95,7 @@ const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_
 const VIDEO_SITE = "https://mcgroovypants.github.io/V8-website-2026/";
 const PEOPLE = `${VIDEO_SITE}#team`;
 const OPENING_IMAGE = `${CLOUD}/image/upload/f_auto,q_auto,w_2200/v1785713703/Full_Moon_Risin_shot_doxnzk.jpg`;
-const BUILD = "v1.10.14";
+const BUILD = "v1.10.15";
 
 // Keyed by build on purpose. The persist effect writes every record, mediaUrl
 // included, on first visit whether or not the editor was opened, and the load
@@ -139,6 +140,7 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     mediaPosition: "46% 48%",
     mediaScale: 1.08,
     mediaBlur: 1.5,
+    mediaBrightness: 1.4,
   },
   motion: {
     id: "motion",
@@ -189,8 +191,8 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785665173/Adventuresmart_still_7_kbz7fl.png`,
     href: VIDEO_SITE,
     ctaLabel: "Find out more",
-    mediaPosition: "68% center",
-    mediaScale: 1.1,
+    mediaPosition: "0% center",
+    mediaScale: 1.22,
     mediaBlur: 2,
   },
   "real-estate": {
@@ -495,6 +497,7 @@ function StageMedia({ record, active }: { record: DivisionRecord; active: boolea
         backgroundPosition: record.mediaPosition ?? "center",
         "--media-scale": `${record.mediaScale ?? 1}`,
         "--media-blur": `${record.mediaBlur ?? 0}px`,
+        "--media-brightness": `${record.mediaBrightness ?? 1}`,
       } as CSSProperties}
       aria-hidden="true"
     />
