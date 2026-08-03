@@ -22,14 +22,15 @@ async function render(pathname = "/") {
   );
 }
 
-test("server-renders the Vision8 v1.10.19 homepage", async () => {
+test("server-renders the Vision8 v1.10.20 homepage", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /Vision8 homepage/);
-  assert.match(html, /Build <!-- -->v1\.10\.19/);
+  assert.match(html, /Build <!-- -->v1\.10\.20/);
+  assert.match(html, /aria-label="Vision8 home"/);
   assert.match(html, /Audio/);
   assert.match(html, /Tech Solutions/);
   assert.match(html, /Seven connected divisions/);

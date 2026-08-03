@@ -97,7 +97,7 @@ const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_
 const VIDEO_SITE = "https://mcgroovypants.github.io/V8-website-2026/";
 const PEOPLE = `${VIDEO_SITE}#team`;
 const VIDEO_IMAGE = `${CLOUD}/image/upload/f_auto,q_auto,w_1800/v1785665173/Adventuresmart_still_7_kbz7fl.png`;
-const BUILD = "v1.10.19";
+const BUILD = "v1.10.20";
 
 // Keyed by build on purpose. The persist effect writes every record, mediaUrl
 // included, on first visit whether or not the editor was opened, and the load
@@ -259,7 +259,7 @@ const defaultHeaderCopy: HeaderCopy = {
 const defaultFont = '"Helvetica Neue", Helvetica, Arial, sans-serif';
 
 const defaultStyles: EditorStyles = {
-  header: { scale: 110, color: "#bac2bf", brightness: 100, fontFamily: defaultFont },
+  header: { scale: 110, color: "#f3f4ef", brightness: 100, fontFamily: defaultFont },
   fan: { scale: 100, color: "#f3f4ef", brightness: 70, fontFamily: defaultFont },
   kicker: { scale: 100, color: "#0bb7a3", brightness: 100, fontFamily: defaultFont },
   headline: { scale: 100, color: "#f3f4ef", brightness: 100, fontFamily: defaultFont },
@@ -527,6 +527,9 @@ function Header({
 }) {
   return (
     <header className="site-header">
+      <button className="header-brand" type="button" onClick={onHome} aria-label="Vision8 home">
+        <Image src={LOGO} alt="Vision8" width={1976} height={704} priority unoptimized />
+      </button>
       <nav className="header-left" aria-label="Homepage navigation">
         <button className="editable-header-item" style={headerItemStyle(styles, "home")} type="button" onClick={onHome}>{copy.home}</button>
         <a className="editable-header-item" style={headerItemStyle(styles, "about")} href={PEOPLE}>{copy.about}</a>

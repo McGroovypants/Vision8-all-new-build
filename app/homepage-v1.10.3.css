@@ -16,6 +16,46 @@
   --media-drift: 6000ms;
 }
 
+/* Shared page-header direction: logo left, clear capitals on black, teal hover. */
+.site-header {
+  justify-content: flex-start;
+  background: #030404;
+  backdrop-filter: none;
+}
+
+.header-brand {
+  width: clamp(116px, 10vw, 156px);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.header-brand img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.site-header .header-left {
+  margin-left: auto;
+}
+
+.site-header .header-right {
+  margin-left: clamp(24px, 3.2vw, 52px);
+}
+
+.site-header nav a,
+.site-header nav button {
+  text-transform: uppercase;
+  letter-spacing: 0.045em;
+}
+
+.site-header .header-right a {
+  font-weight: 700;
+}
+
 /*
   Two transitions of deliberately different lengths. Opacity crossfades quickly
   while the image keeps drifting from 1.06 down to 1.0 for several seconds
@@ -215,6 +255,14 @@
 }
 
 @media (max-width: 720px) {
+  .header-brand {
+    width: 104px;
+  }
+
+  .site-header .header-right {
+    margin-left: 12px;
+  }
+
   .stage-media-stack .stage-media-layer {
     background-position: var(--media-mobile-position, var(--media-position, center));
     background-size: var(--media-mobile-size, var(--media-size, cover));
