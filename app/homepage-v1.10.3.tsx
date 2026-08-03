@@ -97,7 +97,7 @@ const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_
 const VIDEO_SITE = "https://mcgroovypants.github.io/V8-website-2026/";
 const PEOPLE = `${VIDEO_SITE}#team`;
 const VIDEO_IMAGE = `${CLOUD}/image/upload/f_auto,q_auto,w_1800/v1785665173/Adventuresmart_still_7_kbz7fl.png`;
-const BUILD = "v1.10.18";
+const BUILD = "v1.10.19";
 
 // Keyed by build on purpose. The persist effect writes every record, mediaUrl
 // included, on first visit whether or not the editor was opened, and the load
@@ -156,9 +156,8 @@ const defaultRecords: Record<DivisionId, DivisionRecord> = {
     mediaUrl: `${CLOUD}/image/upload/${IMG}/v1785664543/Screenshot_2026-08-02_at_9.38.08_PM_u9ta1b.png`,
     href: VIDEO_SITE,
     ctaLabel: "Find out more",
-    mediaPosition: "center 520px",
-    mediaMobilePosition: "center 250px",
-    mediaScale: 1,
+    mediaPosition: "72% center",
+    mediaScale: 1.1,
     mediaBlur: 2,
   },
   photography: {

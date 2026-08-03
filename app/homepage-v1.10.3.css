@@ -124,6 +124,15 @@
   opacity: var(--editor-media-opacity);
 }
 
+/* Keep the Websites preview 15 points brighter and Motion 15 points quieter. */
+.stage-media-stack .stage-media-layer.stage-websites.active {
+  opacity: min(0.8, calc(var(--editor-media-opacity) + 0.15));
+}
+
+.stage-media-stack .stage-media-layer.stage-motion.active {
+  opacity: max(0, calc(var(--editor-media-opacity) - 0.15));
+}
+
 .fan-cycle .stage-wash {
   background:
     radial-gradient(circle at 50% 38%, rgba(3, 4, 4, 0.18), rgba(3, 4, 4, 0.6) 48%, rgba(3, 4, 4, 0.92) 88%),
