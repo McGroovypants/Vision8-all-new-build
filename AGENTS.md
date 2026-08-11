@@ -33,7 +33,8 @@ npm run lint
 | `app/video/page.tsx`, `app/video/video-services.tsx` | The Video page: nine service cards, row-based playback, detail dialog |
 | `app/about/page.tsx` | People |
 | `app/portfolio-pages.css` | Styles for the Video, People and holding routes |
-| `app/<division>/page.tsx` | Holding routes: `photography`, `audio`, `real-estate-media`, `websites`, `ai-solutions` |
+| `app/audio/page.tsx` | The Audio page: four service cards, approach and fact sections, stills from `public/audio/` |
+| `app/<division>/page.tsx` | Holding routes: `photography`, `real-estate-media`, `websites`, `ai-solutions` |
 | `worker/index.ts` | Cloudflare Worker entry point |
 | `build/sites-vite-plugin.ts`, `.openai/hosting.json` | Imported by `vite.config.ts` |
 | `legacy/video-showcase/` | Imported source of the old GitHub Pages showcase, not wired in |
@@ -76,11 +77,10 @@ For anything visual, drive a real browser rather than reasoning about the cascad
 Full detail in `../vision8-push-and-deploy-v1.10.12.md`.
 
 ```
-ssh-add --apple-load-keychain    # first push of a session fails without this
 git push origin main --follow-tags
 ```
 
-The SSH key is passphrase-protected and a restart empties the agent, so the first push returns `Permission denied (publickey)`. The keychain load prompts for nothing.
+The remote is HTTPS as of v1.10.24, with the `gh` CLI as the credential helper. Nothing needs loading first. The SSH key on this machine is rejected by GitHub rather than merely locked, so `ssh-add --apple-load-keychain`, which earlier versions of this file required, does not help and is no longer needed.
 
 ### [CRITICAL] Pushing does not deploy
 
