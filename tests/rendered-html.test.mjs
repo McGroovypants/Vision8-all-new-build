@@ -22,14 +22,14 @@ async function render(pathname = "/") {
   );
 }
 
-test("server-renders the Vision8 v1.10.26 homepage", async () => {
+test("server-renders the Vision8 v1.11.0 homepage", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /Vision8 homepage/);
-  assert.match(html, /Build <!-- -->v1\.10\.26/);
+  assert.match(html, /Build <!-- -->v1\.11\.0/);
   assert.match(html, /aria-label="Vision8 home"/);
   assert.match(html, /Audio/);
   assert.match(html, /Tech Solutions/);
@@ -49,7 +49,7 @@ const routes = [
   ["/photography", "Still work with purpose."],
   // Each sentence of the Audio headline is its own span, so the full title is
   // never one contiguous string in the markup.
-  ["/audio", "Real Instruments."],
+  ["/audio", "What you hear changes what you feel"],
   ["/real-estate-media", "Vision8 Real Estate Media"],
   ["/websites", "Useful digital experiences."],
   ["/ai-solutions", "Useful tools, built for the job."],
@@ -63,7 +63,7 @@ for (const [pathname, expected] of routes) {
 
     const html = await response.text();
     assert.match(html, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.match(html, /Build (?:<!-- -->)?v1\.10\.26/);
+    assert.match(html, /Build (?:<!-- -->)?v1\.11\.0/);
     assert.match(html, />Home</);
     assert.match(html, />About us</);
     assert.match(html, />Our mahi</);
