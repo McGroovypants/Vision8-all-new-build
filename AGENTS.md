@@ -33,7 +33,7 @@ npm run lint
 | `app/video/page.tsx`, `app/video/video-services.tsx` | The Video page: nine service cards, row-based playback, detail dialog |
 | `app/about/page.tsx` | People |
 | `app/portfolio-pages.css` | Styles for the Video, People and holding routes |
-| `app/audio/page.tsx` | The Audio page: four service cards, approach and fact sections, stills from `public/audio/` |
+| `app/audio/page.tsx` | The Audio page: project stories, people, stills from `public/audio/` |
 | `app/<division>/page.tsx` | Holding routes: `photography`, `real-estate-media`, `websites`, `ai-solutions` |
 | `worker/index.ts` | Cloudflare Worker entry point |
 | `build/sites-vite-plugin.ts`, `.openai/hosting.json` | Imported by `vite.config.ts` |
