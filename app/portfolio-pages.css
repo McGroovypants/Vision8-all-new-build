@@ -708,9 +708,11 @@
 .audio-page .audio-eyebrow {
   margin: 0 0 18px;
   color: var(--teal-bright);
-  font-size: 0.75rem;
+  /* Double the 0.75rem these started at. Tracking eases off with the size:
+     0.18em on caps this large spreads the label much too wide. */
+  font-size: 1.5rem;
   font-weight: 700;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
 }
 
@@ -770,6 +772,19 @@
 
 .audio-hero .audio-hero-copy {
   max-width: 660px;
+}
+
+/*
+  The page title, so it carries far more weight than the section eyebrows that
+  use the same class further down. Held well under the h1 beneath it: roughly
+  37px against 78px at 1440, so it reads as a label above the headline rather
+  than competing with it. Tracking eases off, since 0.18em on caps this size
+  spreads the word much too wide.
+*/
+.audio-hero .audio-eyebrow {
+  margin-bottom: 10px;
+  font-size: clamp(1.75rem, 2.6vw, 2.3rem);
+  letter-spacing: 0.1em;
 }
 
 /*
@@ -896,12 +911,17 @@
   border-radius: 0;
 }
 
-/* Sits on the same line as the programme name rather than under it. */
+/* Sits on the same line as the programme name, pushed out to the right edge of
+   the copy column so the mark lines up with the text block below it. */
 .audio-page .audio-client-line {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px 14px;
+}
+
+.audio-page .audio-client-line .audio-client-logo {
+  margin-left: auto;
 }
 
 .audio-page .audio-client-logo-wide {
