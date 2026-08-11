@@ -201,44 +201,6 @@ export default function AudioPage() {
               <figcaption>Jeramiah Ross · Module</figcaption>
             </figure>
           </div>
-          <div className="audio-duo">
-            <img src="/audio/groovebox.jpg" alt="Groovebox performance" loading="lazy" />
-            <img src="/audio/drum-machine.jpg" alt="Drum machine hardware" loading="lazy" />
-          </div>
-        </div>
-      </section>
-
-      <section className="audio-section">
-        <div className="audio-inner">
-          <div className="audio-split">
-            <figure>
-              <img src="/audio/andy-bw-gat.jpg" alt="Andy McGrath playing guitar" loading="lazy" />
-              <figcaption>Andy McGrath</figcaption>
-            </figure>
-            <div>
-              <p className="audio-eyebrow">Andy McGrath · Musician</p>
-              <h2>Music has always been part of the picture.</h2>
-              <p>For Andy, music isn&rsquo;t a service that was added to Vision8. It has been there all along.</p>
-              <p>
-                As a songwriter, musician, producer and performer, Andy has spent years moving between music and
-                pictures, playing guitar, bass, drums and harmonica, writing songs, recording and collaborating with
-                other musicians and music producers.
-              </p>
-              <p>That experience changes the way Vision8 approaches audio.</p>
-              <p>It isn&rsquo;t simply about whether something is technically correct.</p>
-              <p>
-                <strong>It&rsquo;s about whether it feels right.</strong>
-              </p>
-              <p className="audio-actions">
-                <a className="audio-btn audio-btn-solid" href={ANDY_LISTEN} target="_blank" rel="noopener">
-                  Listen to Andy&rsquo;s music
-                </a>
-                <a className="audio-btn" href={ANDY_VIDEOS} target="_blank" rel="noopener">
-                  Watch music videos
-                </a>
-              </p>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -286,6 +248,49 @@ export default function AudioPage() {
         </div>
       </section>
 
+      <section className="audio-section">
+        <div className="audio-inner">
+          <div className="audio-split">
+            <figure>
+              <img src="/audio/andy-bw-gat.jpg" alt="Andy McGrath playing guitar" loading="lazy" />
+              <figcaption>Andy McGrath</figcaption>
+            </figure>
+            <div>
+              <p className="audio-eyebrow">Andy McGrath · Musician</p>
+              <h2>Music has always been part of the picture.</h2>
+              <p>For Andy, music isn&rsquo;t a service that was added to Vision8. It has been there all along.</p>
+              <p>
+                As a songwriter, musician, producer and performer, Andy has spent years moving between music and
+                pictures, playing guitar, bass, drums and harmonica, writing songs, recording and collaborating with
+                other musicians and music producers.
+              </p>
+              <p>That experience changes the way Vision8 approaches audio.</p>
+              <p>It isn&rsquo;t simply about whether something is technically correct.</p>
+              <p>
+                <strong>It&rsquo;s about whether it feels right.</strong>
+              </p>
+              <p className="audio-actions">
+                <a className="audio-btn audio-btn-solid" href={ANDY_LISTEN} target="_blank" rel="noopener">
+                  Listen to Andy&rsquo;s music
+                </a>
+                <a className="audio-btn" href={ANDY_VIDEOS} target="_blank" rel="noopener">
+                  Watch music videos
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="audio-section">
+        <div className="audio-inner">
+          <div className="audio-duo">
+            <img src="/audio/groovebox.jpg" alt="Groovebox performance" loading="lazy" />
+            <img src="/audio/drum-machine.jpg" alt="Drum machine hardware" loading="lazy" />
+          </div>
+        </div>
+      </section>
+
       <section className="audio-closing">
         <div className="audio-closing-copy">
           <p className="audio-eyebrow">Audio + pictures</p>
@@ -305,7 +310,7 @@ export default function AudioPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.2</p>
+      <p className="portfolio-build">Build v1.11.3</p>
     </main>
   );
 }
