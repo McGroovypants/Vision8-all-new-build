@@ -67,7 +67,13 @@ export default function AudioPage() {
   return (
     <PortfolioShell
       eyebrow="Audio & Music Production"
-      title="Crafted Sound. Human Emotion. Real Instruments."
+      title={
+        <>
+          <span>Crafted Sound.</span>
+          <span>Human Emotion.</span>
+          <span>Real Instruments.</span>
+        </>
+      }
       intro="Vision8 is a sonic studio built on decades of musical exploration by Jeramiah Ross (Module) and Andy McGrath – two musician producer composers whose long-term creative partnership has shaped film, games, installations, and immersive experiences across Aotearoa and beyond."
       heroImage="/audio/hero-guitar.jpg"
       className="audio-shell"

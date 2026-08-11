@@ -680,6 +680,36 @@
   filter: blur(0.5px);
 }
 
+/*
+  Three sentences, one per line, set deliberately rather than left to wrap.
+  The shared h1 caps the measure at 13ch, which suits a short title; this one is
+  46 characters, so above about 1600px it broke mid-sentence as "Human /
+  Emotion. Real / Instruments." and the hero swallowed the fold. The cap is
+  released, the sentences carry their own breaks, and the size comes down so the
+  longest line holds at every width the hero is used at.
+*/
+.audio-shell .portfolio-hero-copy {
+  max-width: min(1100px, 78%);
+}
+
+.audio-shell .portfolio-hero-copy h1 {
+  max-width: none;
+  font-size: clamp(2.1rem, 4.6vw, 4.6rem);
+}
+
+/*
+  The shared `.portfolio-hero-copy span` rule styles the intro sentence: 1.25rem,
+  dimmed, capped at 620px. It matches these headline spans too and rendered the
+  whole title at 20px, so every property it sets has to be handed back.
+*/
+.audio-shell .portfolio-hero-copy h1 span {
+  display: block;
+  max-width: none;
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
 .audio-shell .portfolio-hero-wash {
   background:
     linear-gradient(to right, rgba(3, 4, 4, 0.82), rgba(3, 4, 4, 0.34) 62%),
