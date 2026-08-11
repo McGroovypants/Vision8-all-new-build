@@ -14,7 +14,12 @@ export const metadata: Metadata = {
 const ANDY_LISTEN = "https://andymcgrath.com/#listen";
 const ANDY_VIDEOS = "https://andymcgrath.com/#videos";
 const MODULE = "https://open.spotify.com/artist/5ZBKIdb9VbEXIPrdAFh1V1";
+const MAX = "https://maxmaxwell.nz/";
 const CONTACT = "mailto:hello@vision8.co.nz";
+
+// Named as supplied, including the lower-case "recording", since these are the
+// client's own service names.
+const services = ["Mixing", "Location Sound", "Voice-Over", "Multitrack recording", "Composition"];
 
 export default function AudioPage() {
   return (
@@ -34,11 +39,14 @@ export default function AudioPage() {
               Vision8 works across audio engineering, music production and original composition for television,
               advertising, presentations, films and music releases.
             </p>
-            <p>
-              It might mean rescuing and shaping an important archive recording. Building a mix where every word
-              matters. Or starting with an empty timeline and writing the music the pictures need.
-            </p>
           </div>
+          {/* Outside the copy column on purpose: that column is held narrow for
+              reading, and the five names need the full width to hold one line. */}
+          <ul className="audio-services">
+            {services.map((service) => (
+              <li key={service}>{service}</li>
+            ))}
+          </ul>
         </div>
       </header>
 
@@ -166,44 +174,6 @@ export default function AudioPage() {
 
       <section className="audio-section">
         <div className="audio-inner">
-          <div className="audio-split">
-            <figure>
-              <img src="/audio/andy-bw-gat.jpg" alt="Andy McGrath playing guitar" loading="lazy" />
-              <figcaption>Andy McGrath</figcaption>
-            </figure>
-            <div>
-              <p className="audio-eyebrow">Andy McGrath · Musician</p>
-              <h2>Music has always been part of the picture.</h2>
-              <p>For Andy, music isn&rsquo;t a service that was added to Vision8. It has been there all along.</p>
-              <p>
-                As a songwriter, musician, producer and performer, Andy has spent years moving between music and
-                pictures, playing guitar, bass, drums and harmonica, writing songs, recording and collaborating with
-                other musicians and music producers.
-              </p>
-              <p>That experience changes the way Vision8 approaches audio.</p>
-              <p>It isn&rsquo;t simply about whether something is technically correct.</p>
-              <p>
-                <strong>It&rsquo;s about whether it feels right.</strong>
-              </p>
-              <p className="audio-actions">
-                <a className="audio-btn audio-btn-solid" href={ANDY_LISTEN} target="_blank" rel="noopener">
-                  Listen to Andy&rsquo;s music
-                </a>
-                <a className="audio-btn" href={ANDY_VIDEOS} target="_blank" rel="noopener">
-                  Watch music videos
-                </a>
-              </p>
-            </div>
-          </div>
-          <div className="audio-duo">
-            <img src="/audio/vocal-mic.jpg" alt="Studio microphone and pop shield" loading="lazy" />
-            <img src="/audio/andy-studio.jpg" alt="In the studio with guitars" loading="lazy" />
-          </div>
-        </div>
-      </section>
-
-      <section className="audio-section">
-        <div className="audio-inner">
           <div className="audio-split audio-flip">
             <div>
               <p className="audio-eyebrow">Jeramiah Ross / Module</p>
@@ -242,6 +212,40 @@ export default function AudioPage() {
         <div className="audio-inner">
           <div className="audio-split">
             <figure>
+              <img src="/audio/andy-bw-gat.jpg" alt="Andy McGrath playing guitar" loading="lazy" />
+              <figcaption>Andy McGrath</figcaption>
+            </figure>
+            <div>
+              <p className="audio-eyebrow">Andy McGrath · Musician</p>
+              <h2>Music has always been part of the picture.</h2>
+              <p>For Andy, music isn&rsquo;t a service that was added to Vision8. It has been there all along.</p>
+              <p>
+                As a songwriter, musician, producer and performer, Andy has spent years moving between music and
+                pictures, playing guitar, bass, drums and harmonica, writing songs, recording and collaborating with
+                other musicians and music producers.
+              </p>
+              <p>That experience changes the way Vision8 approaches audio.</p>
+              <p>It isn&rsquo;t simply about whether something is technically correct.</p>
+              <p>
+                <strong>It&rsquo;s about whether it feels right.</strong>
+              </p>
+              <p className="audio-actions">
+                <a className="audio-btn audio-btn-solid" href={ANDY_LISTEN} target="_blank" rel="noopener">
+                  Listen to Andy&rsquo;s music
+                </a>
+                <a className="audio-btn" href={ANDY_VIDEOS} target="_blank" rel="noopener">
+                  Watch music videos
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="audio-section">
+        <div className="audio-inner">
+          <div className="audio-split">
+            <figure>
               <img src="/audio/max-andy-bw.jpg" alt="Max Maxwell and Andy McGrath" loading="lazy" />
               <figcaption>Max Maxwell &amp; Andy McGrath</figcaption>
             </figure>
@@ -272,6 +276,11 @@ export default function AudioPage() {
                 electronic instincts meeting Andy and Jeramiah&rsquo;s backgrounds in songwriting and live
                 performance.
               </p>
+              <p className="audio-actions">
+                <a className="audio-btn" href={MAX} target="_blank" rel="noopener">
+                  Visit maxmaxwell.nz
+                </a>
+              </p>
             </div>
           </div>
         </div>
@@ -296,7 +305,7 @@ export default function AudioPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.1</p>
+      <p className="portfolio-build">Build v1.11.2</p>
     </main>
   );
 }

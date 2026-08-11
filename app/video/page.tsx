@@ -18,7 +18,7 @@ export default function VideoPage() {
         </div>
         <VideoServices />
       </section>
-      <p className="portfolio-build">Build v1.11.1</p>
+      <p className="portfolio-build">Build v1.11.2</p>
     </main>
   );
 }
