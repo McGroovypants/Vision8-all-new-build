@@ -1,5 +1,14 @@
+/*
+  [CRITICAL] This must be its own scroll container, like `.video-page` below.
+  The base stylesheet locks the document for the single-screen homepage with
+  `html, body { height: 100%; overflow: hidden }`, so a page taller than the
+  viewport is silently clipped rather than scrolled: `min-height: 100svh` here
+  left every holding route stuck on its hero with the rest unreachable, and
+  scrollIntoView still worked, so it passed a scripted check.
+*/
 .portfolio-shell {
-  min-height: 100svh;
+  height: 100svh;
+  overflow-y: auto;
   color: var(--white);
   background: var(--black);
 }
