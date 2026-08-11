@@ -7,9 +7,12 @@ export const metadata: Metadata = {
 };
 
 // Andy's music sits on his own site, which is the preferred destination for
-// him; Jeramiah goes to Spotify. The `si` share tokens are stripped from the
-// Spotify URL: they identify the person who copied the link, not the artist.
-const ANDY = "https://andymcgrath.com/";
+// him. Deep-linked to its own section anchors rather than the homepage, so the
+// two buttons land somewhere different; both are real ids on that site.
+// Jeramiah goes to Spotify. The `si` share tokens are stripped from that URL:
+// they identify the person who copied the link, not the artist.
+const ANDY_LISTEN = "https://andymcgrath.com/#listen";
+const ANDY_VIDEOS = "https://andymcgrath.com/#videos";
 const MODULE = "https://open.spotify.com/artist/5ZBKIdb9VbEXIPrdAFh1V1";
 const CONTACT = "mailto:hello@vision8.co.nz";
 
@@ -183,10 +186,10 @@ export default function AudioPage() {
                 <strong>It&rsquo;s about whether it feels right.</strong>
               </p>
               <p className="audio-actions">
-                <a className="audio-btn audio-btn-solid" href={ANDY} target="_blank" rel="noopener">
+                <a className="audio-btn audio-btn-solid" href={ANDY_LISTEN} target="_blank" rel="noopener">
                   Listen to Andy&rsquo;s music
                 </a>
-                <a className="audio-btn" href={ANDY} target="_blank" rel="noopener">
+                <a className="audio-btn" href={ANDY_VIDEOS} target="_blank" rel="noopener">
                   Watch music videos
                 </a>
               </p>
@@ -293,7 +296,7 @@ export default function AudioPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.0</p>
+      <p className="portfolio-build">Build v1.11.1</p>
     </main>
   );
 }
