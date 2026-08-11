@@ -52,7 +52,7 @@ export default function AudioPage() {
 
       <section className="audio-section">
         <div className="audio-inner">
-          <div className="audio-split">
+          <div className="audio-split audio-flip">
             <figure>
               <img src="/audio/te-pataka-korero.jpg" alt="Te Pātaka Kōrero title still" loading="lazy" />
               <figcaption>Te Pātaka Kōrero · Māori+</figcaption>
@@ -145,7 +145,7 @@ export default function AudioPage() {
 
       <section className="audio-section">
         <div className="audio-inner">
-          <div className="audio-split audio-flip">
+          <div className="audio-split">
             <div>
               <p className="audio-eyebrow">Music production</p>
               <h2>From first thought to final mix</h2>
@@ -250,7 +250,7 @@ export default function AudioPage() {
 
       <section className="audio-section">
         <div className="audio-inner">
-          <div className="audio-split">
+          <div className="audio-split audio-flip">
             <figure>
               <img src="/audio/andy-bw-gat.jpg" alt="Andy McGrath playing guitar" loading="lazy" />
               <figcaption>Andy McGrath</figcaption>
@@ -310,7 +310,7 @@ export default function AudioPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.3</p>
+      <p className="portfolio-build">Build v1.11.4</p>
     </main>
   );
 }

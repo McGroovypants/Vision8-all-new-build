@@ -815,6 +815,12 @@
   }
 }
 
+/*
+  Picture and copy are placed by column rather than by source order, so which
+  side the picture takes is decided by `.audio-flip` alone. Some blocks put the
+  figure first and some the copy first, and without this the class would mean
+  the opposite thing depending on which. The picture always takes the 7fr side.
+*/
 .audio-split {
   display: grid;
   grid-template-columns: 7fr 5fr;
@@ -822,10 +828,35 @@
   align-items: center;
 }
 
-/* Copy left, picture right. The alternation is what stops six stacked sections
-   reading as one long column. */
+/*
+  `grid-row: 1` is required, not decoration. Auto-placement walks the source
+  order and will not go back to an earlier column in the same row, so on the
+  blocks where the figure comes first and is sent to column 2, the copy was
+  pushed down into a second row and the two sat diagonally rather than side
+  by side.
+*/
+.audio-split > figure {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.audio-split > div {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+/* Picture right. The alternation down the page is what stops six stacked
+   sections reading as one long column. */
 .audio-split.audio-flip {
   grid-template-columns: 5fr 7fr;
+}
+
+.audio-split.audio-flip > figure {
+  grid-column: 2;
+}
+
+.audio-split.audio-flip > div {
+  grid-column: 1;
 }
 
 .audio-split-spaced {
@@ -1008,7 +1039,21 @@
     grid-template-columns: 1fr;
   }
 
-  .audio-split.audio-flip figure {
+  /*
+    [CRITICAL] The desktop rules place children in named columns, and a child
+    left on `grid-column: 2` here creates an implicit second column rather than
+    stacking: every section rendered as two squeezed columns on a phone. Both
+    children have to be put back into column one.
+  */
+  .audio-split > figure,
+  .audio-split > div,
+  .audio-split.audio-flip > figure,
+  .audio-split.audio-flip > div {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .audio-split.audio-flip > figure {
     order: -1;
   }
 
