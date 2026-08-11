@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 const CLOUD = "https://res.cloudinary.com/deyb4o5qz";
 const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_whfcvy.png`;
-const BUILD = "v1.10.23";
+const BUILD = "v1.10.24";
 
 // Returning to the homepage from an internal page should not replay the 3.2s
 // logo intro; it is an opening, not a transition. The homepage reads this and
@@ -31,16 +31,20 @@ export function PortfolioShell({
   title,
   intro,
   heroImage,
+  // Lets one page tune the shared shell without forking it. Audio uses it to
+  // lift the hero wash, which is tuned for bright stills and buries a dark one.
+  className,
   children,
 }: {
   eyebrow: string;
   title: string;
   intro: string;
   heroImage?: string;
+  className?: string;
   children: ReactNode;
 }) {
   return (
-    <main className="portfolio-shell">
+    <main className={className ? `portfolio-shell ${className}` : "portfolio-shell"}>
       <PageHeader />
 
       <section className="portfolio-hero">
