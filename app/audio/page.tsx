@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 // two buttons land somewhere different; both are real ids on that site.
 // Jeramiah goes to Spotify. The `si` share tokens are stripped from that URL:
 // they identify the person who copied the link, not the artist.
-const ANDY_LISTEN = "https://andymcgrath.com/#listen";
-const ANDY_VIDEOS = "https://andymcgrath.com/#videos";
+const ANDY_LISTEN = "https://www.andymcgrath.com/#listen";
+const ANDY_VIDEOS = "https://www.andymcgrath.com/#videos";
 const MODULE = "https://open.spotify.com/artist/5ZBKIdb9VbEXIPrdAFh1V1";
 const MAX = "https://maxmaxwell.nz/";
 const CONTACT = "mailto:hello@vision8.co.nz";
@@ -63,8 +63,10 @@ export default function AudioPage() {
               <p className="audio-lede">
                 Bringing archive recordings and studio voice together into one coherent sound.
               </p>
-              <h3>Te Pātaka Kōrero</h3>
-              <img className="audio-client-logo" src="/audio/maoriplus-logo.svg" alt="Māori+" loading="lazy" />
+              <h3 className="audio-client-line">
+                Te Pātaka Kōrero
+                <img className="audio-client-logo" src="/audio/maoriplus-logo.svg" alt="Māori+" loading="lazy" />
+              </h3>
               <p>
                 <em>
                   A thirteen-part series featuring a rich backlog of Radio New Zealand&rsquo;s archival recordings of
@@ -282,25 +284,11 @@ export default function AudioPage() {
         </div>
       </section>
 
-      <section className="audio-section">
-        <div className="audio-inner">
-          <div className="audio-duo">
-            <img src="/audio/groovebox.jpg" alt="Groovebox performance" loading="lazy" />
-            <img src="/audio/drum-machine.jpg" alt="Drum machine hardware" loading="lazy" />
-          </div>
-        </div>
-      </section>
-
       <section className="audio-closing">
         <div className="audio-closing-copy">
           <p className="audio-eyebrow">Audio + pictures</p>
-          <h2>
-            There doesn&rsquo;t have to be a dividing line between the person thinking about the pictures and the
-            person thinking about the sound.
-          </h2>
-          <p>Often the interesting work happens when both are considered together.</p>
           <p className="audio-big-line">Filming. Editing. Sound. Music.</p>
-          <p>Different parts of the same idea.</p>
+          <p>Often the interesting work happens when both are considered together.</p>
           <h3>Have something that needs the right sound?</h3>
           <p className="audio-actions">
             <a className="audio-btn audio-btn-solid" href={CONTACT}>
@@ -310,7 +298,7 @@ export default function AudioPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.4</p>
+      <p className="portfolio-build">Build v1.11.5</p>
     </main>
   );
 }

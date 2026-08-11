@@ -882,14 +882,30 @@
   text-transform: uppercase;
 }
 
-/* Client marks, carried at their own scale rather than filling the column. */
-.audio-client-logo {
+/*
+  Client marks, carried at their own scale rather than filling the column.
+
+  [CRITICAL] Scoped with `.audio-page`. Unscoped, these lose to `.audio-split
+  img` above, which is a class plus an element and therefore one point higher,
+  and the Māori+ mark rendered at the full 710px column width.
+*/
+.audio-page .audio-client-logo {
   width: auto;
-  height: 44px;
-  margin: 6px 0 24px;
+  height: 34px;
+  margin: 0;
+  border-radius: 0;
 }
 
-.audio-client-logo-wide {
+/* Sits on the same line as the programme name rather than under it. */
+.audio-page .audio-client-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+.audio-page .audio-client-logo-wide {
+  width: 100%;
   height: auto;
   max-width: 340px;
   margin: 10px 0 0;
