@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 const CLOUD = "https://res.cloudinary.com/deyb4o5qz";
 const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_whfcvy.png`;
-const BUILD = "v1.11.6";
+const BUILD = "v1.11.7";
 
 // Returning to the homepage from an internal page should not replay the 3.2s
 // logo intro; it is an opening, not a transition. The homepage reads this and
@@ -21,7 +21,7 @@ export function PageHeader() {
         <a href="/about">About us</a>
         <a href="/video">Our mahi</a>
       </nav>
-      <a className="portfolio-contact" href="mailto:hello@vision8.co.nz">Contact</a>
+      <a className="portfolio-contact" href="mailto:info@vision8.co.nz">Contact</a>
     </header>
   );
 }

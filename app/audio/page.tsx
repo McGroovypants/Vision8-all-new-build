@@ -15,7 +15,7 @@ const ANDY_LISTEN = "https://www.andymcgrath.com/#listen";
 const ANDY_VIDEOS = "https://www.andymcgrath.com/#videos";
 const MODULE = "https://open.spotify.com/artist/5ZBKIdb9VbEXIPrdAFh1V1";
 const MAX = "https://maxmaxwell.nz/";
-const CONTACT = "mailto:hello@vision8.co.nz";
+const CONTACT = "mailto:info@vision8.co.nz";
 
 // Named as supplied, including the lower-case "recording", since these are the
 // client's own service names.
@@ -298,7 +298,7 @@ export default function AudioPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.6</p>
+      <p className="portfolio-build">Build v1.11.7</p>
     </main>
   );
 }
