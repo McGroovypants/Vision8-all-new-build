@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "../portfolio-shell";
 import { ReelHero } from "./reel-hero";
+import { HoverPlay } from "./hover-play";
 
 const HERO = "https://res.cloudinary.com/deyb4o5qz/image/upload/f_auto,q_auto,w_1800/v1785656289/Real_estate_shot_rrts1z.jpg";
 const CONTACT = "mailto:info@vision8.co.nz";
@@ -23,8 +24,10 @@ const PROPERTY_REEL =
 
 // The walkthrough example. Contained rather than cropped, so Vimeo's own
 // controls are left on and there is nothing to build here.
+// Muted so HoverPlay's programmatic play is allowed; Vimeo's controls stay on,
+// so sound is one click away.
 const MATTERPORT_VIDEO =
-  "https://player.vimeo.com/video/1217587526?h=aecf03551a&title=0&byline=0&portrait=0&dnt=1";
+  "https://player.vimeo.com/video/1217587526?h=aecf03551a&muted=1&loop=1&title=0&byline=0&portrait=0&dnt=1";
 
 /*
   A live tour, when there is one. A public link rather than an inline embed: an
@@ -90,7 +93,11 @@ export default function RealEstateMediaPage() {
         {/* The literal string the route test matches. It must not be shortened
             and dressed back up with text-transform. */}
         <p className="re-hero-eyebrow">Vision8 Real Estate Media</p>
-        <h1>Property stories, ready to move.</h1>
+        <h1>
+          Property stories,
+          <br />
+          ready to move.
+        </h1>
         <span className="re-hero-lede">
           Experienced direction that helps properties, and the people selling them, come alive.
         </span>
@@ -153,7 +160,11 @@ export default function RealEstateMediaPage() {
                 A good property shoot should feel relaxed. We help agents find their rhythm, keep things moving and
                 bring out the person their clients already know.
               </p>
-              <p className="re-pull">No big production. No unnecessary fuss.</p>
+              <p className="re-pull">
+                No big production.
+                <br />
+                No unnecessary fuss.
+              </p>
               <p>
                 <strong>Just good direction when it&rsquo;s needed.</strong>
               </p>
@@ -164,7 +175,7 @@ export default function RealEstateMediaPage() {
 
       <section className="re-section">
         <div className="re-inner">
-          <div className="re-split">
+          <HoverPlay className="re-split">
             <figure>
               <div className="re-video">
                 <iframe
@@ -175,6 +186,8 @@ export default function RealEstateMediaPage() {
                   loading="lazy"
                   allowFullScreen
                 />
+                {/* Removed by HoverPlay on activation; see the comment there. */}
+                <span className="re-video-cover" aria-hidden="true" />
               </div>
               <figcaption>Matterport walkthrough examples</figcaption>
             </figure>
@@ -197,7 +210,7 @@ export default function RealEstateMediaPage() {
                 </div>
               )}
             </div>
-          </div>
+          </HoverPlay>
         </div>
       </section>
 
@@ -207,23 +220,10 @@ export default function RealEstateMediaPage() {
             <p className="re-eyebrow"><span className="re-index">03</span>Photography and floor plans</p>
             <h2>The essentials still matter.</h2>
           </div>
-          <div className="re-pair">
-            <div>
-              <h3>Photography</h3>
-              <p>Clean, considered property photography with an eye for the details that make a home feel right.</p>
-              <p>Photography can be produced directly by Vision8 or by trusted photographers we work with.</p>
-            </div>
-            <div>
-              <h3>2D floor plans</h3>
-              <p>
-                Clear, useful floor plans that help buyers understand the layout quickly and complete the property
-                media package.
-              </p>
-              <figure className="re-plan">
-                <img src="/real-estate/floor-plan-example.jpg" alt="Three-floor plan example with room dimensions" loading="lazy" />
-                <figcaption>Floor plan example</figcaption>
-              </figure>
-            </div>
+          <div>
+            <h3>Photography</h3>
+            <p>Clean, considered property photography with an eye for the details that make a home feel right.</p>
+            <p>Photography can be produced directly by Vision8 or by trusted photographers we work with.</p>
           </div>
           {/* Six, as the brief asked. Every image here was opened at full size
               before shipping; that check has now rejected three supplied files
@@ -235,6 +235,17 @@ export default function RealEstateMediaPage() {
             <img src="/real-estate/homewood-living.jpg" alt="Bright living room with skylights and garden doors" loading="lazy" />
             <img src="/real-estate/villa-entrance.jpg" alt="Villa entrance with clipped hedges and stone driveway" loading="lazy" />
             <img src="/real-estate/karaka-dusk.jpg" alt="Covered deck at dusk with lit timber walls and rural outlook" loading="lazy" />
+          </div>
+          <div className="re-plans-block">
+            <h3>2D floor plans</h3>
+            <p>
+              Clear, useful floor plans that help buyers understand the layout quickly and complete the property
+              media package.
+            </p>
+            <figure className="re-plan">
+              <img src="/real-estate/floor-plan-example.jpg" alt="Three-floor plan example with room dimensions" loading="lazy" />
+              <figcaption>Floor plan example</figcaption>
+            </figure>
           </div>
         </div>
       </section>
@@ -346,7 +357,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.14</p>
+      <p className="portfolio-build">Build v1.11.15</p>
     </main>
   );
 }

@@ -1177,6 +1177,14 @@
   border: 0;
 }
 
+/* Our DOM over the cross-origin player, so the section's rollover fires even
+   when the pointer lands straight on the iframe. HoverPlay removes it. */
+.re-video .re-video-cover {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
 .re-section {
   padding: clamp(64px, 7vw, 110px) 0;
   border-bottom: 1px solid var(--line);
@@ -1201,6 +1209,7 @@
   to `.audio-services` on the Audio page, which is the client's reference.
 */
 .re-hero-strip {
+  z-index: 3;
   position: absolute;
   right: var(--gutter);
   bottom: clamp(28px, 3.5vw, 44px);
@@ -1300,14 +1309,27 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  width: min(560px, 46%);
-  height: min(400px, 52%);
+  width: min(640px, 52%);
+  height: min(440px, 58%);
   background: radial-gradient(
     115% 100% at 0% 100%,
     rgba(3, 4, 4, 0.88) 0%,
     rgba(3, 4, 4, 0.55) 40%,
     rgba(3, 4, 4, 0) 70%
   );
+}
+
+/* Under the centred services strip: a low band across the hero's foot, gone by
+   a third of the height, so only the strip's line of the picture is calmed. */
+.re-hero::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 34%;
+  background: linear-gradient(to top, rgba(3, 4, 4, 0.62) 0%, rgba(3, 4, 4, 0) 100%);
+  pointer-events: none;
 }
 
 /*
@@ -1362,20 +1384,11 @@
 }
 
 /*
-  80%. This shipped at the 50% floor first and the client called it: over
-  moving picture at full brightness, half-strength text does not hold.
-
-  [CRITICAL] Applied to each element, not to `.re-hero-copy`. Opacity on the
-  wrapper opens a stacking context and no child can then be brought back above
-  it, which would drop the sound control to half strength too. A control has to
-  stay legible.
+  Hero text is full strength. It walked 50%, then 80%, then back to 100% across
+  three builds, each on the client's call against the live reel: over moving
+  picture, reduced text does not hold. The washes do the legibility work.
+  Do not reintroduce opacity here.
 */
-.real-estate-page .re-hero-eyebrow,
-.real-estate-page .re-hero h1,
-.real-estate-page .re-hero-lede,
-.real-estate-page .re-hero .re-services {
-  opacity: 0.8;
-}
 
 /* `.audio-btn` is written for anchors, so a button needs the browser default
    surface and font taken off it. */
@@ -1444,10 +1457,18 @@
 .real-estate-page .re-keywords {
   margin: 0 0 clamp(36px, 4.4vw, 60px);
   color: var(--white);
-  font-size: clamp(2.3rem, 5.6vw, 4.6rem);
+  /*
+    [CRITICAL] The line must not wrap, on the client's instruction, so the size
+    is derived from the container rather than clamped independently of it: the
+    statement measures just under 20em at this weight and tracking, and the
+    container is min(1280px, 100% - 2 gutters). A static clamp here wraps at
+    whichever width its slope happens to cross the container.
+  */
+  font-size: min(4.2rem, calc(min(1280px, 100vw - (2 * var(--gutter)) - 12px) / 20));
   font-weight: 700;
   line-height: 1.05;
   letter-spacing: -0.035em;
+  white-space: nowrap;
 }
 
 /* The accent lands on the full stops, so the teal marks the rhythm of the
@@ -1461,6 +1482,7 @@
 .real-estate-page .re-keywords-sub {
   margin: 32px 0 0;
   font-size: clamp(1.5rem, 2.8vw, 2.5rem);
+  white-space: normal;
 }
 
 /* A faint teal fall-off at the top of the first scrolled section, so the
@@ -1656,6 +1678,11 @@
   glowing cut-out, so it sits on its own white card, which is how plans are
   printed and how they carry on dark sites.
 */
+.re-plans-block {
+  max-width: 980px;
+  margin-top: clamp(48px, 6vw, 80px);
+}
+
 .real-estate-page .re-plan {
   margin: 26px 0 0;
 }
