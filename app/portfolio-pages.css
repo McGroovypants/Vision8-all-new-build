@@ -1156,12 +1156,6 @@
   margin: 0 auto;
 }
 
-/* Wider than the reading column, for the property video only. */
-.re-inner-wide {
-  width: min(1620px, calc(100% - (2 * var(--gutter))));
-  margin: 0 auto clamp(36px, 4.5vw, 60px);
-}
-
 /*
   The Vimeo player. An iframe has no intrinsic aspect ratio, so the ratio is held
   by the wrapper and the frame is stretched to fill it. Without this the embed
@@ -1194,35 +1188,6 @@
 .re-section-head {
   max-width: 760px;
   margin-bottom: clamp(32px, 4vw, 56px);
-}
-
-/*
-  [CRITICAL] The hero keeps `.portfolio-hero-copy`, whose eyebrow rule is
-  `.portfolio-hero-copy p`: a class plus an element, the same weight as
-  `.real-estate-page p` below and earlier in the file, so the eyebrow would have
-  lost its teal to body grey on source order alone. This rule is a class plus a
-  class plus an element, which settles it, and it is also where the eyebrow is
-  brought up in size: at 0.72rem it read as a mistake beneath a 6.5rem headline
-  and above 1.5rem section labels.
-*/
-.real-estate-page .portfolio-hero-copy p {
-  margin: 0 0 14px;
-  color: var(--teal-bright);
-  font-size: clamp(1.1rem, 1.9vw, 1.7rem);
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
-/*
-  The existing hero headline treatment, reduced by roughly 13% across the whole
-  clamp so the shape holds at every width rather than only at the top end.
-  Was clamp(2.8rem, 7vw, 7.5rem).
-*/
-.real-estate-page .portfolio-hero-copy h1 {
-  max-width: 15ch;
-  font-size: clamp(2.45rem, 6.1vw, 6.5rem);
 }
 
 /*
@@ -1265,9 +1230,113 @@
   }
 }
 
-/* A div rather than a p, so `.portfolio-hero-copy p` cannot reach the button. */
-.re-hero-actions {
-  margin-top: 32px;
+/*
+  The reel as the hero. The player is cover-cropped to fill the fold rather than
+  sitting in a 16/9 box, which on a phone would be roughly 220px tall and not
+  "the first thing you see".
+
+  An iframe has no `object-fit`, so cover is done the long way: centre it, then
+  let whichever of the two minimums is larger push it past the box on one axis.
+  The minimums are derived from the box, not from `100vh`, because the box is a
+  viewport minus the sticky header and the two would drift apart.
+*/
+.re-hero {
+  --re-hero-h: max(460px, calc(100svh - 72px));
+  position: relative;
+  height: var(--re-hero-h);
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+}
+
+/* The still sits behind the player, so the fold is never empty during the few
+   seconds Vimeo takes to negotiate a rendition and start. */
+.re-hero-video {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-size: cover;
+}
+
+.re-hero-video iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  min-width: calc(1.7778 * var(--re-hero-h));
+  min-height: 56.25vw;
+  transform: translate(-50%, -50%);
+  border: 0;
+  /* Controls are off and the player is cropped, so nothing here should take a
+     click. Without this Vimeo swallows them and the page feels dead. */
+  pointer-events: none;
+}
+
+/*
+  Weighted left and to the bottom, where the copy sits. An even wash would have
+  to be heavy enough for the worst frame of a 60 second reel, which would leave
+  the picture flat for the other fifty nine seconds.
+*/
+.re-hero-wash {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(3, 4, 4, 0.93) 0%, rgba(3, 4, 4, 0.62) 50%, rgba(3, 4, 4, 0.16) 100%),
+    linear-gradient(to top, rgba(3, 4, 4, 0.86) 0%, rgba(3, 4, 4, 0) 52%);
+}
+
+.re-hero-copy {
+  position: absolute;
+  right: var(--gutter);
+  bottom: clamp(40px, 6vw, 84px);
+  left: var(--gutter);
+  z-index: 3;
+  max-width: 860px;
+}
+
+.real-estate-page .re-hero-eyebrow {
+  margin: 0 0 14px;
+  color: var(--teal-bright);
+  font-size: clamp(1.1rem, 1.9vw, 1.7rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+/* The hero treatment carried over from the holding page, reduced by roughly 13%
+   across the whole clamp so the shape holds at every width rather than only at
+   the top end. Was clamp(2.8rem, 7vw, 7.5rem). */
+.real-estate-page .re-hero h1 {
+  max-width: 15ch;
+  margin: 0 0 20px;
+  font-size: clamp(2.45rem, 6.1vw, 6.5rem);
+  font-weight: 500;
+  line-height: 0.92;
+  letter-spacing: -0.055em;
+}
+
+/* Lifted from the 0.76 the holding page used. That was set against a still; this
+   sits over moving picture and needs the extra contrast. */
+.real-estate-page .re-hero-lede {
+  display: block;
+  max-width: 620px;
+  color: rgba(243, 244, 239, 0.88);
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  line-height: 1.5;
+}
+
+/* `.audio-btn` is written for anchors, so a button needs the browser default
+   surface and font taken off it. */
+.real-estate-page .re-sound {
+  margin-top: 28px;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.real-estate-page .re-sound.audio-btn-solid {
+  background: var(--teal-bright);
 }
 
 .real-estate-page .re-eyebrow {
@@ -1425,6 +1494,61 @@
 }
 
 /*
+  Three across, and each card is a flex column so the attributions line up along
+  the bottom however uneven the quotes are.
+*/
+.re-quotes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(20px, 2.4vw, 32px);
+}
+
+.re-quote {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: clamp(24px, 2.6vw, 34px);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.022);
+}
+
+.re-quote blockquote {
+  flex: 1;
+  margin: 0;
+}
+
+.real-estate-page .re-quote blockquote p {
+  margin: 0;
+  color: rgba(243, 244, 239, 0.84);
+  font-size: 1rem;
+}
+
+/*
+  [CRITICAL] Scoped, and it has to override three things `.real-estate-page
+  figcaption` sets for picture captions: uppercase, wide tracking and 0.78rem.
+  An attribution rendered as a caption reads as a label on the quote rather than
+  the name of the person who gave it.
+*/
+.real-estate-page .re-quote figcaption {
+  margin-top: 24px;
+  color: var(--white);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.real-estate-page .re-quote figcaption span {
+  display: block;
+  margin-top: 5px;
+  color: var(--teal-bright);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/*
   The rhythm break, full width and centred with no picture pair, placed after
   the fifth two-column section. Toned rather than photographic so it does not
   wait on an asset; a background image can be added here alone later.
@@ -1478,6 +1602,16 @@
 @media (max-width: 820px) {
   .re-section {
     scroll-margin-top: 74px;
+  }
+
+  /* The header shrinks to 62px below this width, and the hero height is derived
+     from it. */
+  .re-hero {
+    --re-hero-h: max(460px, calc(100svh - 62px));
+  }
+
+  .re-quotes {
+    grid-template-columns: 1fr;
   }
 
   /* One column below this, and the picture leads on every section regardless of

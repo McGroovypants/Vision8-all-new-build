@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PageHeader } from "../portfolio-shell";
+import { ReelHero } from "./reel-hero";
 
 const HERO = "https://res.cloudinary.com/deyb4o5qz/image/upload/f_auto,q_auto,w_1800/v1785656289/Real_estate_shot_rrts1z.jpg";
 const CONTACT = "mailto:info@vision8.co.nz";
@@ -13,25 +14,56 @@ const RATE_CARD = "mailto:info@vision8.co.nz?subject=Real%20estate%20rate%20card
   [CRITICAL] Promo V4 is a different cut and is still private. Its URL does not
   belong in this file, in the markup or in the build.
 
-  `h` is the unlisted-video hash and the embed will not load without it. The rest
-  is muted autoplay, which is what the brief asks for, with Vimeo's own controls
-  left on so the viewer has a clear way to turn sound on. `dnt=1` stops Vimeo
-  setting tracking cookies on our visitors.
+  `h` is the unlisted-video hash and the embed will not load without it.
+  `controls=0` because the hero crops the player; the sound control lives in
+  `ReelHero` instead. `dnt=1` stops Vimeo setting tracking cookies on visitors.
 */
 const PROPERTY_REEL =
-  "https://player.vimeo.com/video/1217581060?h=015949962e&autoplay=1&muted=1&loop=1&title=0&byline=0&portrait=0&dnt=1";
+  "https://player.vimeo.com/video/1217581060?h=015949962e&autoplay=1&muted=1&loop=1&controls=0&title=0&byline=0&portrait=0&dnt=1";
+
+// The walkthrough example. Contained rather than cropped, so Vimeo's own
+// controls are left on and there is nothing to build here.
+const MATTERPORT_VIDEO =
+  "https://player.vimeo.com/video/1217587526?h=aecf03551a&title=0&byline=0&portrait=0&dnt=1";
 
 /*
-  A public link rather than an inline embed. An iframe brings a third party
-  script we cannot theme against `--black`, and the URL dies the moment the
-  listing is delisted or the subscription lapses, leaving a grey box on a live
-  page. A poster and a button degrade to a poster and no button.
+  A live tour, when there is one. A public link rather than an inline embed: an
+  iframe brings a third party script we cannot theme against `--black`, and the
+  URL dies the moment the listing is delisted, leaving a grey box on a live page.
+  Empty means the button is not rendered at all, since an anchor with no
+  destination is worse than no anchor.
 */
-const MATTERPORT = "";
+const MATTERPORT_TOUR = "";
 
-// Four services, as one line in the hero rather than a stacked list, which is
-// how `.audio-services` carries the same job on the Audio page.
+// Four services, as one line rather than a stacked list, which is how
+// `.audio-services` carries the same job on the Audio page.
 const services = ["Photography", "Video", "3D walkthroughs", "Floor plans"];
+
+/*
+  Supplied by the client. Trimmed only to remove the trading name, at the
+  client's instruction, and to replace dashes with sentence breaks for house
+  style. Nothing else in the wording was changed.
+*/
+const testimonials = [
+  {
+    name: "Kirsty McCarthy",
+    agency: "Ray White",
+    quote:
+      "I highly recommend Helen and Andy for anyone in real estate marketing. Helen’s photography is always beautifully composed and captures each property at its best, while Andy’s video work brings every space to life with style and clarity. They’re both professional, reliable, and a pleasure to work with.",
+  },
+  {
+    name: "Stephanie Guy",
+    agency: "Harcourts Team Group",
+    quote:
+      "I’d love to give a big thank you to Andy and Helen for their outstanding photography and video work. They consistently deliver high-quality visuals that make my real estate listings stand out. Their professionalism, creativity, and attention to detail make them a pleasure to work with. I highly recommend them to anyone looking to showcase properties at their best. They’ve been an essential part of my marketing success.",
+  },
+  {
+    name: "Lexi Boddy",
+    agency: "S.LK Design",
+    quote:
+      "When someone approached me asking who I’d recommend to cover a nationwide, high-profile launch, someone who could get the shots and deliver a polished presentation, I immediately thought of Andy. He’s reliable, creative, and delivers every time.",
+  },
+];
 
 export const metadata: Metadata = {
   title: "Vision8 Real Estate Media",
@@ -44,61 +76,28 @@ export default function RealEstateMediaPage() {
     <main className="real-estate-page">
       <PageHeader />
 
-      <section className="portfolio-hero real-estate-hero">
-        <div className="portfolio-hero-image" style={{ backgroundImage: `url(${HERO})` }} aria-hidden="true" />
-        <div className="portfolio-hero-wash" aria-hidden="true" />
-        <div className="portfolio-hero-copy">
-          {/* Bare `p`, so it keeps `.portfolio-hero-copy p`: teal, uppercase, small.
-              The words are the literal string the route test matches, so it must
-              not be shortened and dressed up with text-transform. */}
-          <p>Vision8 Real Estate Media</p>
-          <h1>Property stories, ready to move.</h1>
-          <span>Experienced direction that helps properties, and the people selling them, come alive.</span>
-          <ul className="re-services">
-            {services.map((service) => (
-              <li key={service}>{service}</li>
-            ))}
-          </ul>
-          {/* A div, not a p. `.portfolio-hero-copy p` is a class plus an element
-              and would take the margin and the eyebrow treatment with it. */}
-          <div className="re-hero-actions">
-            <a className="audio-btn audio-btn-solid" href="#work">
-              View our work
-            </a>
-          </div>
-        </div>
-      </section>
+      <ReelHero src={PROPERTY_REEL} poster={HERO}>
+        {/* The literal string the route test matches. It must not be shortened
+            and dressed back up with text-transform. */}
+        <p className="re-hero-eyebrow">Vision8 Real Estate Media</p>
+        <h1>Property stories, ready to move.</h1>
+        <span className="re-hero-lede">
+          Experienced direction that helps properties, and the people selling them, come alive.
+        </span>
+        <ul className="re-services">
+          {services.map((service) => (
+            <li key={service}>{service}</li>
+          ))}
+        </ul>
+      </ReelHero>
 
-      <section className="re-section" id="work">
-        <div className="re-inner">
-          <div className="re-section-head">
-            <p className="re-eyebrow">Property video</p>
-            <h2>Give the property room to speak.</h2>
-            <p className="re-lede">Let the reel do most of the talking.</p>
-          </div>
-        </div>
-
-        {/* Wider than the reading column on purpose. The brief asks for almost
-            full width and minimal framing, so the video breaks the 1280 grid. */}
-        <div className="re-inner-wide">
-          <div className="re-video">
-            {/* Lazy, because this sits below the fold. That also means autoplay
-                starts as the section comes into view rather than on page load. */}
-            <iframe
-              src={PROPERTY_REEL}
-              title="Vision8 real estate reel"
-              allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
-              referrerPolicy="strict-origin-when-cross-origin"
-              loading="lazy"
-              allowFullScreen
-            />
-          </div>
-        </div>
-
+      {/* No heading. The reel above is the statement, and a headline here would
+          be introducing something the visitor has already watched. */}
+      <section className="re-section">
         <div className="re-inner">
           <div className="re-pair">
             <div>
-              <p>A good property video isn&rsquo;t simply a sequence of beautiful rooms.</p>
+              <p className="re-lede">A good property video isn&rsquo;t simply a sequence of beautiful rooms.</p>
               <p>
                 It&rsquo;s movement, timing, detail, atmosphere and knowing when the agent should lead the story and
                 when the home should take over.
@@ -153,10 +152,17 @@ export default function RealEstateMediaPage() {
         <div className="re-inner">
           <div className="re-split">
             <figure>
-              <div className="re-frame">
-                <span>3D walkthrough preview</span>
+              <div className="re-video">
+                <iframe
+                  src={MATTERPORT_VIDEO}
+                  title="Matterport walkthrough examples"
+                  allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  loading="lazy"
+                  allowFullScreen
+                />
               </div>
-              <figcaption>Matterport</figcaption>
+              <figcaption>Matterport walkthrough examples</figcaption>
             </figure>
             <div>
               <p className="re-eyebrow">Matterport</p>
@@ -169,16 +175,12 @@ export default function RealEstateMediaPage() {
                 We take care over camera position, coverage and the flow through the property so the finished
                 walkthrough feels natural to navigate rather than simply documenting every room.
               </p>
-              {/* No button until there is a link. An anchor with no destination
-                  is worse than no anchor. */}
-              {MATTERPORT ? (
+              {MATTERPORT_TOUR && (
                 <div className="re-actions">
-                  <a className="audio-btn" href={MATTERPORT} target="_blank" rel="noopener">
+                  <a className="audio-btn" href={MATTERPORT_TOUR} target="_blank" rel="noopener">
                     Explore a 3D walkthrough
                   </a>
                 </div>
-              ) : (
-                <p className="re-pending">An example walkthrough is being selected for this page.</p>
               )}
             </div>
           </div>
@@ -195,9 +197,7 @@ export default function RealEstateMediaPage() {
             <div>
               <h3>Photography</h3>
               <p>Clean, considered property photography with an eye for the details that make a home feel right.</p>
-              <p>
-                Photography can be produced directly by Vision8 or by trusted photographers we work with.
-              </p>
+              <p>Photography can be produced directly by Vision8 or by trusted photographers we work with.</p>
             </div>
             <div>
               <h3>2D floor plans</h3>
@@ -220,10 +220,9 @@ export default function RealEstateMediaPage() {
       </section>
 
       {/*
-        The rhythm break. Six two-column sections in a row read as one long
+        The rhythm break. Several two-column sections in a row read as one long
         column, so this one goes full width and centred with no picture pair.
-        Toned rather than photographic: it does not wait on an asset, and a
-        background image can be added later without touching the markup.
+        Toned rather than photographic: it does not wait on an asset.
       */}
       <section className="re-band">
         <div className="re-band-copy">
@@ -267,6 +266,29 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
+      {/* Last before the ask, which is where proof does the most work. */}
+      <section className="re-section">
+        <div className="re-inner">
+          <div className="re-section-head">
+            <p className="re-eyebrow">Testimonials</p>
+            <h2>What agents say.</h2>
+          </div>
+          <div className="re-quotes">
+            {testimonials.map((entry) => (
+              <figure className="re-quote" key={entry.name}>
+                <blockquote>
+                  <p>{entry.quote}</p>
+                </blockquote>
+                <figcaption>
+                  {entry.name}
+                  <span>{entry.agency}</span>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Delivery folded in above the contact block: it is a service benefit of
           two sentences, not a section, and it reads better as the last practical
           point before the ask. */}
@@ -299,7 +321,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.9</p>
+      <p className="portfolio-build">Build v1.11.10</p>
     </main>
   );
 }
