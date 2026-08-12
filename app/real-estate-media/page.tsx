@@ -91,16 +91,23 @@ export default function RealEstateMediaPage() {
         </ul>
       </ReelHero>
 
-      {/* No heading. The reel above is the statement, and a headline here would
-          be introducing something the visitor has already watched. */}
-      <section className="re-section">
+      {/*
+        The keyword statement. This section shipped unheaded, on the argument
+        that the reel above was the statement; the client read that as small
+        floating text and asked for keyword heading style. The four nouns were
+        already in the paragraph below, so they are promoted to display scale
+        and the paragraph keeps only the part a heading cannot carry.
+      */}
+      <section className="re-section re-statement">
         <div className="re-inner">
+          <h2 className="re-keywords">
+            Movement<span>.</span> Timing<span>.</span> Detail<span>.</span> Atmosphere<span>.</span>
+          </h2>
           <div className="re-pair">
             <div>
               <p className="re-lede">A good property video isn&rsquo;t simply a sequence of beautiful rooms.</p>
               <p>
-                It&rsquo;s movement, timing, detail, atmosphere and knowing when the agent should lead the story and
-                when the home should take over.
+                It&rsquo;s knowing when the agent should lead the story and when the home should take over.
               </p>
             </div>
             <div>
@@ -126,7 +133,9 @@ export default function RealEstateMediaPage() {
               <figcaption>Direction on location</figcaption>
             </figure>
             <div>
-              <p className="re-eyebrow">People</p>
+              {/* Chapter numbers run 01 to 06 across the sections. The closing
+                  stays unnumbered because it is the ask, not a chapter. */}
+              <p className="re-eyebrow"><span className="re-index">01</span>People</p>
               <h2>Good on camera matters.</h2>
               <p className="re-lede">
                 Being good at selling property doesn&rsquo;t automatically make being on camera easy.
@@ -165,7 +174,7 @@ export default function RealEstateMediaPage() {
               <figcaption>Matterport walkthrough examples</figcaption>
             </figure>
             <div>
-              <p className="re-eyebrow">Matterport</p>
+              <p className="re-eyebrow"><span className="re-index">02</span>Matterport</p>
               <h2>Walk through before walking in.</h2>
               <p>
                 Matterport 3D walkthroughs let buyers explore a home in their own time and understand how the spaces
@@ -190,7 +199,7 @@ export default function RealEstateMediaPage() {
       <section className="re-section">
         <div className="re-inner">
           <div className="re-section-head">
-            <p className="re-eyebrow">Photography and floor plans</p>
+            <p className="re-eyebrow"><span className="re-index">03</span>Photography and floor plans</p>
             <h2>The essentials still matter.</h2>
           </div>
           <div className="re-pair">
@@ -226,7 +235,7 @@ export default function RealEstateMediaPage() {
       */}
       <section className="re-band">
         <div className="re-band-copy">
-          <p className="re-eyebrow">Experience</p>
+          <p className="re-eyebrow"><span className="re-index">04</span>Experience</p>
           <h2>Experience is useful when you know what to do with it.</h2>
           <p>Vision8 comes from a much wider world than property marketing.</p>
           <p>
@@ -235,7 +244,12 @@ export default function RealEstateMediaPage() {
             capturing.
           </p>
           <p>That experience now comes to a property shoot without bringing a television crew with it.</p>
-          <p className="re-pull">Thoughtful when it matters. Fast when it needs to be. Easy to work with throughout.</p>
+          {/* The former pull line, cut to its keywords on the client's ask for
+              keyword heading style. The qualifiers it dropped were already the
+              h2's point: knowing what to do with it. */}
+          <p className="re-keywords re-keywords-sub">
+            Thoughtful<span>.</span> Fast<span>.</span> Easy to work with<span>.</span>
+          </p>
         </div>
       </section>
 
@@ -249,7 +263,7 @@ export default function RealEstateMediaPage() {
               <figcaption>Building a profile over time</figcaption>
             </figure>
             <div>
-              <p className="re-eyebrow">Agent profile</p>
+              <p className="re-eyebrow"><span className="re-index">05</span>Agent profile</p>
               <h2>Every listing says something about you too.</h2>
               <p>Property media doesn&rsquo;t only market the home.</p>
               <p>
@@ -270,7 +284,7 @@ export default function RealEstateMediaPage() {
       <section className="re-section">
         <div className="re-inner">
           <div className="re-section-head">
-            <p className="re-eyebrow">Testimonials</p>
+            <p className="re-eyebrow"><span className="re-index">06</span>Testimonials</p>
             <h2>What agents say.</h2>
           </div>
           <div className="re-quotes">
@@ -321,7 +335,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.11</p>
+      <p className="portfolio-build">Build v1.11.12</p>
     </main>
   );
 }

@@ -1372,18 +1372,90 @@
   background: var(--teal-bright);
 }
 
+/*
+  Numbered chapter labels in place of plain eyebrows. The client read the page
+  as bland, and part of that was six identical teal labels at near-h3 size
+  competing with their own headlines. The label drops to label scale and gains
+  a number and a tick, so the h2 below is the only thing at heading size and
+  each section reads as a step in a sequence.
+*/
 .real-estate-page .re-eyebrow {
-  margin: 0 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 20px;
   color: var(--teal-bright);
-  font-size: 1.5rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
+}
+
+.real-estate-page .re-eyebrow::before {
+  content: "";
+  flex: none;
+  width: 24px;
+  height: 2px;
+  background: var(--teal-bright);
+}
+
+/* Dimmer than the label so the section's name, not its number, registers
+   first. 0.55 stays above the 50% floor the house style sets. */
+.real-estate-page .re-index {
+  color: rgba(243, 244, 239, 0.55);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The band and the closing centre their copy, but a flex row keeps its
+   children left unless told otherwise, and a left-hung label reads as broken
+   inside a centred block. */
+.real-estate-page .re-band .re-eyebrow,
+.real-estate-page .re-closing .re-eyebrow {
+  justify-content: center;
+}
+
+/*
+  The keyword headings the client asked for by name: short noun runs at
+  display scale, where the copy between sections was reading as small
+  floating text.
+
+  [CRITICAL] Two classes, not a lone `.re-keywords`. This page sets defaults
+  on `.real-estate-page p` and `.real-estate-page h2`, a class plus an
+  element, and a single class loses to that regardless of source order.
+*/
+.real-estate-page .re-keywords {
+  margin: 0 0 clamp(36px, 4.4vw, 60px);
+  color: var(--white);
+  font-size: clamp(2.3rem, 5.6vw, 4.6rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+
+/* The accent lands on the full stops, so the teal marks the rhythm of the
+   line rather than promoting one word into a claim. */
+.real-estate-page .re-keywords span {
+  color: var(--teal-bright);
+}
+
+/* The band variant sits under an h2 that already carries the argument, so it
+   holds a step below the statement scale. */
+.real-estate-page .re-keywords-sub {
+  margin: 32px 0 0;
+  font-size: clamp(1.5rem, 2.8vw, 2.5rem);
+}
+
+/* A faint teal fall-off at the top of the first scrolled section, so the
+   page does not go flat the moment the reel leaves the screen. The band's
+   glow, turned down and hung from the hero's corner. */
+.real-estate-page .re-statement {
+  background: radial-gradient(90% 75% at 0% 0%, rgba(11, 183, 163, 0.07), rgba(3, 4, 4, 0) 62%);
 }
 
 .real-estate-page h2 {
   margin: 0 0 22px;
-  font-size: clamp(1.85rem, 3.4vw, 3rem);
+  /* Lifted a step in the bland pass; the client read the page as undersized. */
+  font-size: clamp(2.05rem, 3.8vw, 3.4rem);
   font-weight: 700;
   line-height: 1.12;
   letter-spacing: -0.02em;
@@ -1407,15 +1479,19 @@
 }
 
 .real-estate-page .re-lede {
-  font-size: 1.14rem;
+  font-size: clamp(1.18rem, 1.5vw, 1.35rem);
 }
 
 /* The one promoted line in a block, held under the h2 so it lifts the copy
-   without reading as a second headline. */
+   without reading as a second headline. The teal edge and the extra step of
+   size came from the bland pass: at body-adjacent size it read as a lost
+   paragraph rather than a pull. */
 .real-estate-page .re-pull {
-  margin: 26px 0 14px;
+  margin: 28px 0 16px;
+  padding-left: 18px;
+  border-left: 2px solid var(--teal-bright);
   color: var(--white);
-  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-size: clamp(1.35rem, 2.2vw, 1.9rem);
   font-weight: 700;
   line-height: 1.3;
   letter-spacing: 0.01em;
@@ -1477,13 +1553,42 @@
   page. Swapping in an `<img>` later is a one-line change per slot.
 */
 .real-estate-page .re-frame {
+  position: relative;
   display: grid;
   place-items: center;
   aspect-ratio: 4 / 3;
   padding: 20px;
   border: 1px solid var(--line);
   border-radius: 2px;
-  background: linear-gradient(145deg, rgba(11, 183, 163, 0.08), rgba(255, 255, 255, 0.022));
+  /* A fine diagonal hatch over the tint. Real media is weeks away, so the
+     slot has to hold the eye on its own; a flat gradient read as a grey box. */
+  background:
+    repeating-linear-gradient(135deg, rgba(243, 244, 239, 0.03) 0 1px, rgba(3, 4, 4, 0) 1px 10px),
+    linear-gradient(145deg, rgba(11, 183, 163, 0.1), rgba(255, 255, 255, 0.022));
+}
+
+/* Viewfinder corners, top-left and bottom-right. They mark the slot as a
+   frame waiting on a picture rather than a picture that failed to load. */
+.real-estate-page .re-frame::before,
+.real-estate-page .re-frame::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+}
+
+.real-estate-page .re-frame::before {
+  top: 10px;
+  left: 10px;
+  border-top: 1px solid var(--teal-bright);
+  border-left: 1px solid var(--teal-bright);
+}
+
+.real-estate-page .re-frame::after {
+  right: 10px;
+  bottom: 10px;
+  border-right: 1px solid var(--teal-bright);
+  border-bottom: 1px solid var(--teal-bright);
 }
 
 .real-estate-page .re-frame span {
@@ -1542,6 +1647,8 @@
   margin: 0;
   padding: clamp(24px, 2.6vw, 34px);
   border: 1px solid var(--line);
+  /* Teal top edge so three long quotes read as kept cards, not grey slabs. */
+  border-top: 2px solid var(--teal-bright);
   background: rgba(255, 255, 255, 0.022);
 }
 
@@ -1591,7 +1698,7 @@
   text-align: center;
   border-bottom: 1px solid var(--line);
   background:
-    radial-gradient(120% 90% at 50% 0%, rgba(11, 183, 163, 0.14), rgba(3, 4, 4, 0) 62%),
+    radial-gradient(120% 90% at 50% 0%, rgba(11, 183, 163, 0.18), rgba(3, 4, 4, 0) 62%),
     #070909;
 }
 
