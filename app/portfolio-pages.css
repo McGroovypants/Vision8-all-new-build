@@ -1212,6 +1212,8 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  /* Centred under the reel's centred logo card, on the client's call. */
+  justify-content: center;
   /* Sized on the list so the gaps and separators scale with the type. */
   font-size: clamp(1.25rem, 2.3vw, 2rem);
   gap: 0.3em 0.62em;
@@ -1638,6 +1640,32 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
   margin-top: clamp(40px, 5vw, 64px);
+}
+
+/* Cropped to the slot rather than letting six mixed ratios rag the rows. */
+.re-photo-grid img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+/*
+  The plan is a white-ground document. Dropped raw on --black it reads as a
+  glowing cut-out, so it sits on its own white card, which is how plans are
+  printed and how they carry on dark sites.
+*/
+.real-estate-page .re-plan {
+  margin: 26px 0 0;
+}
+
+.real-estate-page .re-plan img {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border-radius: 2px;
+  background: #fff;
 }
 
 .real-estate-page .re-actions {

@@ -254,7 +254,7 @@ export default function AudioPage() {
         <div className="audio-inner">
           <div className="audio-split audio-flip">
             <figure>
-              <img src="/audio/andy-bw-gat.jpg" alt="Andy McGrath playing guitar" loading="lazy" />
+              <img src="/audio/andy-bw-live.jpg" alt="Andy McGrath playing guitar, black and white" loading="lazy" />
               <figcaption>Andy McGrath</figcaption>
             </figure>
             <div>
@@ -298,7 +298,7 @@ export default function AudioPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.13</p>
+      <p className="portfolio-build">Build v1.11.14</p>
     </main>
   );
 }

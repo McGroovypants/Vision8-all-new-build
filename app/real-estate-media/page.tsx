@@ -219,16 +219,22 @@ export default function RealEstateMediaPage() {
                 Clear, useful floor plans that help buyers understand the layout quickly and complete the property
                 media package.
               </p>
+              <figure className="re-plan">
+                <img src="/real-estate/floor-plan-example.jpg" alt="Three-floor plan example with room dimensions" loading="lazy" />
+                <figcaption>Floor plan example</figcaption>
+              </figure>
             </div>
           </div>
-          {/* Six frames, not eight. The brief asks for four to six excellent
-              images, and the grid should not imply more than will be filled. */}
-          <div className="re-photo-grid" aria-label="Property photography, images to follow">
-            {Array.from({ length: 6 }, (_, index) => (
-              <div className="re-frame" key={index}>
-                <span>Property image {index + 1}</span>
-              </div>
-            ))}
+          {/* Six, as the brief asked. Every image here was opened at full size
+              before shipping; that check has now rejected three supplied files
+              across the site, including a watermarked one from this batch. */}
+          <div className="re-photo-grid" aria-label="Property photography">
+            <img src="/real-estate/crawford-exterior.jpg" alt="Modern hillside home with glass corner living room and deck" loading="lazy" />
+            <img src="/real-estate/crawford-living.jpg" alt="Open living and dining room with timber ceiling and harbour view" loading="lazy" />
+            <img src="/real-estate/drone-aerial.jpg" alt="Aerial view of a modernist home on a bush-clad hillside" loading="lazy" />
+            <img src="/real-estate/homewood-living.jpg" alt="Bright living room with skylights and garden doors" loading="lazy" />
+            <img src="/real-estate/villa-entrance.jpg" alt="Villa entrance with clipped hedges and stone driveway" loading="lazy" />
+            <img src="/real-estate/karaka-dusk.jpg" alt="Covered deck at dusk with lit timber walls and rural outlook" loading="lazy" />
           </div>
         </div>
       </section>
@@ -340,7 +346,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.13</p>
+      <p className="portfolio-build">Build v1.11.14</p>
     </main>
   );
 }
