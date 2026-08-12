@@ -76,7 +76,17 @@ export default function RealEstateMediaPage() {
     <main className="real-estate-page">
       <PageHeader />
 
-      <ReelHero src={PROPERTY_REEL} poster={HERO}>
+      <ReelHero
+        src={PROPERTY_REEL}
+        poster={HERO}
+        strip={
+          <ul className="re-services">
+            {services.map((service) => (
+              <li key={service}>{service}</li>
+            ))}
+          </ul>
+        }
+      >
         {/* The literal string the route test matches. It must not be shortened
             and dressed back up with text-transform. */}
         <p className="re-hero-eyebrow">Vision8 Real Estate Media</p>
@@ -84,11 +94,6 @@ export default function RealEstateMediaPage() {
         <span className="re-hero-lede">
           Experienced direction that helps properties, and the people selling them, come alive.
         </span>
-        <ul className="re-services">
-          {services.map((service) => (
-            <li key={service}>{service}</li>
-          ))}
-        </ul>
       </ReelHero>
 
       {/*
@@ -335,7 +340,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.12</p>
+      <p className="portfolio-build">Build v1.11.13</p>
     </main>
   );
 }

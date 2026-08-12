@@ -1194,14 +1194,28 @@
   The four services as one line, in place of listing them again in the lede
   above. A stacked column of four would cost more hero height than the copy.
 */
+/*
+  The full-width band at the hero's foot. It escapes the copy column because
+  the column is held narrow for the reel's centred logo card, and a row at this
+  scale cannot fit inside it; down here it runs under the card instead. Sized
+  to `.audio-services` on the Audio page, which is the client's reference.
+*/
+.re-hero-strip {
+  position: absolute;
+  right: var(--gutter);
+  bottom: clamp(28px, 3.5vw, 44px);
+  left: var(--gutter);
+  z-index: 3;
+}
+
 .real-estate-page .re-services {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  /* Sized here so the gaps and the separators below scale with the type. */
-  font-size: clamp(0.8rem, 0.95vw, 0.9rem);
+  /* Sized on the list so the gaps and separators scale with the type. */
+  font-size: clamp(1.25rem, 2.3vw, 2rem);
   gap: 0.3em 0.62em;
-  margin: 18px 0 0;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
@@ -1217,7 +1231,7 @@
   drawn on the item that follows, so a wrap opens the new line with a dangling
   bullet. Below this width the names simply space out.
 */
-@media (min-width: 1280px) {
+@media (min-width: 1024px) {
   .real-estate-page .re-services li + li::before {
     content: "";
     display: inline-block;
@@ -1303,7 +1317,8 @@
 */
 .re-hero-copy {
   position: absolute;
-  bottom: clamp(36px, 5vw, 72px);
+  /* Clear of the services strip at the hero's foot. */
+  bottom: clamp(120px, 13vw, 168px);
   left: var(--gutter);
   z-index: 3;
   width: min(440px, calc(100% - (2 * var(--gutter))));
@@ -1345,7 +1360,8 @@
 }
 
 /*
-  50%, which is the floor the house style sets rather than a step below it.
+  80%. This shipped at the 50% floor first and the client called it: over
+  moving picture at full brightness, half-strength text does not hold.
 
   [CRITICAL] Applied to each element, not to `.re-hero-copy`. Opacity on the
   wrapper opens a stacking context and no child can then be brought back above
@@ -1356,7 +1372,7 @@
 .real-estate-page .re-hero h1,
 .real-estate-page .re-hero-lede,
 .real-estate-page .re-hero .re-services {
-  opacity: 0.5;
+  opacity: 0.8;
 }
 
 /* `.audio-btn` is written for anchors, so a button needs the browser default

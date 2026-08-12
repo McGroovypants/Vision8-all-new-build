@@ -19,10 +19,18 @@ export function ReelHero({
   src,
   poster,
   children,
+  strip,
 }: {
   src: string;
   poster: string;
   children: ReactNode;
+  /*
+    Rendered as a full-width band at the foot of the hero, outside the copy
+    column. The column is held narrow so it cannot cross the reel's centred
+    logo card; a row of services at Audio scale cannot live inside it, but the
+    strip runs under the logo card, so it can take the whole width.
+  */
+  strip?: ReactNode;
 }) {
   const frameRef = useRef<HTMLIFrameElement>(null);
   const [soundOn, setSoundOn] = useState(false);
@@ -65,6 +73,7 @@ export function ReelHero({
           {soundOn ? "Sound on" : "Play with sound"}
         </button>
       </div>
+      {strip && <div className="re-hero-strip">{strip}</div>}
     </section>
   );
 }
