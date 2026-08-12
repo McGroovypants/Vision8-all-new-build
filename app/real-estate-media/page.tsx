@@ -24,6 +24,15 @@ const PROPERTY_REEL =
 
 // The walkthrough example. Contained rather than cropped, so Vimeo's own
 // controls are left on and there is nothing to build here.
+/*
+  [NOTE] A placeholder at the client's direction until a proper direction-on-
+  location piece exists: it is the Vision8 "Testimonials" cut, 24 seconds,
+  public on the Vision8 account. Same rollover treatment as the Matterport
+  example below.
+*/
+const PEOPLE_VIDEO =
+  "https://player.vimeo.com/video/1110767463?muted=1&loop=1&title=0&byline=0&portrait=0&dnt=1";
+
 // Muted so HoverPlay's programmatic play is allowed; Vimeo's controls stay on,
 // so sound is one click away.
 const MATTERPORT_VIDEO =
@@ -38,9 +47,8 @@ const MATTERPORT_VIDEO =
 */
 const MATTERPORT_TOUR = "";
 
-// Four services, as one line rather than a stacked list, which is how
-// `.audio-services` carries the same job on the Audio page.
-const services = ["Photography", "Video", "3D walkthroughs", "Floor plans"];
+// Four services, one line, in the client's order.
+const services = ["Video", "Photography", "3D walkthroughs", "2D Plans"];
 
 /*
   Supplied by the client. Trimmed only to remove the trading name, at the
@@ -77,7 +85,7 @@ export const metadata: Metadata = {
 export default function RealEstateMediaPage() {
   return (
     <main className="real-estate-page">
-      <PageHeader />
+      <PageHeader division="Real Estate Media" />
 
       <ReelHero
         src={PROPERTY_REEL}
@@ -90,9 +98,9 @@ export default function RealEstateMediaPage() {
           </ul>
         }
       >
-        {/* The literal string the route test matches. It must not be shortened
-            and dressed back up with text-transform. */}
-        <p className="re-hero-eyebrow">Vision8 Real Estate Media</p>
+        {/* The route test's "Vision8 Real Estate Media" is carried by the page
+            title now that the hero eyebrow is gone; the header lockup has the
+            visible words. */}
         <h1>
           Property stories,
           <br />
@@ -137,10 +145,19 @@ export default function RealEstateMediaPage() {
 
       <section className="re-section">
         <div className="re-inner">
-          <div className="re-split re-flip">
+          <HoverPlay className="re-split re-flip">
             <figure>
-              <div className="re-frame">
-                <span>Agent on camera</span>
+              <div className="re-video">
+                <iframe
+                  src={PEOPLE_VIDEO}
+                  title="People in front of camera"
+                  allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  loading="lazy"
+                  allowFullScreen
+                />
+                {/* Removed by HoverPlay on activation. */}
+                <span className="re-video-cover" aria-hidden="true" />
               </div>
               <figcaption>Direction on location</figcaption>
             </figure>
@@ -148,7 +165,7 @@ export default function RealEstateMediaPage() {
               {/* Chapter numbers run 01 to 06 across the sections. The closing
                   stays unnumbered because it is the ask, not a chapter. */}
               <p className="re-eyebrow"><span className="re-index">01</span>People</p>
-              <h2>Good on camera matters.</h2>
+              <h2>Being comfortable on camera matters.</h2>
               <p className="re-lede">
                 Being good at selling property doesn&rsquo;t automatically make being on camera easy.
               </p>
@@ -169,7 +186,7 @@ export default function RealEstateMediaPage() {
                 <strong>Just good direction when it&rsquo;s needed.</strong>
               </p>
             </div>
-          </div>
+          </HoverPlay>
         </div>
       </section>
 
@@ -357,7 +374,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.15</p>
+      <p className="portfolio-build">Build v1.11.16</p>
     </main>
   );
 }

@@ -52,6 +52,20 @@
   height: auto;
 }
 
+/* The division wordmark, drawn to read as part of the logo: spaced caps off a
+   hairline, the same lockup grammar as the reel's own logo card. */
+.portfolio-division {
+  margin-left: 16px;
+  padding-left: 18px;
+  border-left: 1px solid var(--line);
+  color: var(--white);
+  font-size: clamp(0.74rem, 0.95vw, 0.98rem);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
 .portfolio-header nav a,
 .portfolio-contact {
   font-weight: 500;
@@ -1118,6 +1132,12 @@
   }
 }
 
+@media (max-width: 700px) {
+  .portfolio-division {
+    display: none;
+  }
+}
+
 @media (max-width: 520px) {
   .portfolio-header nav a:nth-child(3) {
     display: none;
@@ -1208,27 +1228,19 @@
   scale cannot fit inside it; down here it runs under the card instead. Sized
   to `.audio-services` on the Audio page, which is the client's reference.
 */
-.re-hero-strip {
-  z-index: 3;
-  position: absolute;
-  right: var(--gutter);
-  bottom: clamp(28px, 3.5vw, 44px);
-  left: var(--gutter);
-  z-index: 3;
-}
-
 .real-estate-page .re-services {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  /* Centred under the reel's centred logo card, on the client's call. */
-  justify-content: center;
-  /* Sized on the list so the gaps and separators scale with the type. */
-  font-size: clamp(1.25rem, 2.3vw, 2rem);
-  gap: 0.3em 0.62em;
+  /* 20% over the Audio-scale row it replaced, on the client's mark. The slope
+     is held slightly under proportional so the button and the line share one
+     row down to about 1024 before wrapping. */
+  font-size: clamp(1.3rem, 2.2vw, 2.4rem);
+  gap: 0.3em 0.55em;
   margin: 0;
   padding: 0;
   list-style: none;
+  text-transform: uppercase;
 }
 
 .real-estate-page .re-services li {
@@ -1242,16 +1254,13 @@
   drawn on the item that follows, so a wrap opens the new line with a dangling
   bullet. Below this width the names simply space out.
 */
+/* Teal hyphens, the client's separator, only while the row holds one line. */
 @media (min-width: 1024px) {
   .real-estate-page .re-services li + li::before {
-    content: "";
-    display: inline-block;
-    width: 0.22em;
-    height: 0.22em;
-    margin-right: 0.62em;
-    vertical-align: 0.24em;
-    border-radius: 50%;
-    background: var(--teal-bright);
+    content: "-";
+    margin-right: 0.55em;
+    color: var(--teal-bright);
+    font-weight: 700;
   }
 }
 
@@ -1305,31 +1314,18 @@
 
   Anchored to the corner and faded to nothing by 70%, so there is no edge to see.
 */
+/*
+  One band, behind the words only. The corner pool and the separate foot band
+  are gone on the client's call: everything above the copy block plays clean,
+  and this fades out just past the headline's top.
+*/
 .re-hero-wash {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: min(640px, 52%);
-  height: min(440px, 58%);
-  background: radial-gradient(
-    115% 100% at 0% 100%,
-    rgba(3, 4, 4, 0.88) 0%,
-    rgba(3, 4, 4, 0.55) 40%,
-    rgba(3, 4, 4, 0) 70%
-  );
-}
-
-/* Under the centred services strip: a low band across the hero's foot, gone by
-   a third of the height, so only the strip's line of the picture is calmed. */
-.re-hero::after {
-  content: "";
   position: absolute;
   right: 0;
   bottom: 0;
   left: 0;
-  height: 34%;
-  background: linear-gradient(to top, rgba(3, 4, 4, 0.62) 0%, rgba(3, 4, 4, 0) 100%);
-  pointer-events: none;
+  height: min(400px, 44%);
+  background: linear-gradient(to top, rgba(3, 4, 4, 0.8) 0%, rgba(3, 4, 4, 0.44) 55%, rgba(3, 4, 4, 0) 100%);
 }
 
 /*
@@ -1341,11 +1337,21 @@
 */
 .re-hero-copy {
   position: absolute;
-  /* Clear of the services strip at the hero's foot. */
-  bottom: clamp(120px, 13vw, 168px);
+  right: var(--gutter);
+  bottom: clamp(32px, 4vw, 52px);
   left: var(--gutter);
   z-index: 3;
-  width: min(440px, calc(100% - (2 * var(--gutter))));
+}
+
+/* The bottom row: sound button and the services line, baseline-aligned, on the
+   client's mark. It runs under the reel's centred logo card, which is why the
+   block above it can span the width while the headline stays capped. */
+.re-hero-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 18px 36px;
+  margin-top: 26px;
 }
 
 .real-estate-page .re-hero-eyebrow {
@@ -1509,7 +1515,10 @@
 
 .real-estate-page p {
   margin: 0 0 18px;
-  color: rgba(243, 244, 239, 0.78);
+  /* Brightness and size both lifted on the client's call against the built
+     page: 0.78 up a fifth, 1rem up a tenth. */
+  color: rgba(243, 244, 239, 0.94);
+  font-size: 1.1rem;
   line-height: 1.65;
 }
 
@@ -1730,8 +1739,8 @@
 
 .real-estate-page .re-quote blockquote p {
   margin: 0;
-  color: rgba(243, 244, 239, 0.84);
-  font-size: 1rem;
+  color: rgba(243, 244, 239, 0.9);
+  font-size: 1.1rem;
 }
 
 /*
@@ -1776,6 +1785,11 @@
 .re-band-copy {
   max-width: 880px;
   margin: 0 auto;
+}
+
+/* A quarter over the new body size, on the client's mark for this blurb. */
+.real-estate-page .re-band p {
+  font-size: 1.375rem;
 }
 
 /* Held under the section h2 size: this is a nine word sentence, and at the full

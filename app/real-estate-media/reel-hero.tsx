@@ -25,10 +25,9 @@ export function ReelHero({
   poster: string;
   children: ReactNode;
   /*
-    Rendered as a full-width band at the foot of the hero, outside the copy
-    column. The column is held narrow so it cannot cross the reel's centred
-    logo card; a row of services at Audio scale cannot live inside it, but the
-    strip runs under the logo card, so it can take the whole width.
+    Rendered on the same bottom row as the sound button, baseline-aligned, on
+    the client's mark. The row sits low enough to run under the reel's centred
+    logo card, which is why the copy block above it can span the full width.
   */
   strip?: ReactNode;
 }) {
@@ -64,16 +63,18 @@ export function ReelHero({
       <div className="re-hero-wash" aria-hidden="true" />
       <div className="re-hero-copy">
         {children}
-        <button
-          type="button"
-          className={`audio-btn re-sound${soundOn ? " audio-btn-solid" : ""}`}
-          onClick={toggleSound}
-          aria-pressed={soundOn}
-        >
-          {soundOn ? "Sound on" : "Play with sound"}
-        </button>
+        <div className="re-hero-foot">
+          <button
+            type="button"
+            className={`audio-btn re-sound${soundOn ? " audio-btn-solid" : ""}`}
+            onClick={toggleSound}
+            aria-pressed={soundOn}
+          >
+            {soundOn ? "Sound on" : "Play with sound"}
+          </button>
+          {strip}
+        </div>
       </div>
-      {strip && <div className="re-hero-strip">{strip}</div>}
     </section>
   );
 }
