@@ -22,14 +22,14 @@ async function render(pathname = "/") {
   );
 }
 
-test("server-renders the Vision8 v1.11.7 homepage", async () => {
+test("server-renders the Vision8 v1.11.9 homepage", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /Vision8 homepage/);
-  assert.match(html, /Build <!-- -->v1\.11\.7/);
+  assert.match(html, /Build <!-- -->v1\.11\.9/);
   assert.match(html, /aria-label="Vision8 home"/);
   assert.match(html, /Audio/);
   assert.match(html, /Tech Solutions/);
@@ -63,7 +63,7 @@ for (const [pathname, expected] of routes) {
 
     const html = await response.text();
     assert.match(html, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.match(html, /Build (?:<!-- -->)?v1\.11\.7/);
+    assert.match(html, /Build (?:<!-- -->)?v1\.11\.9/);
     assert.match(html, />Home</);
     assert.match(html, />About us</);
     assert.match(html, />Our mahi</);
@@ -71,12 +71,19 @@ for (const [pathname, expected] of routes) {
   });
 }
 
-test("real-estate holding page is honest about missing final media", async () => {
+// The Real Estate page carries the cleared reel, and is still waiting on a
+// walkthrough and on approved photography. This asserts both halves: the page
+// says so in its own words rather than implying media exists, and neither the
+// private Promo V4 cut nor the unapproved photography credit reaches the markup.
+test("real-estate page embeds only cleared media", async () => {
   const response = await render("/real-estate-media");
   const html = await response.text();
-  assert.match(html, /Real estate reel source to be added/);
-  assert.match(html, /final real-estate reel URL is still required/);
-  assert.doesNotMatch(html, /Lensworks/);
+  // The reel that is embedded is the cleared cut. Asserted positively, so a
+  // silent swap to a different video is a test failure rather than a surprise.
+  assert.match(html, /player\.vimeo\.com\/video\/1217581060\?h=015949962e/);
+  assert.match(html, /An example walkthrough is being selected/);
+  assert.doesNotMatch(html, /Lensworks/i);
+  assert.doesNotMatch(html, /Promo[\s_-]?V4/i);
 });
 
 test("internal Video and About navigation replace the external GitHub page", async () => {
