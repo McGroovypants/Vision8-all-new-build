@@ -1199,9 +1199,9 @@
   flex-wrap: wrap;
   align-items: center;
   /* Sized here so the gaps and the separators below scale with the type. */
-  font-size: clamp(1rem, 1.6vw, 1.35rem);
+  font-size: clamp(0.8rem, 0.95vw, 0.9rem);
   gap: 0.3em 0.62em;
-  margin: 26px 0 0;
+  margin: 18px 0 0;
   padding: 0;
   list-style: none;
 }
@@ -1217,7 +1217,7 @@
   drawn on the item that follows, so a wrap opens the new line with a dangling
   bullet. Below this width the names simply space out.
 */
-@media (min-width: 1024px) {
+@media (min-width: 1280px) {
   .real-estate-page .re-services li + li::before {
     content: "";
     display: inline-block;
@@ -1273,63 +1273,96 @@
 }
 
 /*
-  Weighted left and to the bottom, where the copy sits. An even wash would have
-  to be heavy enough for the worst frame of a 60 second reel, which would leave
-  the picture flat for the other fifty nine seconds.
+  A pool in the bottom-left corner, sized to the copy block, not a wash over the
+  whole hero. This is the hero: everything outside the few hundred pixels the
+  text actually occupies must play at full brightness. The earlier full-height
+  gradients darkened most of the frame to protect one small block of type.
+
+  Anchored to the corner and faded to nothing by 70%, so there is no edge to see.
 */
 .re-hero-wash {
   position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(90deg, rgba(3, 4, 4, 0.93) 0%, rgba(3, 4, 4, 0.62) 50%, rgba(3, 4, 4, 0.16) 100%),
-    linear-gradient(to top, rgba(3, 4, 4, 0.86) 0%, rgba(3, 4, 4, 0) 52%);
+  bottom: 0;
+  left: 0;
+  width: min(560px, 46%);
+  height: min(400px, 52%);
+  background: radial-gradient(
+    115% 100% at 0% 100%,
+    rgba(3, 4, 4, 0.88) 0%,
+    rgba(3, 4, 4, 0.55) 40%,
+    rgba(3, 4, 4, 0) 70%
+  );
 }
 
+/*
+  [CRITICAL] Held to a narrow lower-left block, and the width is the point, not
+  the styling. The reel opens on the Vision8 logo card, which is centred in the
+  frame and stays centred because the player is cover-cropped. A copy block wide
+  enough to cross the middle of the hero lands straight on top of that logo for
+  the opening seconds of every loop. Nothing here may reach the centre line.
+*/
 .re-hero-copy {
   position: absolute;
-  right: var(--gutter);
-  bottom: clamp(40px, 6vw, 84px);
+  bottom: clamp(36px, 5vw, 72px);
   left: var(--gutter);
   z-index: 3;
-  max-width: 860px;
+  width: min(440px, calc(100% - (2 * var(--gutter))));
 }
 
 .real-estate-page .re-hero-eyebrow {
-  margin: 0 0 14px;
+  margin: 0 0 12px;
   color: var(--teal-bright);
-  font-size: clamp(1.1rem, 1.9vw, 1.7rem);
+  font-size: clamp(0.82rem, 1.05vw, 0.98rem);
   font-weight: 700;
   letter-spacing: 0.12em;
   line-height: 1.2;
   text-transform: uppercase;
 }
 
-/* The hero treatment carried over from the holding page, reduced by roughly 13%
-   across the whole clamp so the shape holds at every width rather than only at
-   the top end. Was clamp(2.8rem, 7vw, 7.5rem). */
+/*
+  Roughly half the size it launched at. Over a still it could carry the full
+  display scale; over moving picture, at that size, it stopped being a headline
+  and became a wall. 18ch breaks it after "stories," which is where the line
+  wants to turn anyway.
+*/
 .real-estate-page .re-hero h1 {
-  max-width: 15ch;
-  margin: 0 0 20px;
-  font-size: clamp(2.45rem, 6.1vw, 6.5rem);
+  max-width: 18ch;
+  margin: 0 0 16px;
+  font-size: clamp(1.6rem, 2.6vw, 2.4rem);
   font-weight: 500;
-  line-height: 0.92;
-  letter-spacing: -0.055em;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
 }
 
 /* Lifted from the 0.76 the holding page used. That was set against a still; this
    sits over moving picture and needs the extra contrast. */
 .real-estate-page .re-hero-lede {
   display: block;
-  max-width: 620px;
-  color: rgba(243, 244, 239, 0.88);
-  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  max-width: 400px;
+  color: var(--white);
+  font-size: clamp(0.88rem, 1.02vw, 0.96rem);
   line-height: 1.5;
+}
+
+/*
+  50%, which is the floor the house style sets rather than a step below it.
+
+  [CRITICAL] Applied to each element, not to `.re-hero-copy`. Opacity on the
+  wrapper opens a stacking context and no child can then be brought back above
+  it, which would drop the sound control to half strength too. A control has to
+  stay legible.
+*/
+.real-estate-page .re-hero-eyebrow,
+.real-estate-page .re-hero h1,
+.real-estate-page .re-hero-lede,
+.real-estate-page .re-hero .re-services {
+  opacity: 0.5;
 }
 
 /* `.audio-btn` is written for anchors, so a button needs the browser default
    surface and font taken off it. */
 .real-estate-page .re-sound {
-  margin-top: 28px;
+  margin-top: 24px;
   background: transparent;
   font-family: inherit;
   cursor: pointer;
