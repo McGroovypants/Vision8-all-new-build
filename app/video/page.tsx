@@ -7,7 +7,15 @@ export const metadata: Metadata = {
   description: "Vision8 video services, from filming through to animation and finishing.",
 };
 
-export default function VideoPage() {
+// Resolved on the server and passed down, the same way the homepage handles
+// skipintro: reading the query in the client component instead mismatches
+// hydration and the parameter is silently dropped.
+export default async function VideoPage({
+  searchParams,
+}: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const params = await searchParams;
+  const service = typeof params.service === "string" ? params.service : undefined;
+
   return (
     <main className="video-page">
       <PageHeader />
@@ -16,9 +24,9 @@ export default function VideoPage() {
           <h1>Everything video</h1>
           <span>From aerial filming to animation, we offer a comprehensive range of video services to bring your vision to life.</span>
         </div>
-        <VideoServices />
+        <VideoServices openSlug={service} />
       </section>
-      <p className="portfolio-build">Build v1.11.24</p>
+      <p className="portfolio-build">Build v1.11.25</p>
     </main>
   );
 }

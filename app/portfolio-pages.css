@@ -1725,7 +1725,9 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 0 var(--gutter) 14px;
+  /* The right pad clears the fixed build stamp, which sits in this corner and
+     otherwise prints straight over the scrub line. */
+  padding: 0 calc(var(--gutter) + 86px) 14px var(--gutter);
 }
 
 .real-estate-page .re-playtoggle {
@@ -1894,6 +1896,36 @@
      from it. */
   .re-hero {
     --re-hero-h: max(460px, calc(100svh - 62px));
+  }
+
+  /*
+    [CRITICAL] Portrait only, and the height comes off the width rather than the
+    viewport. A full-height hero on a phone is a 0.5 ratio box, and covering it
+    with a 16/9 frame throws away three quarters of the picture: measured at
+    390px, 28% of the frame was visible, so the reel read as a slice of whatever
+    happened to be centre screen. Tying height to width holds the box near the
+    frame's own ratio and roughly doubles what survives.
+  */
+  @media (orientation: portrait) {
+    .re-hero {
+      --re-hero-h: clamp(400px, 112vw, calc(100svh - 62px));
+    }
+
+    /*
+      The wash is a percentage of the hero, and the hero just got much shorter,
+      so 44% no longer reaches the headline: it sat over open sky and washed
+      out. The copy occupies roughly the lower four fifths of a portrait hero,
+      so the gradient has to cover that much.
+    */
+    .re-hero-wash {
+      height: 84%;
+      background: linear-gradient(
+        to top,
+        rgba(3, 4, 4, 0.84) 0%,
+        rgba(3, 4, 4, 0.62) 46%,
+        rgba(3, 4, 4, 0) 100%
+      );
+    }
   }
 
   .re-quotes {

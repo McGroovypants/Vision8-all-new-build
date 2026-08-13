@@ -4,6 +4,10 @@ import { useEffect, useRef, useState } from "react";
 
 type Service = {
   title: string;
+  // Stable, hand-written rather than derived from the title: a macron or an
+  // ampersand makes a derived slug either ugly or unstable, and these appear in
+  // URLs the homepage links to.
+  slug: string;
   // Shown on the card, two lines. Carried over verbatim from the GitHub Pages
   // build, where it sat under every title and was lost when the cards moved
   // behind the modal. `description` is the longer modal copy and is separate.
@@ -25,6 +29,7 @@ const POSTER = `${CLOUD}/video/upload/w_960,q_auto,so_0`;
 const services: Service[] = [
   {
     title: "Air & Underwater Filming",
+    slug: "air-underwater-filming",
     card: "Aerial and underwater filming add both unique and cinematic views that elevate any story.",
     description: "Certified drone, helicopter, underwater and boat filming, planned carefully for memorable images in demanding locations.",
     video: `${VIDEO}/Vision8_sky_and_water_Reel_1_uzx4vi.mp4`,
@@ -32,6 +37,7 @@ const services: Service[] = [
   },
   {
     title: "Marketing & Engagement",
+    slug: "marketing-engagement",
     card: "Strategic, imaginative campaigns for marketing teams, from concept through to delivery.",
     description: "Strategic, imaginative campaigns from concept to delivery, created to give marketing teams material that connects.",
     video: `${VIDEO}/Vision8_Corp_Comms_Reels_1_czh0mh.mp4`,
@@ -39,6 +45,7 @@ const services: Service[] = [
   },
   {
     title: "Te Ao Māori & Pasifika",
+    slug: "te-ao-maori-pasifika",
     card: "Honouring Indigenous culture means understanding the importance of doing things the right way.",
     description: "Stories developed in partnership, with care for their origins, audiences and the right way to tell them.",
     video: `${VIDEO}/Vision8_Te_Ao_Maori_Reel_1_ck0nsf.mp4`,
@@ -46,6 +53,7 @@ const services: Service[] = [
   },
   {
     title: "Corporate Comms",
+    slug: "corporate-comms",
     card: "Staff learn faster with engaging video. Bring out the best in your organisation with great corporate communications.",
     description: "Clear, engaging video for induction, learning, culture change and internal communication.",
     video: `${VIDEO}/Vision8_Corp_Comms_Reels_1_czh0mh.mp4`,
@@ -53,6 +61,7 @@ const services: Service[] = [
   },
   {
     title: "Food Filming & Styling",
+    slug: "food-filming-styling",
     card: "Capturing the taste, colour, and scrumptiousness of food on camera is an art form.",
     description: "Food content shaped by experience in timing, lighting, styling and making every detail look its best.",
     video: `${VIDEO}/Vision8_Food_Reel_1_pn4hog.mp4`,
@@ -60,6 +69,7 @@ const services: Service[] = [
   },
   {
     title: "Motion & Animation",
+    slug: "motion-animation",
     card: "Motion graphics and animation add professionalism and a winning edge to branding, logos, and titles.",
     description: "Polished motion graphics, 2D and 3D animation that clarify ideas and give brands a distinctive edge.",
     video: `${VIDEO}/Vision8_Animation_Motion_Gfx_h0emew.mp4`,
@@ -67,6 +77,7 @@ const services: Service[] = [
   },
   {
     title: "Explainer Videos",
+    slug: "explainer-videos",
     card: "Create precise, detailed working models or clarify complex topics with explainer videos that make stories easier to understand.",
     description: "Visual explanations that make complex subjects, machinery and working models easier to understand.",
     video: `${VIDEO}/Vision_8_Explainer_videos_reel_nkyotq.mp4`,
@@ -74,6 +85,7 @@ const services: Service[] = [
   },
   {
     title: "Testimonial Videos",
+    slug: "testimonial-videos",
     card: "Your clients, customers, staff, stakeholders, and of course, you, are the best ambassadors of your brand and message.",
     description: "Comfortable, authentic interviews that let the people who matter carry the story.",
     video: `${VIDEO}/Vision8_Testimonials_Reels_V1_udukwv.mp4`,
@@ -81,6 +93,7 @@ const services: Service[] = [
   },
   {
     title: "Rural Videos",
+    slug: "rural-videos",
     card: "Honest stories from rural Aotearoa, told with a feel for the people, the land and the work behind them.",
     description: "Honest stories from rural Aotearoa, filmed with practical know-how and a feel for the people, land and work behind them.",
     poster: `${CLOUD}/image/upload/w_960,q_auto,f_auto/Screen_Shot_2019-02-15_at_9.19.24_PM_gdnovh.jpg`,
@@ -92,7 +105,12 @@ function ServiceVisual({ service, detail = false }: { service: Service; detail?:
   return <video autoPlay controls={detail} loop muted={!detail} playsInline preload="metadata" poster={service.poster} src={service.video} />;
 }
 
-export function VideoServices() {
+/*
+  `openSlug` opens one card's detail on arrival, so the homepage's Motion and
+  Animation button lands on the same panel its own "Find out more" opens rather
+  than dropping the visitor at the top of the grid to find it again.
+*/
+export function VideoServices({ openSlug }: { openSlug?: string } = {}) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [selected, setSelected] = useState<Service | null>(null);
   const [activeRow, setActiveRow] = useState<number | null>(null);
@@ -113,6 +131,17 @@ export function VideoServices() {
       }
     });
   }, [activeRow]);
+
+  // Once only. `open` plays the detail video, and re-running it on any later
+  // render would restart whatever the visitor was already watching.
+  const deepLinked = useRef(false);
+  useEffect(() => {
+    if (deepLinked.current || !openSlug) return;
+    const match = services.find((service) => service.slug === openSlug);
+    if (!match) return;
+    deepLinked.current = true;
+    open(match);
+  });
 
   function open(service: Service) {
     setSelected(service);
