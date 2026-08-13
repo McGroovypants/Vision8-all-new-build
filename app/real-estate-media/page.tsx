@@ -68,11 +68,11 @@ const VOICE = {
   property:
     "Andy has a great understanding of real estate and knows how to capture a property in a way that makes it look its absolute best while still feeling authentic.",
   camera:
-    "He knows how to make you feel comfortable and confident on camera, which makes the whole process feel very natural.",
+    "Andy knows how to make you feel comfortable and confident on camera, which makes the whole process feel very natural.",
   breadth:
-    "Whether it\u2019s shooting, editing, photography, 3D walkthroughs or helping bring an idea to life, he understands what is needed and delivers.",
+    "Whether it\u2019s shooting, editing, photography, 3D walkthroughs or helping bring an idea to life, Andy understands what is needed and delivers.",
   working:
-    "What really sets Andy apart is how easy he is to deal with. He\u2019s professional, reliable, creative and always willing to go the extra mile to get the right result.",
+    "What really sets Vision8 apart is how easy Andy is to deal with \u2014 professional, reliable, creative and always willing to go the extra mile to get the right result.",
 };
 
 export const metadata: Metadata = {
@@ -316,7 +316,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.25</p>
+      <p className="portfolio-build">Build v1.11.26</p>
     </main>
   );
 }

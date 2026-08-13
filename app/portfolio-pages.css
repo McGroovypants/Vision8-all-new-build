@@ -1182,6 +1182,14 @@
 .real-estate-page {
   height: 100svh;
   overflow-y: auto;
+  /*
+    Belt and braces for phones: the client reported the page refusing to
+    scroll on mobile. Chrome touch-gesture emulation scrolls it, so this is
+    not reproducible from here; pan-y declares the intent to iOS explicitly
+    and -webkit-overflow-scrolling is a harmless no-op on anything modern.
+  */
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
   color: var(--white);
   background: var(--black);
 }
