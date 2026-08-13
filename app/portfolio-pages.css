@@ -1604,59 +1604,6 @@
   margin: 0;
 }
 
-/*
-  Image slots, stubbed until approved photography arrives. Deliberately drawn as
-  a framed slot rather than a grey box: it reads as a considered space on a real
-  page. Swapping in an `<img>` later is a one-line change per slot.
-*/
-.real-estate-page .re-frame {
-  position: relative;
-  display: grid;
-  place-items: center;
-  aspect-ratio: 4 / 3;
-  padding: 20px;
-  border: 1px solid var(--line);
-  border-radius: 2px;
-  /* A fine diagonal hatch over the tint. Real media is weeks away, so the
-     slot has to hold the eye on its own; a flat gradient read as a grey box. */
-  background:
-    repeating-linear-gradient(135deg, rgba(243, 244, 239, 0.03) 0 1px, rgba(3, 4, 4, 0) 1px 10px),
-    linear-gradient(145deg, rgba(11, 183, 163, 0.1), rgba(255, 255, 255, 0.022));
-}
-
-/* Viewfinder corners, top-left and bottom-right. They mark the slot as a
-   frame waiting on a picture rather than a picture that failed to load. */
-.real-estate-page .re-frame::before,
-.real-estate-page .re-frame::after {
-  content: "";
-  position: absolute;
-  width: 16px;
-  height: 16px;
-}
-
-.real-estate-page .re-frame::before {
-  top: 10px;
-  left: 10px;
-  border-top: 1px solid var(--teal-bright);
-  border-left: 1px solid var(--teal-bright);
-}
-
-.real-estate-page .re-frame::after {
-  right: 10px;
-  bottom: 10px;
-  border-right: 1px solid var(--teal-bright);
-  border-bottom: 1px solid var(--teal-bright);
-}
-
-.real-estate-page .re-frame span {
-  color: rgba(243, 244, 239, 0.5);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-align: center;
-  text-transform: uppercase;
-}
-
 .real-estate-page figcaption {
   margin-top: 12px;
   color: rgba(243, 244, 239, 0.62);

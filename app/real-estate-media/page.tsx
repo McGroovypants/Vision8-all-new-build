@@ -140,7 +140,7 @@ export default function RealEstateMediaPage() {
               <figcaption>Direction on location</figcaption>
             </figure>
             <div>
-              {/* Chapter numbers run 01 to 06 across the sections. The closing
+              {/* Chapter numbers run 01 to 04 across the sections. The closing
                   stays unnumbered because it is the ask, not a chapter. */}
               <p className="re-eyebrow"><span className="re-index">01</span>People</p>
               <h2>Being comfortable on camera matters.</h2>
@@ -291,33 +291,6 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <section className="re-section">
-        <div className="re-inner">
-          <div className="re-split re-flip">
-            <figure>
-              <div className="re-frame">
-                <span>Agent profile</span>
-              </div>
-              <figcaption>Building a profile over time</figcaption>
-            </figure>
-            <div>
-              <p className="re-eyebrow"><span className="re-index">05</span>Agent profile</p>
-              <h2>Every listing says something about you too.</h2>
-              <p>Property media doesn&rsquo;t only market the home.</p>
-              <p>
-                Over time, every video, photograph and appearance in front of camera becomes part of an agent&rsquo;s
-                own profile.
-              </p>
-              <p>We think about that as well.</p>
-              <p>
-                The aim isn&rsquo;t to make you look like somebody else. It&rsquo;s to help the confident, natural
-                version of you come through consistently.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Delivery folded in above the contact block: it is a service benefit of
           two sentences, not a section, and it reads better as the last practical
           point before the ask. */}
@@ -355,7 +328,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.19</p>
+      <p className="portfolio-build">Build v1.11.20</p>
     </main>
   );
 }
