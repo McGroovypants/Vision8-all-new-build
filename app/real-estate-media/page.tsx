@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "../portfolio-shell";
 import { ReelHero } from "./reel-hero";
-import { HoverPlay } from "./hover-play";
+import { ViewportPlay } from "./viewport-play";
 
 const HERO = "https://res.cloudinary.com/deyb4o5qz/image/upload/f_auto,q_auto,w_1800/v1785656289/Real_estate_shot_rrts1z.jpg";
 const CONTACT = "mailto:info@vision8.co.nz";
@@ -27,13 +27,13 @@ const PROPERTY_REEL =
 /*
   [NOTE] A placeholder at the client's direction until a proper direction-on-
   location piece exists: it is the Vision8 "Testimonials" cut, 24 seconds,
-  public on the Vision8 account. Same rollover treatment as the Matterport
-  example below.
+  public on the Vision8 account. Plays on entering its region, as the
+  Matterport example below does.
 */
 const PEOPLE_VIDEO =
   "https://player.vimeo.com/video/1110767463?muted=1&loop=1&title=0&byline=0&portrait=0&dnt=1";
 
-// Muted so HoverPlay's programmatic play is allowed; Vimeo's controls stay on,
+// Muted so ViewportPlay's programmatic play is allowed; Vimeo's controls stay on,
 // so sound is one click away.
 const MATTERPORT_VIDEO =
   "https://player.vimeo.com/video/1217587526?h=aecf03551a&muted=1&loop=1&title=0&byline=0&portrait=0&dnt=1";
@@ -51,30 +51,28 @@ const MATTERPORT_TOUR = "";
 const services = ["Video", "Photography", "3D walkthroughs", "2D Plans"];
 
 /*
-  Supplied by the client. Trimmed only to remove the trading name, at the
-  client's instruction, and to replace dashes with sentence breaks for house
-  style. Nothing else in the wording was changed.
+  Harry Eggers' testimonial, supplied by the client and used as excerpts placed
+  beside the claims each one backs, rather than gathered into a testimonial
+  block. The client's reasoning: the page should make a restrained claim and
+  have a real client quietly confirm it, not build a trophy wall.
+
+  He is credited once, at the foot of the page. His name is deliberately not
+  repeated beside each quote.
+
+  The three earlier testimonials were removed at the client's instruction: two
+  described work involving a second party and so do not belong on a Vision8
+  page, and the third belongs elsewhere on the wider site.
 */
-const testimonials = [
-  {
-    name: "Kirsty McCarthy",
-    agency: "Ray White",
-    quote:
-      "I highly recommend Helen and Andy for anyone in real estate marketing. Helen’s photography is always beautifully composed and captures each property at its best, while Andy’s video work brings every space to life with style and clarity. They’re both professional, reliable, and a pleasure to work with.",
-  },
-  {
-    name: "Stephanie Guy",
-    agency: "Harcourts Team Group",
-    quote:
-      "I’d love to give a big thank you to Andy and Helen for their outstanding photography and video work. They consistently deliver high-quality visuals that make my real estate listings stand out. Their professionalism, creativity, and attention to detail make them a pleasure to work with. I highly recommend them to anyone looking to showcase properties at their best. They’ve been an essential part of my marketing success.",
-  },
-  {
-    name: "Lexi Boddy",
-    agency: "S.LK Design",
-    quote:
-      "When someone approached me asking who I’d recommend to cover a nationwide, high-profile launch, someone who could get the shots and deliver a polished presentation, I immediately thought of Andy. He’s reliable, creative, and delivers every time.",
-  },
-];
+const VOICE = {
+  property:
+    "Andy has a great understanding of real estate and knows how to capture a property in a way that makes it look its absolute best while still feeling authentic.",
+  camera:
+    "He knows how to make you feel comfortable and confident on camera, which makes the whole process feel very natural.",
+  breadth:
+    "Whether it\u2019s shooting, editing, photography, 3D walkthroughs or helping bring an idea to life, he understands what is needed and delivers.",
+  working:
+    "What really sets Andy apart is how easy he is to deal with. He\u2019s professional, reliable, creative and always willing to go the extra mile to get the right result.",
+};
 
 export const metadata: Metadata = {
   title: "Vision8 Real Estate Media",
@@ -135,17 +133,17 @@ export default function RealEstateMediaPage() {
                 We shoot to keep things moving and edit with the same thought in mind: make people want to see what
                 comes next.
               </p>
-              <p>
-                <strong>One strong piece of work says more than a wall of thumbnails.</strong>
-              </p>
             </div>
           </div>
+          <blockquote className="re-voice">
+            <p>{VOICE.property}</p>
+          </blockquote>
         </div>
       </section>
 
       <section className="re-section">
         <div className="re-inner">
-          <HoverPlay className="re-split re-flip">
+          <ViewportPlay className="re-split re-flip">
             <figure>
               <div className="re-video">
                 <iframe
@@ -156,8 +154,6 @@ export default function RealEstateMediaPage() {
                   loading="lazy"
                   allowFullScreen
                 />
-                {/* Removed by HoverPlay on activation. */}
-                <span className="re-video-cover" aria-hidden="true" />
               </div>
               <figcaption>Direction on location</figcaption>
             </figure>
@@ -186,13 +182,16 @@ export default function RealEstateMediaPage() {
                 <strong>Just good direction when it&rsquo;s needed.</strong>
               </p>
             </div>
-          </HoverPlay>
+          </ViewportPlay>
+          <blockquote className="re-voice re-voice-lead">
+            <p>{VOICE.camera}</p>
+          </blockquote>
         </div>
       </section>
 
       <section className="re-section">
         <div className="re-inner">
-          <HoverPlay className="re-split">
+          <ViewportPlay className="re-split">
             <figure>
               <div className="re-video">
                 <iframe
@@ -203,8 +202,6 @@ export default function RealEstateMediaPage() {
                   loading="lazy"
                   allowFullScreen
                 />
-                {/* Removed by HoverPlay on activation; see the comment there. */}
-                <span className="re-video-cover" aria-hidden="true" />
               </div>
               <figcaption>Matterport walkthrough examples</figcaption>
             </figure>
@@ -227,7 +224,10 @@ export default function RealEstateMediaPage() {
                 </div>
               )}
             </div>
-          </HoverPlay>
+          </ViewportPlay>
+          <blockquote className="re-voice">
+            <p>{VOICE.breadth}</p>
+          </blockquote>
         </div>
       </section>
 
@@ -240,7 +240,10 @@ export default function RealEstateMediaPage() {
           <div>
             <h3>Photography</h3>
             <p>Clean, considered property photography with an eye for the details that make a home feel right.</p>
-            <p>Photography can be produced directly by Vision8 or by trusted photographers we work with.</p>
+            <p>
+              Property photography is handled by Vision8 and trusted photographers we work closely with, depending on
+              the property and brief.
+            </p>
           </div>
           {/* Six, as the brief asked. Every image here was opened at full size
               before shipping; that check has now rejected three supplied files
@@ -254,10 +257,10 @@ export default function RealEstateMediaPage() {
             <img src="/real-estate/karaka-dusk.jpg" alt="Covered deck at dusk with lit timber walls and rural outlook" loading="lazy" />
           </div>
           <div className="re-plans-block">
-            <h3>2D floor plans</h3>
+            <h3>Photos show how a home feels. A floor plan shows how it works.</h3>
             <p>
-              Clear, useful floor plans that help buyers understand the layout quickly and complete the property
-              media package.
+              Clear 2D plans help buyers understand the layout, room sizes and flow at a glance, and give them
+              something useful to return to after a viewing.
             </p>
             <figure className="re-plan">
               <img src="/real-estate/floor-plan-example.jpg" alt="Three-floor plan example with room dimensions" loading="lazy" />
@@ -289,6 +292,9 @@ export default function RealEstateMediaPage() {
           <p className="re-keywords re-keywords-sub">
             Thoughtful<span>.</span> Fast<span>.</span> Easy to work with<span>.</span>
           </p>
+          <blockquote className="re-voice">
+            <p>{VOICE.working}</p>
+          </blockquote>
         </div>
       </section>
 
@@ -315,29 +321,6 @@ export default function RealEstateMediaPage() {
                 version of you come through consistently.
               </p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Last before the ask, which is where proof does the most work. */}
-      <section className="re-section">
-        <div className="re-inner">
-          <div className="re-section-head">
-            <p className="re-eyebrow"><span className="re-index">06</span>Testimonials</p>
-            <h2>What agents say.</h2>
-          </div>
-          <div className="re-quotes">
-            {testimonials.map((entry) => (
-              <figure className="re-quote" key={entry.name}>
-                <blockquote>
-                  <p>{entry.quote}</p>
-                </blockquote>
-                <figcaption>
-                  {entry.name}
-                  <span>{entry.agency}</span>
-                </figcaption>
-              </figure>
-            ))}
           </div>
         </div>
       </section>
@@ -371,10 +354,15 @@ export default function RealEstateMediaPage() {
             </a>
           </div>
           <p className="re-pending">Pricing is available privately rather than published on the website.</p>
+          {/* Credited once, here, rather than beside each excerpt. */}
+          <p className="re-credit">
+            With thanks to Harry Eggers, Lowe &amp; Co Realty, for allowing us to share these comments from his
+            experience working with Vision8.
+          </p>
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.17</p>
+      <p className="portfolio-build">Build v1.11.18</p>
     </main>
   );
 }
