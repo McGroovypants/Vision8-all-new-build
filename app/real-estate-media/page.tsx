@@ -23,7 +23,11 @@ const RATE_CARD = "mailto:info@vision8.co.nz?subject=Real%20estate%20rate%20card
 */
 const MEDIA = "https://media.vision8.co.nz/library/public/collections-media/vision8-website";
 const PROPERTY_REEL = `${MEDIA}/vision8-real-estate-promo-v2-reduced/download.mp4`;
-const PEOPLE_VIDEO = `${MEDIA}/testimonial-2026c/download.mp4`;
+// The re-cut, `-2`. Replacing an asset retires the URL the old one had: the
+// original `testimonial-2026c` went to 403 the moment this was published, and
+// so did the Matterport example. Any swap here needs the whole collection
+// re-checked, not just the file that changed.
+const PEOPLE_VIDEO = `${MEDIA}/testimonial-2026c-2/download.mp4`;
 const MATTERPORT_VIDEO = `${MEDIA}/matterport-video-examples/download.mp4`;
 
 /*
@@ -303,7 +307,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.21</p>
+      <p className="portfolio-build">Build v1.11.22</p>
     </main>
   );
 }
