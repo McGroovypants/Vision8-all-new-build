@@ -110,32 +110,14 @@ export default function RealEstateMediaPage() {
       </ReelHero>
 
       {/*
-        The keyword statement. This section shipped unheaded, on the argument
-        that the reel above was the statement; the client read that as small
-        floating text and asked for keyword heading style. The four nouns were
-        already in the paragraph below, so they are promoted to display scale
-        and the paragraph keeps only the part a heading cannot carry.
+        The reel, then a client saying what it does. The keyword heading and the
+        three paragraphs that sat here went at the client's instruction: the
+        page had already shown the work, and describing it afterwards was the
+        weakest thing on the page. What is left is the strongest.
       */}
       <section className="re-section re-statement">
         <div className="re-inner">
-          <h2 className="re-keywords">
-            Movement<span>.</span> Timing<span>.</span> Detail<span>.</span> Atmosphere<span>.</span>
-          </h2>
-          <div className="re-pair">
-            <div>
-              <p className="re-lede">A good property video isn&rsquo;t simply a sequence of beautiful rooms.</p>
-              <p>
-                It&rsquo;s knowing when the agent should lead the story and when the home should take over.
-              </p>
-            </div>
-            <div>
-              <p>
-                We shoot to keep things moving and edit with the same thought in mind: make people want to see what
-                comes next.
-              </p>
-            </div>
-          </div>
-          <blockquote className="re-voice">
+          <blockquote className="re-voice re-voice-lead">
             <p>{VOICE.property}</p>
           </blockquote>
         </div>
@@ -240,10 +222,6 @@ export default function RealEstateMediaPage() {
           <div>
             <h3>Photography</h3>
             <p>Clean, considered property photography with an eye for the details that make a home feel right.</p>
-            <p>
-              Property photography is handled by Vision8 and trusted photographers we work closely with, depending on
-              the property and brief.
-            </p>
           </div>
           {/* Six, as the brief asked. Every image here was opened at full size
               before shipping; that check has now rejected three supplied files
@@ -256,16 +234,18 @@ export default function RealEstateMediaPage() {
             <img src="/real-estate/villa-entrance.jpg" alt="Villa entrance with clipped hedges and stone driveway" loading="lazy" />
             <img src="/real-estate/karaka-dusk.jpg" alt="Covered deck at dusk with lit timber walls and rural outlook" loading="lazy" />
           </div>
-          <div className="re-plans-block">
-            <h3>Photos show how a home feels. A floor plan shows how it works.</h3>
-            <p>
-              Clear 2D plans help buyers understand the layout, room sizes and flow at a glance, and give them
-              something useful to return to after a viewing.
-            </p>
+          <div className="re-plans-block re-split">
             <figure className="re-plan">
               <img src="/real-estate/floor-plan-example.jpg" alt="Three-floor plan example with room dimensions" loading="lazy" />
               <figcaption>Floor plan example</figcaption>
             </figure>
+            <div>
+              <h3>Photos show how a home feels. A floor plan shows how it works.</h3>
+              <p>
+                Clear 2D plans help buyers understand the layout, room sizes and flow at a glance, and give them
+                something useful to return to after a viewing.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -277,21 +257,34 @@ export default function RealEstateMediaPage() {
       */}
       <section className="re-band">
         <div className="re-band-copy">
-          <p className="re-eyebrow"><span className="re-index">04</span>Experience</p>
-          <h2>Experience is useful when you know what to do with it.</h2>
-          <p>Vision8 comes from a much wider world than property marketing.</p>
-          <p>
-            Years behind cameras and in control rooms across television, commercials, concerts and major live events
-            have taught us how to make decisions quickly, work comfortably with people and recognise the moment worth
-            capturing.
-          </p>
-          <p>That experience now comes to a property shoot without bringing a television crew with it.</p>
-          {/* The former pull line, cut to its keywords on the client's ask for
-              keyword heading style. The qualifiers it dropped were already the
-              h2's point: knowing what to do with it. */}
-          <p className="re-keywords re-keywords-sub">
-            Thoughtful<span>.</span> Fast<span>.</span> Easy to work with<span>.</span>
-          </p>
+          {/* The picture sits beside this copy rather than behind it: it is a
+              portrait frame, and a portrait behind centred text is a wash, not
+              a photograph. The band keeps its tinted full-bleed ground, which
+              is what makes it read as the break in the page's rhythm. */}
+          <div className="re-band-split">
+            <figure>
+              <img
+                src="/real-estate/andy-stabiliser.jpg"
+                alt="Andy McGrath filming inside a home with a gimbal-mounted camera"
+                loading="lazy"
+              />
+              <figcaption>On location</figcaption>
+            </figure>
+            <div>
+              <p className="re-eyebrow"><span className="re-index">04</span>Experience</p>
+              <h2>Experience is useful when you know what to do with it.</h2>
+              <p>Vision8 comes from a much wider world than property marketing.</p>
+              <p>
+                Years behind cameras and in control rooms across television, commercials, concerts and major live
+                events have taught us how to make decisions quickly, work comfortably with people and recognise the
+                moment worth capturing.
+              </p>
+              <p>That experience now comes to a property shoot without bringing a television crew with it.</p>
+              <p className="re-keywords re-keywords-sub">
+                Thoughtful<span>.</span> Fast<span>.</span> Easy to work with<span>.</span>
+              </p>
+            </div>
+          </div>
           <blockquote className="re-voice">
             <p>{VOICE.working}</p>
           </blockquote>
@@ -362,7 +355,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.18</p>
+      <p className="portfolio-build">Build v1.11.19</p>
     </main>
   );
 }

@@ -1696,12 +1696,11 @@
   printed and how they carry on dark sites.
 */
 .re-plans-block {
-  max-width: 980px;
   margin-top: clamp(48px, 6vw, 80px);
 }
 
 .real-estate-page .re-plan {
-  margin: 26px 0 0;
+  margin: 0;
 }
 
 .real-estate-page .re-plan img {
@@ -1748,6 +1747,16 @@
 .real-estate-page .re-voice p::after {
   content: "\201D";
   color: var(--teal-bright);
+}
+
+/*
+  Alone in its section now that the copy above it has gone, so it drops the rule
+  that separated it from that copy. The section's own padding does the spacing.
+*/
+.real-estate-page .re-statement .re-voice {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
 }
 
 /* The strongest of the four, under the section it backs. */
@@ -1852,8 +1861,43 @@
 }
 
 .re-band-copy {
-  max-width: 880px;
+  /* Wider than the 880px it held when this band was copy only: it now carries a
+     picture pair, and the quote below keeps its own narrower measure. */
+  max-width: 1180px;
   margin: 0 auto;
+}
+
+/*
+  The band's picture pair. 5fr/7fr with the frame on the narrow side, which is
+  the reverse of `.re-split` elsewhere and deliberate: the stabiliser frame is
+  portrait, and on the 7fr side it would stand over 1200px tall beside five
+  short paragraphs.
+*/
+.re-band-split {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(32px, 4.4vw, 64px);
+  align-items: center;
+  text-align: left;
+}
+
+.re-band-split figure {
+  margin: 0;
+}
+
+/* Cropped to a settled portrait rather than run at its own 1466 by 2500, which
+   beside this copy is a column of picture and nothing else. */
+.re-band-split img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+/* The band centres its eyebrow; inside the pair it hangs left with the copy. */
+.real-estate-page .re-band-split .re-eyebrow {
+  justify-content: flex-start;
 }
 
 /* A quarter over the new body size, on the client's mark for this blurb. */
@@ -1943,7 +1987,8 @@
     order: -1;
   }
 
-  .re-pair {
+  .re-pair,
+  .re-band-split {
     grid-template-columns: 1fr;
   }
 
