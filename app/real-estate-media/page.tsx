@@ -13,22 +13,31 @@ const RATE_CARD = "mailto:info@vision8.co.nz?subject=Real%20estate%20rate%20card
   with `206` so seeking works, and carries `moov` at byte 32, which is faststart
   and means playback starts before the file finishes arriving.
 
+  `web.mp4`, not `download.mp4`. The download file is the delivery master: the
+  hero was 1920x1080 at 50fps and 7.1Mbps, 51.7MB for a minute, which every
+  visitor pulled because the hero autoplays. The web rendition is the same
+  footage at 1080p30 and roughly 3.2Mbps, and the hero drops to 26.7MB. Vimeo
+  used to pick a rendition per connection; serving straight from the bucket
+  means the encode has to be chosen deliberately instead.
+
   [CRITICAL] These URLs live or die with the portal collection. They carry
   `max-age=300`, so unpublishing "vision8-website" takes the site's video down
-  within five minutes. The collection has to stay published.
+  within five minutes. The collection has to stay published. A republish can
+  also retire slugs that were not re-copied, which has taken the page down once:
+  re-check all three after any change, not just the file that moved.
 
   [CRITICAL] The hero cut is "Promo V2 reduced", the cleared one. Promo V4 is a
   different cut and remains private until footage clearance is confirmed; its
   URL does not belong in this file, the markup or the build.
 */
 const MEDIA = "https://media.vision8.co.nz/library/public/collections-media/vision8-website";
-const PROPERTY_REEL = `${MEDIA}/vision8-real-estate-promo-v2-reduced/download.mp4`;
+const PROPERTY_REEL = `${MEDIA}/vision8-real-estate-promo-v2-reduced/web.mp4`;
 // The re-cut, `-2`. Replacing an asset retires the URL the old one had: the
 // original `testimonial-2026c` went to 403 the moment this was published, and
 // so did the Matterport example. Any swap here needs the whole collection
 // re-checked, not just the file that changed.
-const PEOPLE_VIDEO = `${MEDIA}/testimonial-2026c-2/download.mp4`;
-const MATTERPORT_VIDEO = `${MEDIA}/matterport-video-examples/download.mp4`;
+const PEOPLE_VIDEO = `${MEDIA}/testimonial-2026c-2/web.mp4`;
+const MATTERPORT_VIDEO = `${MEDIA}/matterport-video-examples/web.mp4`;
 
 /*
   A live tour, when there is one. A public link rather than an inline embed: an
@@ -119,8 +128,8 @@ export default function RealEstateMediaPage() {
           <ViewportPlay className="re-split re-flip">
             <figure>
               <div className="re-video">
-                {/* `preload="none"`: this is an 11MB file and nothing should be
-                    fetched until the section is actually reached. */}
+                {/* `preload="none"`: nothing is fetched until the section is
+                    actually reached. */}
                 <video src={PEOPLE_VIDEO} muted loop playsInline preload="none" controls />
               </div>
               <figcaption>Direction on location</figcaption>
@@ -307,7 +316,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.23</p>
+      <p className="portfolio-build">Build v1.11.24</p>
     </main>
   );
 }
