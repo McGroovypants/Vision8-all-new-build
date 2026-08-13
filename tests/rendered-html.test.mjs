@@ -22,14 +22,14 @@ async function render(pathname = "/") {
   );
 }
 
-test("server-renders the Vision8 v1.11.22 homepage", async () => {
+test("server-renders the Vision8 v1.11.23 homepage", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /Vision8 homepage/);
-  assert.match(html, /Build <!-- -->v1\.11\.22/);
+  assert.match(html, /Build <!-- -->v1\.11\.23/);
   assert.match(html, /aria-label="Vision8 home"/);
   assert.match(html, /Audio/);
   assert.match(html, /Tech Solutions/);
@@ -63,7 +63,7 @@ for (const [pathname, expected] of routes) {
 
     const html = await response.text();
     assert.match(html, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.match(html, /Build (?:<!-- -->)?v1\.11\.22/);
+    assert.match(html, /Build (?:<!-- -->)?v1\.11\.23/);
     assert.match(html, />Home</);
     assert.match(html, />About us</);
     assert.match(html, />Our mahi</);
@@ -90,6 +90,24 @@ test("real-estate page embeds only cleared media", async () => {
   assert.doesNotMatch(html, /media\.vision8\.co\.nz\/library\/(?!public\/)/);
   assert.doesNotMatch(html, /Lensworks/i);
   assert.doesNotMatch(html, /Promo[\s_-]?V4/i);
+});
+
+// The editor moved off the front page. Both halves are asserted: that it is
+// gone from the public homepage, and that it still exists where it was moved to.
+test("the editor is not on the public homepage", async () => {
+  const response = await render();
+  const html = await response.text();
+  assert.doesNotMatch(html, /editor-toggle/);
+  assert.doesNotMatch(html, /Homepage editor/);
+});
+
+test("the editor lives on its own route and is not indexable", async () => {
+  const response = await render("/editor");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /editor-toggle/);
+  assert.match(html, /Vision8 homepage editor/);
+  assert.match(html, /noindex/);
 });
 
 test("internal Video and About navigation replace the external GitHub page", async () => {

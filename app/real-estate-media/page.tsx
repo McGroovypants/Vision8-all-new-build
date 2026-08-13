@@ -307,7 +307,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.22</p>
+      <p className="portfolio-build">Build v1.11.23</p>
     </main>
   );
 }

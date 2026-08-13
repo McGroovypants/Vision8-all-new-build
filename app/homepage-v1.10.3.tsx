@@ -97,7 +97,7 @@ const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_
 const VIDEO_SITE = "/video";
 const PEOPLE = "/about";
 const VIDEO_IMAGE = `${CLOUD}/image/upload/f_auto,q_auto,w_1800/v1785665173/Adventuresmart_still_7_kbz7fl.png`;
-const BUILD = "v1.11.22";
+const BUILD = "v1.11.23";
 
 // Keyed by build on purpose. The persist effect writes every record, mediaUrl
 // included, on first visit whether or not the editor was opened, and the load
@@ -910,7 +910,19 @@ function EditorPanel({
   );
 }
 
-export function HomepageV1103({ skipIntro = false }: { skipIntro?: boolean } = {}) {
+/*
+  `editable` is off everywhere except the /editor route. It gates three things,
+  not one: the toggle, the panel, and the localStorage read and write.
+
+  The read matters most. This component merged saved tuning over the defaults on
+  every visit, so the owner's own browser rendered a different homepage from the
+  one the public got, with no way to tell which was which. The public page now
+  renders what is in the source, full stop.
+*/
+export function HomepageV1103({
+  skipIntro = false,
+  editable = false,
+}: { skipIntro?: boolean; editable?: boolean } = {}) {
   const [records, setRecords] = useState(defaultRecords);
   const [headerCopy, setHeaderCopy] = useState(defaultHeaderCopy);
   const [styles, setStyles] = useState(defaultStyles);
@@ -941,6 +953,13 @@ export function HomepageV1103({ skipIntro = false }: { skipIntro?: boolean } = {
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
+      // Saved tuning belongs to the editor route. `loaded` still has to be set:
+      // it gates the persist effect below, and leaving it false would strand it.
+      if (!editable) {
+        setLoaded(true);
+        return;
+      }
+
       const saved = window.localStorage.getItem(STORAGE_KEY);
       if (saved) {
         try {
@@ -978,10 +997,10 @@ export function HomepageV1103({ skipIntro = false }: { skipIntro?: boolean } = {
     }, 0);
 
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [editable]);
 
   useEffect(() => {
-    if (!loaded || !dirty.current) return;
+    if (!editable || !loaded || !dirty.current) return;
     const persistedRecords = { ...records };
     editorOrder.forEach((id) => {
       if (persistedRecords[id].mediaUrl.startsWith("blob:")) {
@@ -989,7 +1008,7 @@ export function HomepageV1103({ skipIntro = false }: { skipIntro?: boolean } = {
       }
     });
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ records: persistedRecords, styles, headerCopy }));
-  }, [records, styles, headerCopy, loaded]);
+  }, [records, styles, headerCopy, loaded, editable]);
 
   useEffect(() => {
     if (cycleCancelled) return;
@@ -1238,9 +1257,11 @@ export function HomepageV1103({ skipIntro = false }: { skipIntro?: boolean } = {
 
       <p className="build-stamp">Build {BUILD}</p>
 
-      <button className="editor-toggle" type="button" onClick={openEditor}>Editor</button>
+      {editable && (
+        <button className="editor-toggle" type="button" onClick={openEditor}>Editor</button>
+      )}
 
-      {editorOpen && (
+      {editable && editorOpen && (
         <EditorPanel
           records={records}
           styles={styles}
