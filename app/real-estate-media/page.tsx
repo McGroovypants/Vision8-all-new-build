@@ -3,40 +3,28 @@ import { PageHeader } from "../portfolio-shell";
 import { ReelHero } from "./reel-hero";
 import { ViewportPlay } from "./viewport-play";
 
-const HERO = "https://res.cloudinary.com/deyb4o5qz/image/upload/f_auto,q_auto,w_1800/v1785656289/Real_estate_shot_rrts1z.jpg";
 const CONTACT = "mailto:info@vision8.co.nz";
 const RATE_CARD = "mailto:info@vision8.co.nz?subject=Real%20estate%20rate%20card";
 
 /*
-  The cleared cut, "Vision8 Real Estate Promo V2 reduced", with the clips that
-  needed clearance taken out. Public and embeddable, confirmed against Vimeo's
-  oEmbed endpoint rather than assumed.
+  The three reels, now served from the Vision8 portal rather than embedded from
+  Vimeo. Verified from outside before wiring in, as this project requires:
+  each fetches bare with no cookie, serves `video/mp4`, answers a range request
+  with `206` so seeking works, and carries `moov` at byte 32, which is faststart
+  and means playback starts before the file finishes arriving.
 
-  [CRITICAL] Promo V4 is a different cut and is still private. Its URL does not
-  belong in this file, in the markup or in the build.
+  [CRITICAL] These URLs live or die with the portal collection. They carry
+  `max-age=300`, so unpublishing "vision8-website" takes the site's video down
+  within five minutes. The collection has to stay published.
 
-  `h` is the unlisted-video hash and the embed will not load without it.
-  `controls=0` because the hero crops the player; the sound control lives in
-  `ReelHero` instead. `dnt=1` stops Vimeo setting tracking cookies on visitors.
+  [CRITICAL] The hero cut is "Promo V2 reduced", the cleared one. Promo V4 is a
+  different cut and remains private until footage clearance is confirmed; its
+  URL does not belong in this file, the markup or the build.
 */
-const PROPERTY_REEL =
-  "https://player.vimeo.com/video/1217581060?h=015949962e&autoplay=1&muted=1&loop=1&controls=0&title=0&byline=0&portrait=0&dnt=1";
-
-// The walkthrough example. Contained rather than cropped, so Vimeo's own
-// controls are left on and there is nothing to build here.
-/*
-  [NOTE] A placeholder at the client's direction until a proper direction-on-
-  location piece exists: it is the Vision8 "Testimonials" cut, 24 seconds,
-  public on the Vision8 account. Plays on entering its region, as the
-  Matterport example below does.
-*/
-const PEOPLE_VIDEO =
-  "https://player.vimeo.com/video/1110767463?muted=1&loop=1&title=0&byline=0&portrait=0&dnt=1";
-
-// Muted so ViewportPlay's programmatic play is allowed; Vimeo's controls stay on,
-// so sound is one click away.
-const MATTERPORT_VIDEO =
-  "https://player.vimeo.com/video/1217587526?h=aecf03551a&muted=1&loop=1&title=0&byline=0&portrait=0&dnt=1";
+const MEDIA = "https://media.vision8.co.nz/library/public/collections-media/vision8-website";
+const PROPERTY_REEL = `${MEDIA}/vision8-real-estate-promo-v2-reduced/download.mp4`;
+const PEOPLE_VIDEO = `${MEDIA}/testimonial-2026c/download.mp4`;
+const MATTERPORT_VIDEO = `${MEDIA}/matterport-video-examples/download.mp4`;
 
 /*
   A live tour, when there is one. A public link rather than an inline embed: an
@@ -87,7 +75,6 @@ export default function RealEstateMediaPage() {
 
       <ReelHero
         src={PROPERTY_REEL}
-        poster={HERO}
         strip={
           <ul className="re-services">
             {services.map((service) => (
@@ -128,14 +115,9 @@ export default function RealEstateMediaPage() {
           <ViewportPlay className="re-split re-flip">
             <figure>
               <div className="re-video">
-                <iframe
-                  src={PEOPLE_VIDEO}
-                  title="People in front of camera"
-                  allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  loading="lazy"
-                  allowFullScreen
-                />
+                {/* `preload="none"`: this is an 11MB file and nothing should be
+                    fetched until the section is actually reached. */}
+                <video src={PEOPLE_VIDEO} muted loop playsInline preload="none" controls />
               </div>
               <figcaption>Direction on location</figcaption>
             </figure>
@@ -176,14 +158,7 @@ export default function RealEstateMediaPage() {
           <ViewportPlay className="re-split">
             <figure>
               <div className="re-video">
-                <iframe
-                  src={MATTERPORT_VIDEO}
-                  title="Matterport walkthrough examples"
-                  allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  loading="lazy"
-                  allowFullScreen
-                />
+                <video src={MATTERPORT_VIDEO} muted loop playsInline preload="none" controls />
               </div>
               <figcaption>Matterport walkthrough examples</figcaption>
             </figure>
@@ -328,7 +303,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.20</p>
+      <p className="portfolio-build">Build v1.11.21</p>
     </main>
   );
 }

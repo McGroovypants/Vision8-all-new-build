@@ -22,14 +22,14 @@ async function render(pathname = "/") {
   );
 }
 
-test("server-renders the Vision8 v1.11.20 homepage", async () => {
+test("server-renders the Vision8 v1.11.21 homepage", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /Vision8 homepage/);
-  assert.match(html, /Build <!-- -->v1\.11\.20/);
+  assert.match(html, /Build <!-- -->v1\.11\.21/);
   assert.match(html, /aria-label="Vision8 home"/);
   assert.match(html, /Audio/);
   assert.match(html, /Tech Solutions/);
@@ -63,7 +63,7 @@ for (const [pathname, expected] of routes) {
 
     const html = await response.text();
     assert.match(html, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.match(html, /Build (?:<!-- -->)?v1\.11\.20/);
+    assert.match(html, /Build (?:<!-- -->)?v1\.11\.21/);
     assert.match(html, />Home</);
     assert.match(html, />About us</);
     assert.match(html, />Our mahi</);
@@ -79,10 +79,15 @@ for (const [pathname, expected] of routes) {
 test("real-estate page embeds only cleared media", async () => {
   const response = await render("/real-estate-media");
   const html = await response.text();
-  // Both embeds asserted positively, so a silent swap to a different video is a
-  // test failure rather than a surprise.
-  assert.match(html, /player\.vimeo\.com\/video\/1217581060\?h=015949962e/);
-  assert.match(html, /player\.vimeo\.com\/video\/1217587526\?h=aecf03551a/);
+  // All three sources asserted positively, so a silent swap to a different cut
+  // is a test failure rather than a surprise. They are portal MP4s now, not
+  // Vimeo embeds; the collection they live in must stay published.
+  assert.match(html, /collections-media\/vision8-website\/vision8-real-estate-promo-v2-reduced\/download\.mp4/);
+  assert.match(html, /collections-media\/vision8-website\/matterport-video-examples\/download\.mp4/);
+  assert.match(html, /collections-media\/vision8-website\/testimonial-2026c\/download\.mp4/);
+  // Nothing on this page may load from the signed prefix: it answers 403 to any
+  // request without a key, which a <video src> cannot carry.
+  assert.doesNotMatch(html, /media\.vision8\.co\.nz\/library\/(?!public\/)/);
   assert.doesNotMatch(html, /Lensworks/i);
   assert.doesNotMatch(html, /Promo[\s_-]?V4/i);
 });

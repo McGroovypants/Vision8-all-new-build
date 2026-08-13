@@ -2,129 +2,79 @@
 
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 
-const PLAYER_ORIGIN = "https://player.vimeo.com";
-
 /*
-  The reel as the hero, cover-cropped to fill the fold rather than sitting in a
-  16/9 box, which on a phone would be about 220px tall and not the first thing
-  anyone sees.
+  The reel as the hero, filling the fold rather than sitting in a 16/9 box.
 
-  Vimeo's chrome is off (`controls=0`) because the player is cropped, so its
-  control bar would sit half off-screen. Everything the visitor can touch is
-  built here instead: a scrub line along the foot, a text pause control and the
-  sound toggle. No play icon anywhere, on the client's instruction, so a paused
-  hero never grows the usual triangle over the picture.
+  This was a cropped Vimeo iframe with a postMessage control channel until the
+  files moved to the Vision8 portal. A same-origin-ish `<video>` takes
+  `object-fit: cover` and `.play()` directly, so the cover-crop calculation, the
+  message plumbing, the activation dance and the click-blocking cover all went.
+  Nothing here is a workaround any more.
 
-  It all runs on the postMessage commands the official Vimeo SDK wraps, so the
-  controls cost no third-party script. The origin is pinned rather than "*":
-  these messages should only ever reach the player.
+  There is no poster. The client asked for no still at page open, and with
+  faststart on the file the first frame arrives quickly enough that a poster
+  would mostly be a flash of a different image.
 */
-export function ReelHero({
-  src,
-  poster,
-  children,
-  strip,
-}: {
-  src: string;
-  poster: string;
-  children: ReactNode;
-  /*
-    Rendered on the same bottom row as the controls, baseline-aligned, on the
-    client's mark. The row sits low enough to run under the reel's centred logo
-    card, which is why the block above it can span the full width.
-  */
-  strip?: ReactNode;
-}) {
-  const frameRef = useRef<HTMLIFrameElement>(null);
+export function ReelHero({ src, children, strip }: { src: string; children: ReactNode; strip?: ReactNode }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [soundOn, setSoundOn] = useState(false);
   const [playing, setPlaying] = useState(true);
   const [percent, setPercent] = useState(0);
-  const duration = useRef(0);
 
-  const post = useCallback((method: string, value?: unknown) => {
-    frameRef.current?.contentWindow?.postMessage(
-      JSON.stringify(value === undefined ? { method } : { method, value }),
-      PLAYER_ORIGIN,
-    );
+  // The element is the source of truth, not our state: it can pause itself when
+  // the tab is hidden or the network stalls, and the control has to follow.
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const onTime = () => {
+      if (video.duration) setPercent((video.currentTime / video.duration) * 100);
+    };
+    const onPlay = () => setPlaying(true);
+    const onPause = () => setPlaying(false);
+
+    video.addEventListener("timeupdate", onTime);
+    video.addEventListener("play", onPlay);
+    video.addEventListener("pause", onPause);
+    return () => {
+      video.removeEventListener("timeupdate", onTime);
+      video.removeEventListener("play", onPlay);
+      video.removeEventListener("pause", onPause);
+    };
   }, []);
 
-  /*
-    The player reports its own position rather than us running a timer against
-    it: a timer drifts as soon as the video stalls to buffer, and the line then
-    lies about where the reel actually is.
-  */
-  useEffect(() => {
-    function subscribe() {
-      for (const event of ["playProgress", "play", "pause"]) {
-        post("addEventListener", event);
-      }
-    }
-
-    function onMessage(event: MessageEvent) {
-      if (event.origin !== PLAYER_ORIGIN) return;
-      let data = event.data;
-      if (typeof data === "string") {
-        try {
-          data = JSON.parse(data);
-        } catch {
-          return;
-        }
-      }
-      if (!data || typeof data !== "object") return;
-
-      // `ready` can land before this listener is attached, which is why the
-      // iframe's load handler subscribes as well. Subscribing twice is
-      // harmless; missing it altogether leaves a line that never moves.
-      if (data.event === "ready") subscribe();
-      if (data.event === "play") setPlaying(true);
-      if (data.event === "pause") setPlaying(false);
-      if (data.event === "playProgress" && data.data) {
-        duration.current = data.data.duration || duration.current;
-        setPercent((data.data.percent || 0) * 100);
-      }
-    }
-
-    window.addEventListener("message", onMessage);
-    return () => window.removeEventListener("message", onMessage);
-  }, [post]);
-
-  function toggleSound() {
+  const toggleSound = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
     const next = !soundOn;
-    // Both, and in this order. Unmuting a player still sitting at volume 0 is
-    // silent, which reads as a broken button.
-    post("setMuted", !next);
-    post("setVolume", next ? 0.25 : 0);
+    video.muted = !next;
+    video.volume = next ? 0.25 : 0;
     setSoundOn(next);
-  }
+  }, [soundOn]);
 
   function togglePlay() {
-    post(playing ? "pause" : "play");
-    setPlaying(!playing);
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) void video.play();
+    else video.pause();
   }
 
   function scrub(event: React.MouseEvent<HTMLDivElement>) {
-    if (!duration.current) return;
+    const video = videoRef.current;
+    if (!video?.duration) return;
     const bar = event.currentTarget.getBoundingClientRect();
     const fraction = Math.min(Math.max((event.clientX - bar.left) / bar.width, 0), 1);
-    post("setCurrentTime", fraction * duration.current);
+    video.currentTime = fraction * video.duration;
     setPercent(fraction * 100);
   }
 
   return (
     <section className="re-hero">
-      {/* The still sits behind the player, so the fold is never empty during the
-          few seconds Vimeo takes to negotiate a rendition and start. */}
-      <div className="re-hero-video" style={{ backgroundImage: `url(${poster})` }}>
-        <iframe
-          ref={frameRef}
-          src={src}
-          title="Vision8 real estate reel"
-          allow="autoplay; fullscreen; encrypted-media"
-          referrerPolicy="strict-origin-when-cross-origin"
-          onLoad={() => {
-            for (const event of ["playProgress", "play", "pause"]) post("addEventListener", event);
-          }}
-        />
+      <div className="re-hero-video">
+        {/* muted and playsInline are both load-bearing: without muted the
+            autoplay is refused outright, and without playsInline iOS takes the
+            video fullscreen instead of playing it in place. */}
+        <video ref={videoRef} src={src} autoPlay muted loop playsInline preload="auto" />
       </div>
       <div className="re-hero-wash" aria-hidden="true" />
       <div className="re-hero-copy">
