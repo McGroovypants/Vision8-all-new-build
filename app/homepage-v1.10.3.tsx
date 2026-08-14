@@ -97,7 +97,7 @@ const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_
 const VIDEO_SITE = "/video";
 const PEOPLE = "/about";
 const VIDEO_IMAGE = `${CLOUD}/image/upload/f_auto,q_auto,w_1800/v1785665173/Adventuresmart_still_7_kbz7fl.png`;
-const BUILD = "v1.11.26";
+const BUILD = "v1.11.27";
 
 // Keyed by build on purpose. The persist effect writes every record, mediaUrl
 // included, on first visit whether or not the editor was opened, and the load
@@ -506,7 +506,13 @@ function StageMedia({ record, active }: { record: DivisionRecord; active: boolea
       key={`${record.id}-${record.mediaUrl}`}
       className={`stage-media-layer stage-image stage-${record.id} has-image${activeClass}`}
       style={{
-        backgroundImage: `url(${record.mediaUrl})`,
+        /*
+          The image is applied by homepage-v1.10.3.css from these variables, not
+          inline, so the 720px media query can swap in the lighter rendition.
+          Inline background-image would beat any stylesheet override.
+        */
+        "--media-url": `url(${record.mediaUrl})`,
+        "--media-url-mobile": `url(${record.mediaUrl.replace("w_1800", "w_800")})`,
         "--media-position": record.mediaPosition ?? "center",
         "--media-size": record.mediaSize ?? "cover",
         "--media-mobile-position": record.mediaMobilePosition ?? record.mediaPosition ?? "center",
@@ -934,6 +940,12 @@ export function HomepageV1103({
   // Reading the query here on the client instead mismatched hydration and was
   // silently dropped.
   const [skipped, setSkipped] = useState(skipIntro);
+  // Hover previews belong to pointers that can hover. On touch, iOS Safari
+  // fires the simulated mouseenter on the first tap; the preview then mutates
+  // the stage, and Safari treats the tap as hover and swallows the click, so
+  // every fan link needed two taps and read as dead. False until measured on
+  // mount; the opening sequence holds hover inert for longer than that anyway.
+  const [hoverable, setHoverable] = useState(false);
   const [cycleCancelled, setCycleCancelled] = useState(false);
   const [isCycling, setIsCycling] = useState(true);
   const [openingMediaDone, setOpeningMediaDone] = useState(false);
@@ -1069,6 +1081,19 @@ export function HomepageV1103({
 
   useEffect(() => () => blobUrls.current.forEach((url) => URL.revokeObjectURL(url)), []);
 
+  useEffect(() => {
+    // Deferred like the editor load effect above: setState directly inside an
+    // effect trips react-hooks/set-state-in-effect.
+    const timer = window.setTimeout(() => {
+      setHoverable(window.matchMedia("(hover: hover)").matches);
+    }, 0);
+    // Session cookie, read server-side in app/page.tsx, same server-resolved
+    // pattern as ?skipintro. The intro plays once per browser session; every
+    // later homepage load lands straight on the fan.
+    document.cookie = "v8-intro-seen=1; path=/; SameSite=Lax";
+    return () => window.clearTimeout(timer);
+  }, []);
+
   const styleVars = {
     "--editor-header-size": `${1.15 * (styles.header.scale / 100)}rem`,
     "--editor-header-color": colorWithBrightness(styles.header.color, styles.header.brightness),
@@ -1193,7 +1218,7 @@ export function HomepageV1103({
         </div>
         <div className="stage-wash" aria-hidden="true" />
 
-        <div className="fan" aria-label="Vision8 divisions" onMouseLeave={returnToDefault}>
+        <div className="fan" aria-label="Vision8 divisions" onMouseLeave={hoverable ? returnToDefault : undefined}>
           {fanOrder.map((id) => {
             const division = records[id];
             const lineClass = litId === id ? " line-active" : "";
@@ -1211,11 +1236,15 @@ export function HomepageV1103({
                   swaps the stage behind it, but the label itself was inert on
                   click, so the only way through to a division was the small CTA
                   in the stage copy.
+
+                  The hover preview is attached only on hover-capable pointers.
+                  onFocus stays for keyboards: focus fires after Safari's tap
+                  heuristic has already decided, so it cannot eat the click.
                 */}
                 <a
                   className={nodeClass}
                   href={division.href}
-                  onMouseEnter={() => activate(id)}
+                  onMouseEnter={hoverable ? () => activate(id) : undefined}
                   onFocus={() => activate(id)}
                 >
                   <span>{division.label}</span>

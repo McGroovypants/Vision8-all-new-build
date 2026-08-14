@@ -94,6 +94,15 @@
 }
 
 /*
+  v1.11.27: the still is applied from a variable, not an inline
+  background-image, so the 720px block below can swap in the w_800 rendition.
+  An inline background-image would beat any stylesheet override.
+*/
+.stage-media-stack .stage-image.has-image {
+  background-image: var(--media-url);
+}
+
+/*
   During the opening fan sequence every layer is held hidden and re-armed at the
   starting scale with no transition, so the Video layer has its full drift left
   to run when the sequence ends and this class comes off.
@@ -259,13 +268,34 @@
   to { opacity: var(--editor-media-opacity); }
 }
 
+/*
+  v1.11.27 mobile pass. Measured on iPhone 13 (390pt) and iPhone SE (320pt)
+  with the audit scripts: the old geometry left five of seven neighbouring
+  label boxes intersecting on an SE, labels rendered at 10.6px, the build
+  stamp sat on the explainer copy, and About us / Our mahi wrapped mid-phrase.
+*/
 @media (max-width: 720px) {
+  /*
+    Brand and nav sized so all four items hold one line down to 320pt.
+    white-space is the actual fix; the sizes just make room for it.
+  */
   .header-brand {
-    width: 104px;
+    width: 78px;
   }
 
   .site-header .header-right {
-    margin-left: 12px;
+    margin-left: 10px;
+  }
+
+  .site-header nav {
+    gap: 8px;
+    font-size: clamp(0.6rem, 2.9vw, 0.82rem);
+  }
+
+  .site-header nav a,
+  .site-header nav button {
+    white-space: nowrap;
+    letter-spacing: 0.03em;
   }
 
   .stage-media-stack .stage-media-layer {
@@ -273,23 +303,65 @@
     background-size: var(--media-mobile-size, var(--media-size, cover));
   }
 
+  /* Phones get the w_800 Cloudinary rendition set by StageMedia. */
+  .stage-media-stack .stage-image.has-image {
+    background-image: var(--media-url-mobile, var(--media-url));
+  }
+
+  /*
+    Taller vertical stagger between the four tiers so no two label boxes
+    intersect. Do not tune these by eye: the tap boxes are larger than the
+    visible labels. scratchpad se-test.mjs measures every pairwise overlap.
+  */
+  .fan {
+    height: min(58vh, 460px);
+  }
+
   .branch-motion,
   .branch-ai {
-    --branch-base-height: min(29vw, 24vh, 150px);
+    --branch-base-height: min(32vw, 23vh, 150px);
   }
 
   .branch-photography,
   .branch-websites {
-    --branch-base-height: min(34vw, 27vh, 172px);
+    --branch-base-height: min(42vw, 30vh, 192px);
   }
 
   .branch-audio,
   .branch-real-estate {
-    --branch-base-height: min(39vw, 29vh, 190px);
+    --branch-base-height: min(52vw, 37vh, 234px);
   }
 
   .branch-filming {
-    --branch-base-height: min(44vw, 31vh, 205px);
+    --branch-base-height: min(62vw, 44vh, 276px);
+  }
+
+  /*
+    0.54rem rendered at 10.6px, half Apple's ~15px legibility floor. The
+    narrower max-width wraps long labels to two lines instead of letting the
+    boxes spread into each other.
+  */
+  .fan-node {
+    max-width: 132px;
+    font-size: clamp(0.8rem, 3.6vw, 0.95rem);
+    /*
+      v1.9.0 sets white-space: nowrap, which on a phone pushes the two long
+      labels past the screen edge instead of wrapping them inside max-width.
+    */
+    white-space: normal;
+  }
+
+  /* Off the explainer copy, into the corner below the CTA line. */
+  .build-stamp {
+    right: 10px;
+    bottom: 10px;
+  }
+}
+
+/* SE-class widths: the outer two label boxes clipped the screen edge by 2px. */
+@media (max-width: 380px) {
+  .fan-node {
+    max-width: 118px;
   }
 }
 
