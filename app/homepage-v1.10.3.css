@@ -371,3 +371,18 @@
     animation: none;
   }
 }
+
+/*
+  v1.11.30: Photography's copy sizes become the sizes, on the client's mark;
+  the other six divisions read too small beside it. The photo-* variables were
+  a photography-only override in homepage-v1.10.1.css; these rules apply them
+  to every division, and the old .active-photography rules become redundant
+  rather than wrong. Headlines were already one size and stay untouched.
+*/
+.stage-copy > .stage-kicker {
+  font-size: var(--editor-photo-kicker-size);
+}
+
+.copy-row .stage-body {
+  font-size: clamp(var(--editor-photo-body-min), var(--editor-photo-body-vw), var(--editor-photo-body-max));
+}

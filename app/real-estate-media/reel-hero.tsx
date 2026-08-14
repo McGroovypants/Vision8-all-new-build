@@ -77,19 +77,18 @@ export function ReelHero({ src, children, strip }: { src: string; children: Reac
         <video ref={videoRef} src={src} autoPlay muted loop playsInline preload="auto" />
       </div>
       <div className="re-hero-wash" aria-hidden="true" />
+      {/* Top right of the hero, out of the foot row, on the client's mark. */}
+      <button
+        type="button"
+        className={`audio-btn re-sound${soundOn ? " audio-btn-solid" : ""}`}
+        onClick={toggleSound}
+        aria-pressed={soundOn}
+      >
+        {soundOn ? "Sound on" : "Play with sound"}
+      </button>
       <div className="re-hero-copy">
         {children}
-        <div className="re-hero-foot">
-          <button
-            type="button"
-            className={`audio-btn re-sound${soundOn ? " audio-btn-solid" : ""}`}
-            onClick={toggleSound}
-            aria-pressed={soundOn}
-          >
-            {soundOn ? "Sound on" : "Play with sound"}
-          </button>
-          {strip}
-        </div>
+        <div className="re-hero-foot">{strip}</div>
       </div>
 
       <div className="re-playbar">

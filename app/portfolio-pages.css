@@ -1405,10 +1405,18 @@
 */
 
 /* `.audio-btn` is written for anchors, so a button needs the browser default
-   surface and font taken off it. */
+   surface and font taken off it.
+
+   v1.11.30: pinned top right of the hero on the client's mark, out of the
+   foot row it shared with the services strip. The hero starts below the
+   sticky header, so no header offset is needed, and the copy sits at the
+   bottom of the fold, so the corner is clear on phones as well. */
 .real-estate-page .re-sound {
-  margin-top: 24px;
-  background: transparent;
+  position: absolute;
+  top: 22px;
+  right: 5%;
+  z-index: 5;
+  background: rgba(3, 4, 4, 0.45);
   font-family: inherit;
   cursor: pointer;
 }
