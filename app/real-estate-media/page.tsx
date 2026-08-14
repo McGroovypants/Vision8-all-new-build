@@ -31,13 +31,21 @@ const RATE_CARD = "mailto:info@vision8.co.nz?subject=Real%20estate%20rate%20card
   URL does not belong in this file, the markup or the build.
 */
 const MEDIA = "https://media.vision8.co.nz/library/public/collections-media/vision8-website";
-const PROPERTY_REEL = `${MEDIA}/vision8-real-estate-promo-v2-reduced/web.mp4`;
+/*
+  [NOTE] `download.mp4` is a stopgap, not the choice. The 14 Aug 2026 portal
+  republish dropped the `web.mp4` renditions and the whole page went to 403;
+  the collection manifest now lists only the delivery masters, so that is what
+  ships. The hero master is 51MB against the web rendition's 26.7MB. When the
+  web renditions are re-published to the portal, switch all three back to
+  `web.mp4` and verify all three, not just the one that moved.
+*/
+const PROPERTY_REEL = `${MEDIA}/vision8-real-estate-promo-v2-reduced/download.mp4`;
 // The re-cut, `-2`. Replacing an asset retires the URL the old one had: the
 // original `testimonial-2026c` went to 403 the moment this was published, and
 // so did the Matterport example. Any swap here needs the whole collection
 // re-checked, not just the file that changed.
-const PEOPLE_VIDEO = `${MEDIA}/testimonial-2026c-2/web.mp4`;
-const MATTERPORT_VIDEO = `${MEDIA}/matterport-video-examples/web.mp4`;
+const PEOPLE_VIDEO = `${MEDIA}/testimonial-2026c-2/download.mp4`;
+const MATTERPORT_VIDEO = `${MEDIA}/matterport-video-examples/download.mp4`;
 
 /*
   A live tour, when there is one. A public link rather than an inline embed: an
@@ -316,7 +324,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.27</p>
+      <p className="portfolio-build">Build v1.11.28</p>
     </main>
   );
 }

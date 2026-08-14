@@ -1980,3 +1980,321 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================================
+   v1.11.28 Photography page, ported from mockup v3.2.
+   Section order changed at the client's instruction: the Coastguard
+   contact sheet sits directly below the hero. The mockup had no mobile
+   layout; the media queries at the end are new and follow the lessons
+   from the 15 Aug mobile audit (no horizontal scroll, no hover-only
+   content, tap targets and text sized for phones).
+   ============================================================ */
+
+.photo-page {
+  background: #0a0a0a;
+  color: #e0e0e0;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.photo-label {
+  margin-bottom: 0.5rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.photo-title {
+  margin-bottom: 2rem;
+  font-size: clamp(1.6rem, 4vw, 2.8rem);
+  font-weight: 300;
+  color: #ccc;
+}
+
+.photo-section {
+  padding: 8vh 5%;
+}
+
+.photo-hero {
+  position: relative;
+  /* The portfolio header is sticky at 72px; this fills the rest of the
+     first screen. */
+  height: calc(100svh - 72px);
+  min-height: 420px;
+  overflow: hidden;
+}
+
+.photo-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.7);
+}
+
+.photo-hero-overlay {
+  position: absolute;
+  bottom: 10%;
+  left: 5%;
+  max-width: 500px;
+}
+
+.photo-hero-overlay h1 {
+  font-size: clamp(1.4rem, 3.5vw, 2.4rem);
+  font-weight: 300;
+  line-height: 1.3;
+  color: #fff;
+}
+
+.photo-hero-sub {
+  margin-bottom: 1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Contact sheet: Coastguard */
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 3px;
+}
+
+.contact-cell {
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.contact-cell:hover {
+  z-index: 10;
+  transform: scale(1.8);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.9);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.contact-cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.85);
+  transition: filter 0.3s;
+}
+
+.contact-cell:hover img {
+  filter: brightness(1);
+}
+
+/* Fanned stack: Primary ITO */
+
+.fan-stack {
+  position: relative;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1200px;
+}
+
+.fan-card {
+  /* The mockup wrote --angle inline per card; it is (i - 4) * 4deg. */
+  --angle: calc((var(--i) - 4) * 4deg);
+  position: absolute;
+  width: 280px;
+  height: 380px;
+  border: 3px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+  background: #111;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+  transform: rotate(calc(var(--angle) * 0.3)) translateX(calc((var(--i) - 3.5) * 90px));
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  cursor: pointer;
+  z-index: calc(10 - var(--i));
+}
+
+/* Three photos fully visible at rest: left, middle, right. */
+.fan-card:nth-child(4),
+.fan-card:nth-child(8) {
+  z-index: 15;
+}
+
+.fan-stack:hover .fan-card {
+  transform: rotate(0deg) translateX(calc((var(--i) - 3.5) * 140px));
+}
+
+.fan-card:hover {
+  z-index: 20;
+  transform: rotate(0deg) translateX(calc((var(--i) - 3.5) * 140px)) scale(1.08) !important;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.8);
+}
+
+.fan-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Breathers */
+
+.photo-breather {
+  padding: 2vh 0;
+}
+
+.photo-breather img {
+  width: 100%;
+  height: 50vh;
+  object-fit: cover;
+  filter: brightness(0.65);
+}
+
+/* Sliced strips: OSPRI */
+
+.strips-container {
+  display: flex;
+  gap: 4px;
+  height: 550px;
+  overflow: hidden;
+}
+
+.strip {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: flex 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  cursor: pointer;
+}
+
+.strip:hover {
+  flex: 3;
+}
+
+.strip img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.strip:hover img {
+  transform: scale(1.05);
+}
+
+/* Editorial grid: Hikoi and observational */
+
+.editorial {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-auto-rows: 160px;
+  gap: 14px;
+}
+
+.ed-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease, transform 0.8s ease, filter 0.4s ease;
+  cursor: pointer;
+}
+
+.ed-img.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ed-img:hover {
+  filter: brightness(1.12);
+}
+
+/* Varied but aligned spans, no rotation. */
+.editorial .ed-img:nth-child(1) { grid-column: span 3; grid-row: span 2; }
+.editorial .ed-img:nth-child(2) { grid-column: span 2; grid-row: span 2; }
+.editorial .ed-img:nth-child(3) { grid-column: span 1; grid-row: span 2; }
+.editorial .ed-img:nth-child(4) { grid-column: span 2; grid-row: span 2; }
+.editorial .ed-img:nth-child(5) { grid-column: span 2; grid-row: span 3; }
+.editorial .ed-img:nth-child(6) { grid-column: span 2; grid-row: span 2; }
+.editorial .ed-img:nth-child(7) { grid-column: span 2; grid-row: span 1; }
+.editorial .ed-img:nth-child(8) { grid-column: span 2; grid-row: span 1; }
+.editorial .ed-img:nth-child(9) { grid-column: span 4; grid-row: span 2; }
+.editorial .ed-img:nth-child(10) { grid-column: span 2; grid-row: span 2; }
+
+/* Closing */
+
+.photo-closing {
+  padding: 12vh 5%;
+  text-align: center;
+}
+
+.photo-closing p {
+  max-width: 600px;
+  margin: 0 auto;
+  font-size: clamp(1rem, 2.5vw, 1.6rem);
+  font-weight: 300;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ed-img {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Mobile: the mockup was desktop-only. The fan compresses to fit the
+   screen, the strips shorten, and the editorial grid drops to two
+   columns so no image ends up a sliver. */
+@media (max-width: 720px) {
+  .photo-hero {
+    height: calc(100svh - 62px);
+  }
+
+  .fan-stack {
+    height: 300px;
+  }
+
+  .fan-card {
+    width: 150px;
+    height: 205px;
+    border-width: 2px;
+    transform: rotate(calc(var(--angle) * 0.3)) translateX(calc((var(--i) - 3.5) * 34px));
+  }
+
+  .fan-stack:hover .fan-card,
+  .fan-card:hover {
+    transform: rotate(calc(var(--angle) * 0.3)) translateX(calc((var(--i) - 3.5) * 34px));
+  }
+
+  .strips-container {
+    height: 320px;
+  }
+
+  .editorial {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 130px;
+    gap: 8px;
+  }
+
+  .editorial .ed-img:nth-child(n) {
+    grid-column: span 1;
+    grid-row: span 2;
+  }
+
+  .editorial .ed-img:nth-child(1),
+  .editorial .ed-img:nth-child(5),
+  .editorial .ed-img:nth-child(9) {
+    grid-column: span 2;
+  }
+
+  .contact-grid {
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  }
+}

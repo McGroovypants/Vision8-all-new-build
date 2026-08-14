@@ -22,14 +22,14 @@ async function render(pathname = "/") {
   );
 }
 
-test("server-renders the Vision8 v1.11.27 homepage", async () => {
+test("server-renders the Vision8 v1.11.28 homepage", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /Vision8 homepage/);
-  assert.match(html, /Build <!-- -->v1\.11\.27/);
+  assert.match(html, /Build <!-- -->v1\.11\.28/);
   assert.match(html, /aria-label="Vision8 home"/);
   assert.match(html, /Audio/);
   assert.match(html, /Tech Solutions/);
@@ -46,7 +46,7 @@ test("server-renders the Vision8 v1.11.27 homepage", async () => {
 const routes = [
   ["/video", "Everything video"],
   ["/about", "Meet the team"],
-  ["/photography", "Still work with purpose."],
+  ["/photography", "Sometimes one frame is enough."],
   // Each sentence of the Audio headline is its own span, so the full title is
   // never one contiguous string in the markup.
   ["/audio", "What you hear changes what you feel"],
@@ -63,7 +63,7 @@ for (const [pathname, expected] of routes) {
 
     const html = await response.text();
     assert.match(html, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.match(html, /Build (?:<!-- -->)?v1\.11\.27/);
+    assert.match(html, /Build (?:<!-- -->)?v1\.11\.28/);
     assert.match(html, />Home</);
     assert.match(html, />About us</);
     assert.match(html, />Our mahi</);
@@ -80,12 +80,13 @@ test("real-estate page embeds only cleared media", async () => {
   const response = await render("/real-estate-media");
   const html = await response.text();
   // All three sources asserted positively, so a silent swap to a different cut
-  // is a test failure rather than a surprise. `web.mp4`, not `download.mp4`:
-  // the download file is the delivery master and the hero autoplays, so serving
-  // it to every visitor cost 51.7MB a visit.
-  assert.match(html, /collections-media\/vision8-website\/vision8-real-estate-promo-v2-reduced\/web\.mp4/);
-  assert.match(html, /collections-media\/vision8-website\/matterport-video-examples\/web\.mp4/);
-  assert.match(html, /collections-media\/vision8-website\/testimonial-2026c-2\/web\.mp4/);
+  // is a test failure rather than a surprise. `download.mp4` is the stopgap in
+  // force since v1.11.28: the 14 Aug portal republish dropped the `web.mp4`
+  // renditions and only the delivery masters are published. When the web
+  // renditions return, the page and these three assertions change together.
+  assert.match(html, /collections-media\/vision8-website\/vision8-real-estate-promo-v2-reduced\/download\.mp4/);
+  assert.match(html, /collections-media\/vision8-website\/matterport-video-examples\/download\.mp4/);
+  assert.match(html, /collections-media\/vision8-website\/testimonial-2026c-2\/download\.mp4/);
   // Nothing on this page may load from the signed prefix: it answers 403 to any
   // request without a key, which a <video src> cannot carry.
   assert.doesNotMatch(html, /media\.vision8\.co\.nz\/library\/(?!public\/)/);
