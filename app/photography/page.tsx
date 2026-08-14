@@ -171,7 +171,7 @@ export default function PhotographyPage() {
         <p>Every collection is different because every story is different.</p>
       </section>
 
-      <p className="portfolio-build">Build v1.11.32</p>
+      <p className="portfolio-build">Build v1.11.33</p>
     </main>
   );
 }

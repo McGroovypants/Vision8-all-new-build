@@ -787,16 +787,30 @@
 }
 
 /* Hero: the copy sits left over the console frame, so the wash is weighted to
-   that side rather than applied evenly. */
+   that side rather than applied evenly.
+
+   v1.11.33: positioned like the Real Estate hero on the client's mark. The
+   copy anchors bottom left at the page gutter instead of sitting vertically
+   centred in the width-capped .audio-inner, and the inner spans gutter to
+   gutter here so the services row has the full page to hold one line; the
+   1280px cap was what wrapped Composition onto a second line on wide
+   screens. The cap is untouched everywhere else on the page. */
 .audio-hero {
-  display: flex;
-  align-items: center;
+  position: relative;
   min-height: min(88svh, 900px);
-  padding: clamp(56px, 7vw, 100px) 0;
   border-bottom: 1px solid var(--line);
   background:
     linear-gradient(90deg, rgba(3, 4, 4, 0.94) 0%, rgba(3, 4, 4, 0.62) 46%, rgba(3, 4, 4, 0.28) 100%),
     url("/audio/mixer-hero.jpg") center / cover no-repeat;
+}
+
+.audio-hero .audio-inner {
+  position: absolute;
+  right: var(--gutter);
+  bottom: clamp(58px, 5vw, 78px);
+  left: var(--gutter);
+  width: auto;
+  margin: 0;
 }
 
 .audio-hero .audio-hero-copy {
@@ -1991,10 +2005,22 @@
    content, tap targets and text sized for phones).
    ============================================================ */
 
+/*
+  [CRITICAL] Its own scroll container, like `.audio-page`, `.video-page` and
+  `.real-estate-page`. The base stylesheet locks the document with
+  `html, body { overflow: hidden }` for the single-screen homepage, so without
+  this the page is stuck on its hero: v1.11.28 shipped exactly that, and the
+  scripted check passed because scrollIntoView scrolls a clipped page. Wheel
+  or swipe the page to check scrolling; never trust scrollIntoView for it.
+*/
 .photo-page {
+  height: 100svh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
   background: #0a0a0a;
   color: #e0e0e0;
-  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 

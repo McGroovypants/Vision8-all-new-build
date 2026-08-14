@@ -57,6 +57,8 @@ These have each cost a session. Read before styling or debugging anything visual
 
 **7. Caches mask deploys.** Hard refresh with Cmd+Shift+R. VSCode's embedded browser keeps its own cache and its own localStorage and has lagged a full session behind; treat Chrome as the reference.
 
+**8. Every new route must be its own scroll container.** `homepage-v1.8.1.css` locks the document with `html, body { overflow: hidden }` for the single-screen homepage, and Next.js page CSS is global, so every other route inherits the lock. A new page without `height: 100svh; overflow-y: auto; touch-action: pan-y` on its root is stuck on its hero with everything below unreachable. This has shipped broken three times (holding routes, real estate on mobile, photography v1.11.28). **scrollIntoView and scrollTo still work on a clipped page, so a scripted scroll check passes on a broken page.** Verify scrolling with a real wheel or swipe, or assert the root's computed `overflow-y` is `auto` and `scrollHeight > clientHeight`.
+
 ## Verify, do not assume
 
 Never report a change as working from source alone. The build stamp is the authority:
