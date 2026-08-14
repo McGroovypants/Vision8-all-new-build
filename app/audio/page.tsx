@@ -24,20 +24,20 @@ const services = ["Mixing", "Location Sound", "Voice-Over", "Multitrack recordin
 export default function AudioPage() {
   return (
     <main className="audio-page">
-      <PageHeader />
+      {/* v1.11.32: the hero matches the Real Estate page on the client's mark.
+          The division moved into the header lockup, the oversized Audio
+          eyebrow went with it, the second hero paragraph was removed, and the
+          lede breaks before its second sentence. */}
+      <PageHeader division="Audio" />
 
       <header className="audio-hero">
         <div className="audio-inner">
           <div className="audio-hero-copy">
-            <p className="audio-eyebrow">Audio</p>
             <h1>What you hear changes what you feel</h1>
             <p className="audio-lede">
-              A piece of music can completely alter the way we see an image. Sometimes the best audio work is the
-              part nobody consciously notices.
-            </p>
-            <p>
-              Vision8 works across audio engineering, music production and original composition for television,
-              advertising, presentations, films and music releases.
+              A piece of music can completely alter the way we see an image.
+              <br />
+              Sometimes the best audio work is the part nobody consciously notices.
             </p>
           </div>
           {/* Outside the copy column on purpose: that column is held narrow for
@@ -298,7 +298,7 @@ export default function AudioPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.31</p>
+      <p className="portfolio-build">Build v1.11.32</p>
     </main>
   );
 }

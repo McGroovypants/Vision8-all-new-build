@@ -804,34 +804,23 @@
 }
 
 /*
-  The page title, so it carries far more weight than the section eyebrows that
-  use the same class further down. Held well under the h1 beneath it: roughly
-  37px against 78px at 1440, so it reads as a label above the headline rather
-  than competing with it. Tracking eases off, since 0.18em on caps this size
-  spreads the word much too wide.
-*/
-.audio-hero .audio-eyebrow {
-  margin-bottom: 10px;
-  font-size: clamp(1.75rem, 2.6vw, 2.3rem);
-  letter-spacing: 0.1em;
-}
-
-/*
-  The service names, in place of the third hero paragraph. A wrapping row rather
-  than a stacked list: five short names read as one line of capability, and a
-  column of five would take more hero height than the copy above it.
+  The service names, in place of the third hero paragraph. v1.11.32: styled to
+  match the Real Estate services row on the client's mark: same size, uppercase,
+  teal hyphen separators, centred on the page at one vertical level. The hero
+  eyebrow rule that sat here went with the eyebrow itself; the division now
+  lives in the header lockup, as on the Real Estate page.
 */
 .audio-page .audio-services {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  /* Sized on the list so the gaps and separators below can scale with the type
-     in em and stay in proportion as it grows. */
-  font-size: clamp(1.25rem, 2.3vw, 2rem);
-  gap: 0.3em 0.62em;
+  justify-content: center;
+  font-size: clamp(0.975rem, 1.65vw, 1.8rem);
+  gap: 0.3em 0.55em;
   margin: 30px 0 0;
   padding: 0;
   list-style: none;
+  text-transform: uppercase;
 }
 
 .audio-page .audio-services li {
@@ -844,18 +833,14 @@
 /*
   Teal separators only where the five names hold a single line. A separator is
   drawn on the item that follows, so as soon as the row wraps the new line opens
-  with a dangling bullet. Below this width the names simply space out instead.
+  with a dangling separator. Below this width the names simply space out.
 */
 @media (min-width: 1024px) {
   .audio-page .audio-services li + li::before {
-    content: "";
-    display: inline-block;
-    width: 0.22em;
-    height: 0.22em;
-    margin-right: 0.62em;
-    vertical-align: 0.24em;
-    border-radius: 50%;
-    background: var(--teal-bright);
+    content: "-";
+    margin-right: 0.55em;
+    color: var(--teal-bright);
+    font-weight: 700;
   }
 }
 
