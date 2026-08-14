@@ -1351,15 +1351,22 @@
   z-index: 3;
 }
 
-/* The bottom row: sound button and the services line, baseline-aligned, on the
-   client's mark. It runs under the reel's centred logo card, which is why the
-   block above it can span the width while the headline stays capped. */
+/* The bottom row, now the services line alone since the sound button moved to
+   the hero's top right. v1.11.31: centred on the page at one vertical level,
+   on the client's mark. The copy block spans gutter to gutter, so centring in
+   it is centring on the page; the ul centres its own items so any wrapped
+   line on a phone stays centred too. */
 .re-hero-foot {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
+  justify-content: center;
   gap: 18px 36px;
   margin-top: 26px;
+}
+
+.real-estate-page .re-services {
+  justify-content: center;
 }
 
 .real-estate-page .re-hero-eyebrow {
