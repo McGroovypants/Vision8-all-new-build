@@ -56,8 +56,8 @@ const MATTERPORT_VIDEO = `${MEDIA}/matterport-video-examples/download.mp4`;
 */
 const MATTERPORT_TOUR = "";
 
-// Four services, one line, in the client's order.
-const services = ["Video", "Photography", "3D walkthroughs", "2D Plans"];
+// Five services, one line, in the client's order.
+const services = ["Video", "Photography", "3D walkthroughs", "2D Plans", "Virtual staging"];
 
 /*
   Harry Eggers' testimonial, supplied by the client and used as excerpts placed
@@ -324,7 +324,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.28</p>
+      <p className="portfolio-build">Build v1.11.29</p>
     </main>
   );
 }
