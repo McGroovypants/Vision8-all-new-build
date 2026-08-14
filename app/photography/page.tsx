@@ -111,9 +111,12 @@ export default function PhotographyPage() {
 
       <section className="photo-hero">
         <img src={HERO} alt="Vision8 Photography" />
+        {/* v1.11.34: the "Vision8 Photography" eyebrow went; the division
+            already reads in the header lockup, as on Audio and Real Estate.
+            The supporting sentence is the client's approved hero copy. */}
         <div className="photo-hero-overlay">
-          <p className="photo-hero-sub">Vision8 Photography</p>
           <h1>Sometimes one frame is enough.</h1>
+          <p className="photo-hero-lede">Photography for people, places, products and the work behind them.</p>
         </div>
       </section>
 
@@ -167,11 +170,14 @@ export default function PhotographyPage() {
         <EditorialGrid images={editorial} />
       </section>
 
+      {/* v1.11.34: replaced "Every collection is different because every
+          story is different." with the client's preferred closing, a simple
+          bookend to the hero line without repeating it. */}
       <section className="photo-closing">
-        <p>Every collection is different because every story is different.</p>
+        <h2>Sometimes all you need is a still image.</h2>
       </section>
 
-      <p className="portfolio-build">Build v1.11.33</p>
+      <p className="portfolio-build">Build v1.11.34</p>
     </main>
   );
 }
