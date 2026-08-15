@@ -8,7 +8,7 @@ import { useEffect, useRef } from "react";
   sweep rather than a block. Reduced motion gets the images already revealed
   via CSS; the observer still runs but the transition is disabled there.
 */
-export function EditorialGrid({ images }: { images: string[] }) {
+export function EditorialGrid({ images }: { images: { src: string; position: string }[] }) {
   const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -29,14 +29,24 @@ export function EditorialGrid({ images }: { images: string[] }) {
       { threshold: 0.15 },
     );
 
-    grid.querySelectorAll(".ed-img").forEach((el) => observer.observe(el));
+    grid.querySelectorAll(".ed-img:not(.revealed)").forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, []);
+    // Re-run when the editor changes the set: newly added images mount
+    // unrevealed and need observing, and a once-only observer would leave
+    // them permanently at opacity 0.
+  }, [images]);
 
   return (
     <div className="editorial" ref={gridRef}>
-      {images.map((src) => (
-        <img className="ed-img" key={src} src={src} alt="" loading="lazy" />
+      {images.map((image, index) => (
+        <img
+          className="ed-img"
+          key={`${image.src}-${index}`}
+          src={image.src}
+          alt=""
+          loading="lazy"
+          style={{ objectPosition: image.position }}
+        />
       ))}
     </div>
   );

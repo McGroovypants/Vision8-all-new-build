@@ -22,14 +22,14 @@ async function render(pathname = "/") {
   );
 }
 
-test("server-renders the Vision8 v1.11.34 homepage", async () => {
+test("server-renders the Vision8 v1.11.35 homepage", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /Vision8 homepage/);
-  assert.match(html, /Build <!-- -->v1\.11\.34/);
+  assert.match(html, /Build <!-- -->v1\.11\.35/);
   assert.match(html, /aria-label="Vision8 home"/);
   assert.match(html, /Audio/);
   assert.match(html, /Tech Solutions/);
@@ -63,7 +63,7 @@ for (const [pathname, expected] of routes) {
 
     const html = await response.text();
     assert.match(html, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.match(html, /Build (?:<!-- -->)?v1\.11\.34/);
+    assert.match(html, /Build (?:<!-- -->)?v1\.11\.35/);
     assert.match(html, />Home</);
     assert.match(html, />About us</);
     assert.match(html, />Our mahi</);
@@ -110,6 +110,34 @@ test("the editor lives on its own route and is not indexable", async () => {
   assert.match(html, /editor-toggle/);
   assert.match(html, /Vision8 homepage editor/);
   assert.match(html, /noindex/);
+});
+
+// The photography editor mirrors the homepage editor's arrangement: absent
+// from the public page, present on its own unindexable route. The preview
+// route exists only for the editor's phone-preview iframe.
+test("the photography editor is not on the public photography page", async () => {
+  const response = await render("/photography");
+  const html = await response.text();
+  assert.doesNotMatch(html, /Photography editor/);
+  assert.doesNotMatch(html, /editor-panel/);
+});
+
+test("the photography editor lives on its own route and is not indexable", async () => {
+  const response = await render("/photography/editor");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Photography editor/);
+  assert.match(html, /editor-panel/);
+  assert.match(html, /noindex/);
+});
+
+test("the photography preview route renders and is not indexable", async () => {
+  const response = await render("/photography/preview");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Sometimes one frame is enough\./);
+  assert.match(html, /noindex/);
+  assert.doesNotMatch(html, /editor-panel/);
 });
 
 test("internal Video and About navigation replace the external GitHub page", async () => {
