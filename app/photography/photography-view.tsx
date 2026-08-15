@@ -62,7 +62,17 @@ export type PhotoState = {
 
 const img = (src: string): PhotoImage => ({ src, focusX: 50, focusY: 50, zoom: 1 });
 
-// Coastguard, 30 face-aware square crops, mockup order.
+/*
+  v1.11.38: the defaults below are the client's first curation pass, made in
+  the editor on 15 Aug 2026 and handed over as Copy layout JSON. Contact
+  sheet down to 28 crops (imgc9205 and imgc5130-1600 dropped, light reorder),
+  editorial down to 8 (screen-shot 8-55-41 and imgc4800 dropped, four
+  reframed), three strips and the second breather reframed, and the Primary
+  ITO, OSPRI and Hikoi labels hidden; Coastguard stays visible. Dropped files
+  remain in public/photography/ and can return via Add by URL.
+*/
+
+// Coastguard, 28 face-aware square crops, client order.
 const contactSheet = [
   "img-9882-1786678083-f2afb9ac.jpg",
   "img-9945-1786678087-d802a26a.jpg",
@@ -76,24 +86,22 @@ const contactSheet = [
   "img-9839-1786734650-24c73033.jpg",
   "img-9805-1786734650-358e3e09.jpg",
   "imgc9164-1786734654-84d3bff1.jpg",
-  "imgc9207-1786734655-5935ae27.jpg",
-  "imgc9198-1786734656-a8c4a4c1.jpg",
-  "imgc9205-1786734657-76665e23.jpg",
+  "imgc9191-1786734682-ffdcf6d7.jpg",
   "screenshot-2026-05-08-at-8-00-09-am-1786734657-589e683c.jpg",
   "screenshot-2026-05-08-at-7-59-58-am-1786734659-695db86e.jpg",
+  "imgc9198-1786734656-a8c4a4c1.jpg",
   "imgc9076-1786734661-338ae127.jpg",
   "img-9708-1786734661-968d33d9.jpg",
   "screenshot-2026-05-08-at-8-00-25-am-1786734663-c971d587.jpg",
+  "imgc9207-1786734655-5935ae27.jpg",
   "imgc9249-1786734663-fdd2f819.jpg",
   "imgc9258-1786734666-6ee7051f.jpg",
   "imgc9257-1786734669-6da9117a.jpg",
   "imgc9195-1786734677-580cbd08.jpg",
-  "imgc9191-1786734682-ffdcf6d7.jpg",
   "imgc9224-1786734683-a6d908fa.jpg",
   "imgc5128-1600x1067-1786740334-cf37bf51.jpg",
   "imgc5146-1600x1066-1786740338-cd4074cd.jpg",
   "imgc5178-1600x1066-1786740340-eb17da65.jpg",
-  "imgc5130-1600x1067-1786740343-ae22cf2e.jpg",
 ].map((file) => img(`${P}/crops/${file}`));
 
 // Primary ITO, eight cards, three fully visible at rest, hover fans them all.
@@ -108,31 +116,31 @@ const fanned = [
   "p-ito-arb-sm-6-1600x1600-1786737305-b08bc111.jpg",
 ].map((file) => img(`${P}/${file}`));
 
-// OSPRI, eight vertical strips, hover expands.
-const strips = [
-  "imgc4355-1785813065.jpg",
-  "imgc4385-1785813065.jpg",
-  "imgc4226-1785813065.jpg",
-  "imgc4401-1785813065.jpg",
-  "imgc4007-1785813065.jpg",
-  "imgc1933-1786735898-19bed632.jpg",
-  "imgc1702-1786735899-65ad6ea4.jpg",
-  "imgc1711-1786735902-b8fabc66.jpg",
-].map((file) => img(`${P}/${file}`));
+// OSPRI, eight vertical strips, hover expands. The last three carry the
+// client's reframes.
+const strips: PhotoImage[] = [
+  img(`${P}/imgc4355-1785813065.jpg`),
+  img(`${P}/imgc4385-1785813065.jpg`),
+  img(`${P}/imgc4226-1785813065.jpg`),
+  img(`${P}/imgc4401-1785813065.jpg`),
+  img(`${P}/imgc4007-1785813065.jpg`),
+  { ...img(`${P}/imgc1933-1786735898-19bed632.jpg`), focusX: 82 },
+  { ...img(`${P}/imgc1702-1786735899-65ad6ea4.jpg`), focusX: 46 },
+  { ...img(`${P}/imgc1711-1786735902-b8fabc66.jpg`), focusX: 42 },
+];
 
-// Hikoi and observational work, ten images on the aligned six-column grid.
-const editorial = [
-  "img-4112-1785781272.jpg",
-  "screen-shot-2018-10-01-at-8-55-41-pm-2-1785781422.jpg",
-  "screen-shot-2018-10-01-at-8-57-08-pm-1785781422.jpg",
-  "imgc4692-1786394460-dfc39369.jpg",
-  "imgc3882-1786394460-847a5f1a.jpg",
-  "imgc4454-1786394464-18c566a0.jpg",
-  "imgc4657-1786394468-f4afa50a.jpg",
-  "imgc3884-1786394471-72c746a7.jpg",
-  "imgc4800-1786394473-b9daa8a1.jpg",
-  "imgc4746-1786394475-9fee2875.jpg",
-].map((file) => img(`${P}/${file}`));
+// Hikoi and observational work. Eight images since the client's curation,
+// which happens to close the six-column span pattern into a full rectangle.
+const editorial: PhotoImage[] = [
+  img(`${P}/img-4112-1785781272.jpg`),
+  { ...img(`${P}/screen-shot-2018-10-01-at-8-57-08-pm-1785781422.jpg`), focusX: 7, focusY: 100, zoom: 1.1 },
+  img(`${P}/imgc4692-1786394460-dfc39369.jpg`),
+  { ...img(`${P}/imgc3882-1786394460-847a5f1a.jpg`), focusY: 0 },
+  img(`${P}/imgc4454-1786394464-18c566a0.jpg`),
+  img(`${P}/imgc4657-1786394468-f4afa50a.jpg`),
+  img(`${P}/imgc3884-1786394471-72c746a7.jpg`),
+  { ...img(`${P}/imgc4746-1786394475-9fee2875.jpg`), focusY: 69 },
+];
 
 export const defaultState: PhotoState = {
   hero: img(`${P}/dragonfly-in-hongkong-1786678073-de2cf7f1.jpg`),
@@ -140,11 +148,13 @@ export const defaultState: PhotoState = {
   heroLede: "Photography for people, places, products and the work behind them.",
   collections: {
     contact: { label: "Coastguard", showLabel: true, title: "Ready for anything", showTitle: true, images: contactSheet },
-    fan: { label: "Primary ITO", showLabel: true, title: "Hands on, every day", showTitle: true, images: fanned },
-    strips: { label: "OSPRI", showLabel: true, title: "Faces, places, purpose", showTitle: true, images: strips },
-    editorial: { label: "Hikoi & Observational", showLabel: true, title: "Because they just happen", showTitle: true, images: editorial },
+    // Labels off for these three at the client's curation; the names stay in
+    // the data so the editor can turn them back on.
+    fan: { label: "Primary ITO", showLabel: false, title: "Hands on, every day", showTitle: true, images: fanned },
+    strips: { label: "OSPRI", showLabel: false, title: "Faces, places, purpose", showTitle: true, images: strips },
+    editorial: { label: "Hikoi & Observational", showLabel: false, title: "Because they just happen", showTitle: true, images: editorial },
   },
-  breathers: [img(`${P}/z6-1786678073-6c134bec.jpg`), img(`${P}/img-8268a-1785783280.jpg`)],
+  breathers: [img(`${P}/z6-1786678073-6c134bec.jpg`), { ...img(`${P}/img-8268a-1785783280.jpg`), focusY: 92 }],
   closing: "Sometimes all you need is a still image.",
   showClosing: true,
 };
