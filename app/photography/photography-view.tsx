@@ -404,6 +404,16 @@ export function PhotographyView({
     const boxW = el.offsetWidth;
     const boxH = el.offsetHeight;
     const cover = el.naturalWidth && el.naturalHeight ? Math.max(boxW / el.naturalWidth, boxH / el.naturalHeight) : 1;
+    const zoom = image.zoom ?? 1;
+    /*
+      Above 100% the drag pans the crop overflow. Below 100% (v1.11.37: the
+      zoom range now reaches down to 20%) the shrunken image slides inside its
+      frame instead, and the focal origin moves it the opposite way, so the
+      range is stored negative to flip the drag direction and keep the image
+      following the pointer.
+    */
+    const rangeX = zoom >= 1 ? Math.max(el.naturalWidth * cover * zoom - boxW, 0) : -(boxW * (1 - zoom));
+    const rangeY = zoom >= 1 ? Math.max(el.naturalHeight * cover * zoom - boxH, 0) : -(boxH * (1 - zoom));
     drag.current = {
       target,
       pointerId: event.pointerId,
@@ -411,8 +421,8 @@ export function PhotographyView({
       startY: event.clientY,
       focusX: image.focusX,
       focusY: image.focusY,
-      rangeX: Math.max(el.naturalWidth * cover * (image.zoom ?? 1) - boxW, 0),
-      rangeY: Math.max(el.naturalHeight * cover * (image.zoom ?? 1) - boxH, 0),
+      rangeX,
+      rangeY,
       moved: false,
     };
     el.setPointerCapture(event.pointerId);
@@ -429,9 +439,10 @@ export function PhotographyView({
     const image = getImage(d.target);
     const next = { ...image };
     // The image follows the pointer: dragging right reveals the left of the
-    // frame, which is a lower focus percentage.
-    if (d.rangeX > 1) next.focusX = Math.round(Math.min(100, Math.max(0, d.focusX - (dx / d.rangeX) * 100)));
-    if (d.rangeY > 1) next.focusY = Math.round(Math.min(100, Math.max(0, d.focusY - (dy / d.rangeY) * 100)));
+    // frame, which is a lower focus percentage. A negative range (zoomed
+    // below 100%) flips that, sliding the shrunken image with the pointer.
+    if (Math.abs(d.rangeX) > 1) next.focusX = Math.round(Math.min(100, Math.max(0, d.focusX - (dx / d.rangeX) * 100)));
+    if (Math.abs(d.rangeY) > 1) next.focusY = Math.round(Math.min(100, Math.max(0, d.focusY - (dy / d.rangeY) * 100)));
     if (next.focusX !== image.focusX || next.focusY !== image.focusY) setImage(d.target, next);
   };
 
@@ -733,8 +744,8 @@ function FocusControls({ image, onChange }: { image: PhotoImage; onChange: (next
         <div className="range-row">
           <input
             type="range"
-            min={100}
-            max={300}
+            min={20}
+            max={200}
             step={5}
             value={Math.round((image.zoom ?? 1) * 100)}
             onChange={(event) => onChange({ ...image, zoom: Number(event.target.value) / 100 })}
@@ -950,7 +961,7 @@ function CollectionControls({
             image={selectedImage}
             onChange={(next) => setImages(c.images.map((entry, i) => (i === selected ? next : entry)))}
           />
-          <p className="editor-note">Drag the photo on the page to reframe it. An image that fills its frame exactly, like the square contact crops, only moves once zoom is above 100%.</p>
+          <p className="editor-note">Drag the photo on the page to reframe it. An image that fills its frame exactly, like the square contact crops, only moves once zoom is away from 100%: above it the drag pans the crop, below it the whole image slides in its frame.</p>
           <div className="editor-two-column">
             <button type="button" disabled={selected === 0} onClick={() => reorder(selected, selected - 1)}>Move earlier</button>
             <button type="button" disabled={selected === c.images.length - 1} onClick={() => reorder(selected, selected + 1)}>Move later</button>
