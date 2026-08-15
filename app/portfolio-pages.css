@@ -2062,11 +2062,20 @@
   overflow: hidden;
 }
 
+/*
+  v1.11.36: every photograph on this page can carry an editor-set zoom and
+  focal point. The component writes --zoom and --origin inline (never an
+  inline transform, which would beat the hover transforms below); the scale
+  lives here so each treatment's own hover can compose with it. At the
+  default --zoom of 1 nothing changes.
+*/
 .photo-hero img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   filter: brightness(0.7);
+  transform: scale(var(--zoom, 1));
+  transform-origin: var(--origin, 50% 50%);
 }
 
 /* Anchored bottom left at the page gutter, the same position grammar as
@@ -2126,6 +2135,8 @@
   object-fit: cover;
   filter: brightness(0.85);
   transition: filter 0.3s;
+  transform: scale(var(--zoom, 1));
+  transform-origin: var(--origin, 50% 50%);
 }
 
 .contact-cell:hover img {
@@ -2186,12 +2197,17 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform: scale(var(--zoom, 1));
+  transform-origin: var(--origin, 50% 50%);
 }
 
 /* Breathers */
 
 .photo-breather {
   padding: 2vh 0;
+  /* Clips the editor's zoom, which would otherwise spill over the sections
+     either side. */
+  overflow: hidden;
 }
 
 .photo-breather img {
@@ -2199,6 +2215,8 @@
   height: 50vh;
   object-fit: cover;
   filter: brightness(0.65);
+  transform: scale(var(--zoom, 1));
+  transform-origin: var(--origin, 50% 50%);
 }
 
 /* Sliced strips: OSPRI */
@@ -2228,10 +2246,13 @@
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
+  transform: scale(var(--zoom, 1));
+  transform-origin: var(--origin, 50% 50%);
 }
 
+/* The hover lift multiplies the editor zoom rather than replacing it. */
 .strip:hover img {
-  transform: scale(1.05);
+  transform: scale(calc(var(--zoom, 1) * 1.05));
 }
 
 /* Editorial grid: Hikoi and observational */
@@ -2243,19 +2264,26 @@
   gap: 14px;
 }
 
+/* v1.11.36: each image sits in an .ed-cell so the editor zoom crops inside
+   its own cell. The span rules target the cells; reveal stays on the img. */
+.ed-cell {
+  overflow: hidden;
+}
+
 .ed-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(30px) scale(var(--zoom, 1));
+  transform-origin: var(--origin, 50% 50%);
   transition: opacity 0.8s ease, transform 0.8s ease, filter 0.4s ease;
   cursor: pointer;
 }
 
 .ed-img.revealed {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(var(--zoom, 1));
 }
 
 .ed-img:hover {
@@ -2263,19 +2291,19 @@
 }
 
 /* Varied but aligned spans, no rotation. */
-.editorial .ed-img:nth-child(1) { grid-column: span 3; grid-row: span 2; }
-.editorial .ed-img:nth-child(2) { grid-column: span 2; grid-row: span 2; }
-.editorial .ed-img:nth-child(3) { grid-column: span 1; grid-row: span 2; }
-.editorial .ed-img:nth-child(4) { grid-column: span 2; grid-row: span 2; }
-.editorial .ed-img:nth-child(5) { grid-column: span 2; grid-row: span 3; }
-.editorial .ed-img:nth-child(6) { grid-column: span 2; grid-row: span 2; }
-.editorial .ed-img:nth-child(7) { grid-column: span 2; grid-row: span 1; }
-.editorial .ed-img:nth-child(8) { grid-column: span 2; grid-row: span 1; }
-.editorial .ed-img:nth-child(9) { grid-column: span 4; grid-row: span 2; }
-.editorial .ed-img:nth-child(10) { grid-column: span 2; grid-row: span 2; }
+.editorial .ed-cell:nth-child(1) { grid-column: span 3; grid-row: span 2; }
+.editorial .ed-cell:nth-child(2) { grid-column: span 2; grid-row: span 2; }
+.editorial .ed-cell:nth-child(3) { grid-column: span 1; grid-row: span 2; }
+.editorial .ed-cell:nth-child(4) { grid-column: span 2; grid-row: span 2; }
+.editorial .ed-cell:nth-child(5) { grid-column: span 2; grid-row: span 3; }
+.editorial .ed-cell:nth-child(6) { grid-column: span 2; grid-row: span 2; }
+.editorial .ed-cell:nth-child(7) { grid-column: span 2; grid-row: span 1; }
+.editorial .ed-cell:nth-child(8) { grid-column: span 2; grid-row: span 1; }
+.editorial .ed-cell:nth-child(9) { grid-column: span 4; grid-row: span 2; }
+.editorial .ed-cell:nth-child(10) { grid-column: span 2; grid-row: span 2; }
 /* Images beyond the mockup's ten, added in the editor, get a consistent 2x2
    cell rather than collapsing to a 1x1 sliver. */
-.editorial .ed-img:nth-child(n + 11) { grid-column: span 2; grid-row: span 2; }
+.editorial .ed-cell:nth-child(n + 11) { grid-column: span 2; grid-row: span 2; }
 
 /* Closing */
 
@@ -2299,7 +2327,8 @@
 @media (prefers-reduced-motion: reduce) {
   .ed-img {
     opacity: 1;
-    transform: none;
+    /* Not `none`: the editor zoom must survive with the reveal disabled. */
+    transform: scale(var(--zoom, 1));
     transition: none;
   }
 }
@@ -2338,14 +2367,14 @@
     gap: 8px;
   }
 
-  .editorial .ed-img:nth-child(n) {
+  .editorial .ed-cell:nth-child(n) {
     grid-column: span 1;
     grid-row: span 2;
   }
 
-  .editorial .ed-img:nth-child(1),
-  .editorial .ed-img:nth-child(5),
-  .editorial .ed-img:nth-child(9) {
+  .editorial .ed-cell:nth-child(1),
+  .editorial .ed-cell:nth-child(5),
+  .editorial .ed-cell:nth-child(9) {
     grid-column: span 2;
   }
 
@@ -2355,11 +2384,55 @@
 }
 
 /* ============================================================
-   Photography editor (v1.11.35). The panel chrome reuses the homepage
-   editor's global classes (.editor-panel, .editor-section, .range-row and
-   friends from homepage-v1.9.0.css); only the pieces the homepage editor
-   does not have are styled here.
+   Photography editor (v1.11.35, reworked v1.11.36). The panel chrome reuses
+   the homepage editor's global classes (.editor-panel, .editor-section,
+   .range-row and friends from homepage-v1.9.0.css); only the pieces the
+   homepage editor does not have are styled here.
    ============================================================ */
+
+/* The page docks beside the open panel instead of running underneath it, on
+   the client's mark: nothing on the page is covered while editing. The width
+   mirrors the .editor-panel width exactly. */
+.photo-page.panel-open {
+  width: calc(100% - min(430px, 100vw));
+}
+
+/* Direct manipulation affordances. Dragging a photo reframes it, so the
+   images advertise grab; text that opens its own field advertises pointer
+   with a teal dash on hover. touch-action is off on the images so a drag is
+   a reframe rather than a page scroll while editing. */
+.photo-editing .photo-hero img,
+.photo-editing .photo-breather img,
+.photo-editing .contact-cell img,
+.photo-editing .fan-card img,
+.photo-editing .strip img,
+.photo-editing .ed-img {
+  cursor: grab;
+  touch-action: none;
+}
+
+.photo-editing [data-edit-text] {
+  cursor: pointer;
+}
+
+.photo-editing [data-edit-text]:hover {
+  outline: 1px dashed rgba(11, 183, 163, 0.65);
+  outline-offset: 6px;
+}
+
+/* While editing, the hover moves that fight a precise drag are stilled: the
+   contact cells stay put instead of scaling 1.8, and the strips hold their
+   width instead of expanding. Hover behaviour is unchanged for visitors and
+   in the phone preview; judge it there. */
+.photo-editing .contact-cell:hover {
+  z-index: auto;
+  transform: none;
+  box-shadow: none;
+}
+
+.photo-editing .strip:hover {
+  flex: 1;
+}
 
 .photo-editor-thumbs {
   display: grid;
@@ -2466,10 +2539,32 @@
   accent-color: var(--teal-bright);
 }
 
-.photo-editor-breather {
+/* Hero and breather blocks: a wide thumbnail above the image controls. The
+   selected state mirrors the collection thumbs so the page-click landing
+   spot is obvious. */
+.photo-editor-slot {
   display: grid;
-  gap: 6px;
-  margin-bottom: 18px;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 4px;
+}
+
+.photo-editor-slot.selected {
+  border-color: var(--teal-bright);
+}
+
+.photo-editor-thumb.wide {
+  aspect-ratio: 21 / 9;
+  width: 100%;
+}
+
+.photo-editor-subhead {
+  margin: 18px 0 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 /* Phone preview: a real 390px viewport in an iframe, so the page's own media

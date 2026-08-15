@@ -9,6 +9,15 @@
   live. The public /photography renders the source defaults below and never
   touches localStorage, so nothing the editor does reaches visitors.
 
+  v1.11.36, on the client's mark: the panel lists every section vertically in
+  page order instead of behind a dropdown; clicking a picture or a line of
+  text on the page jumps the panel to that exact item; and images are
+  reframed by dragging them directly on the page. Dragging pans within the
+  crop, which for an image that exactly fills its frame (the square contact
+  crops in square cells) is a zero range: those need zoom above 100% before
+  any movement is possible, which is also why the v1.11.35 focus sliders
+  appeared to do nothing on the contact sheet.
+
   Collections mean photographs that belong together, not one client per
   section: the client/source labels are editable and hideable here precisely
   so that question can be settled by looking, not decided in source.
@@ -29,7 +38,7 @@ const P = "/photography";
 // shared BUILD in portfolio-shell.tsx whenever these defaults change.
 const STORAGE_KEY = `vision8-photography-editor-${BUILD}`;
 
-export type PhotoImage = { src: string; focusX: number; focusY: number };
+export type PhotoImage = { src: string; focusX: number; focusY: number; zoom: number };
 
 export type SectionId = "contact" | "fan" | "strips" | "editorial";
 
@@ -51,7 +60,7 @@ export type PhotoState = {
   showClosing: boolean;
 };
 
-const img = (src: string): PhotoImage => ({ src, focusX: 50, focusY: 50 });
+const img = (src: string): PhotoImage => ({ src, focusX: 50, focusY: 50, zoom: 1 });
 
 // Coastguard, 30 face-aware square crops, mockup order.
 const contactSheet = [
@@ -162,6 +171,7 @@ function mergeSaved(saved: unknown): PhotoState {
       src: c.src,
       focusX: typeof c.focusX === "number" ? c.focusX : 50,
       focusY: typeof c.focusY === "number" ? c.focusY : 50,
+      zoom: typeof c.zoom === "number" ? c.zoom : 1,
     };
   };
   const collection = (id: SectionId): Collection => {
@@ -205,9 +215,42 @@ function readSaved(): PhotoState | null {
   }
 }
 
-const focus = (image: PhotoImage) => ({ objectPosition: `${image.focusX}% ${image.focusY}%` });
+/*
+  Pan and zoom are both anchored on the focal point: object-position pans the
+  cover overflow, and --zoom/--origin drive a transform scale in CSS (never
+  inline transform, which would silently defeat the hover transforms the
+  treatments already own).
+*/
+const focus = (image: PhotoImage) =>
+  ({
+    objectPosition: `${image.focusX}% ${image.focusY}%`,
+    "--zoom": image.zoom ?? 1,
+    "--origin": `${image.focusX}% ${image.focusY}%`,
+  }) as React.CSSProperties;
 
-type PanelSection = "hero" | SectionId | "breathers" | "closing";
+type ImageTarget =
+  | { kind: "hero" }
+  | { kind: "breather"; index: number }
+  | { kind: "image"; section: SectionId; index: number };
+
+type Active = ImageTarget | null;
+
+const targetKey = (target: ImageTarget) =>
+  target.kind === "image" ? `${target.section}-${target.index}` : target.kind === "breather" ? `breather-${target.index}` : "hero";
+
+// The drag handlers are shared by every image and find their subject through
+// this key in a data attribute, so the handlers can be single component-level
+// functions (the react-compiler lint rejects ref access inside functions
+// minted per image during render).
+const parseTarget = (key: string | undefined): ImageTarget | null => {
+  if (!key) return null;
+  if (key === "hero") return { kind: "hero" };
+  if (key.startsWith("breather-")) return { kind: "breather", index: Number(key.slice("breather-".length)) };
+  const cut = key.lastIndexOf("-");
+  const section = key.slice(0, cut) as SectionId;
+  if (!sectionOrder.includes(section)) return null;
+  return { kind: "image", section, index: Number(key.slice(cut + 1)) };
+};
 
 export function PhotographyView({
   editable = false,
@@ -219,14 +262,24 @@ export function PhotographyView({
   const [state, setState] = useState<PhotoState>(defaultState);
   const [loaded, setLoaded] = useState(false);
   const [panelOpen, setPanelOpen] = useState(editable);
-  const [panelSection, setPanelSection] = useState<PanelSection>("hero");
-  const [selected, setSelected] = useState<number | null>(null);
+  const [active, setActive] = useState<Active>(null);
   const [phonePreview, setPhonePreview] = useState(false);
   const [copied, setCopied] = useState(false);
   // Same guard as the homepage editor: nothing is written to localStorage
   // until the user actually changes something, so opening the editor to look
   // never pins the current defaults over a later deploy.
   const dirty = useRef(false);
+  const drag = useRef<{
+    target: ImageTarget;
+    pointerId: number;
+    startX: number;
+    startY: number;
+    focusX: number;
+    focusY: number;
+    rangeX: number;
+    rangeY: number;
+    moved: boolean;
+  } | null>(null);
 
   useEffect(() => {
     // Deferred with a zero timeout like the homepage editor's load effect:
@@ -274,6 +327,16 @@ export function PhotographyView({
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(persisted));
   }, [editable, loaded, state]);
 
+  // Clicking an element on the page lands the panel on that exact item.
+  useEffect(() => {
+    if (!active) return;
+    const id = `pe-thumb-${targetKey(active)}`;
+    const timer = window.setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 60);
+    return () => window.clearTimeout(timer);
+  }, [active]);
+
   const update = (patch: (current: PhotoState) => PhotoState) => {
     dirty.current = true;
     setState(patch);
@@ -285,25 +348,142 @@ export function PhotographyView({
       collections: { ...current.collections, [id]: { ...current.collections[id], ...patch } },
     }));
 
+  const getImage = (target: ImageTarget): PhotoImage =>
+    target.kind === "hero"
+      ? state.hero
+      : target.kind === "breather"
+        ? state.breathers[target.index]
+        : state.collections[target.section].images[target.index];
+
+  const setImage = (target: ImageTarget, next: PhotoImage) =>
+    update((current) => {
+      if (target.kind === "hero") return { ...current, hero: next };
+      if (target.kind === "breather") {
+        return { ...current, breathers: current.breathers.map((entry, i) => (i === target.index ? next : entry)) };
+      }
+      return {
+        ...current,
+        collections: {
+          ...current.collections,
+          [target.section]: {
+            ...current.collections[target.section],
+            images: current.collections[target.section].images.map((entry, i) => (i === target.index ? next : entry)),
+          },
+        },
+      };
+    });
+
+  const select = (target: ImageTarget) => {
+    setActive(target);
+    setPanelOpen(true);
+  };
+
+  const focusField = (id: string) => {
+    if (!editable) return;
+    setPanelOpen(true);
+    window.setTimeout(() => {
+      const el = document.getElementById(id);
+      el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      (el as HTMLElement | null)?.focus();
+    }, 60);
+  };
+
+  /*
+    Drag-to-reframe, on the page images themselves. A press that moves under
+    4px is a click and selects the image in the panel instead. The pan range
+    is the cover overflow (natural size scaled to cover, times zoom, minus the
+    frame): dragging maps 1:1 through that range, and a zero range, square
+    crop in a square cell at 100% zoom, means there is nothing to pan until
+    zoom is raised.
+  */
+  const onImagePointerDown = (event: React.PointerEvent<HTMLImageElement>) => {
+    const el = event.currentTarget;
+    const target = parseTarget(el.dataset.editTarget);
+    if (!target) return;
+    const image = getImage(target);
+    const boxW = el.offsetWidth;
+    const boxH = el.offsetHeight;
+    const cover = el.naturalWidth && el.naturalHeight ? Math.max(boxW / el.naturalWidth, boxH / el.naturalHeight) : 1;
+    drag.current = {
+      target,
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      focusX: image.focusX,
+      focusY: image.focusY,
+      rangeX: Math.max(el.naturalWidth * cover * (image.zoom ?? 1) - boxW, 0),
+      rangeY: Math.max(el.naturalHeight * cover * (image.zoom ?? 1) - boxH, 0),
+      moved: false,
+    };
+    el.setPointerCapture(event.pointerId);
+    event.preventDefault();
+  };
+
+  const onImagePointerMove = (event: React.PointerEvent<HTMLImageElement>) => {
+    const d = drag.current;
+    if (!d || d.pointerId !== event.pointerId) return;
+    const dx = event.clientX - d.startX;
+    const dy = event.clientY - d.startY;
+    if (!d.moved && Math.hypot(dx, dy) < 4) return;
+    d.moved = true;
+    const image = getImage(d.target);
+    const next = { ...image };
+    // The image follows the pointer: dragging right reveals the left of the
+    // frame, which is a lower focus percentage.
+    if (d.rangeX > 1) next.focusX = Math.round(Math.min(100, Math.max(0, d.focusX - (dx / d.rangeX) * 100)));
+    if (d.rangeY > 1) next.focusY = Math.round(Math.min(100, Math.max(0, d.focusY - (dy / d.rangeY) * 100)));
+    if (next.focusX !== image.focusX || next.focusY !== image.focusY) setImage(d.target, next);
+  };
+
+  const onImagePointerUp = (event: React.PointerEvent<HTMLImageElement>) => {
+    const d = drag.current;
+    if (!d || d.pointerId !== event.pointerId) return;
+    drag.current = null;
+    if (!d.moved) select(d.target);
+  };
+
+  const onImagePointerCancel = () => {
+    drag.current = null;
+  };
+
+  // Only the inert attributes travel through this helper. The four pointer
+  // handlers go into JSX handler positions directly at each image below:
+  // routing them through an object literal trips react-hooks/refs, which
+  // cannot then tell they are event handlers.
+  const editAttrs = (target: ImageTarget): { draggable?: boolean; "data-edit-target"?: string } =>
+    editable ? { draggable: false, "data-edit-target": targetKey(target) } : {};
+
+  const textProps = (fieldId: string) =>
+    editable ? { "data-edit-text": true, onClick: () => focusField(fieldId) } : {};
+
   const collectionBlock = (id: SectionId) => {
     const c = state.collections[id];
     return (
       <>
-        {c.showLabel && c.label && <p className="photo-label">{c.label}</p>}
-        {c.showTitle && c.title && <h2 className="photo-title">{c.title}</h2>}
+        {c.showLabel && c.label && <p className="photo-label" {...textProps(`pe-in-${id}-label`)}>{c.label}</p>}
+        {c.showTitle && c.title && <h2 className="photo-title" {...textProps(`pe-in-${id}-title`)}>{c.title}</h2>}
       </>
     );
   };
 
   return (
-    <main className="photo-page">
+    <main className={`photo-page${editable ? " photo-editing" : ""}${editable && panelOpen ? " panel-open" : ""}`}>
       <PageHeader division="Photography" />
 
       <section className="photo-hero">
-        <img src={state.hero.src} alt="Vision8 Photography" style={focus(state.hero)} />
+        <img
+          src={state.hero.src}
+          alt="Vision8 Photography"
+          style={focus(state.hero)}
+          {...editAttrs({ kind: "hero" })}
+          onPointerDown={editable ? onImagePointerDown : undefined}
+          onPointerMove={editable ? onImagePointerMove : undefined}
+          onPointerUp={editable ? onImagePointerUp : undefined}
+          onPointerCancel={editable ? onImagePointerCancel : undefined}
+        />
         <div className="photo-hero-overlay">
-          {state.heroTitle && <h1>{state.heroTitle}</h1>}
-          {state.heroLede && <p className="photo-hero-lede">{state.heroLede}</p>}
+          {state.heroTitle && <h1 {...textProps("pe-in-hero-title")}>{state.heroTitle}</h1>}
+          {state.heroLede && <p className="photo-hero-lede" {...textProps("pe-in-hero-lede")}>{state.heroLede}</p>}
         </div>
       </section>
 
@@ -312,7 +492,17 @@ export function PhotographyView({
         <div className="contact-grid">
           {state.collections.contact.images.map((image, index) => (
             <div className="contact-cell" key={`${image.src}-${index}`}>
-              <img src={image.src} alt="" loading="lazy" style={focus(image)} />
+              <img
+                src={image.src}
+                alt=""
+                loading="lazy"
+                style={focus(image)}
+                {...editAttrs({ kind: "image", section: "contact", index })}
+                onPointerDown={editable ? onImagePointerDown : undefined}
+                onPointerMove={editable ? onImagePointerMove : undefined}
+                onPointerUp={editable ? onImagePointerUp : undefined}
+                onPointerCancel={editable ? onImagePointerCancel : undefined}
+              />
             </div>
           ))}
         </div>
@@ -326,14 +516,34 @@ export function PhotographyView({
         >
           {state.collections.fan.images.map((image, index) => (
             <div className="fan-card" key={`${image.src}-${index}`} style={{ "--i": index } as React.CSSProperties}>
-              <img src={image.src} alt="" loading="lazy" style={focus(image)} />
+              <img
+                src={image.src}
+                alt=""
+                loading="lazy"
+                style={focus(image)}
+                {...editAttrs({ kind: "image", section: "fan", index })}
+                onPointerDown={editable ? onImagePointerDown : undefined}
+                onPointerMove={editable ? onImagePointerMove : undefined}
+                onPointerUp={editable ? onImagePointerUp : undefined}
+                onPointerCancel={editable ? onImagePointerCancel : undefined}
+              />
             </div>
           ))}
         </div>
       </section>
 
       <section className="photo-breather">
-        <img src={state.breathers[0].src} alt="" loading="lazy" style={focus(state.breathers[0])} />
+        <img
+          src={state.breathers[0].src}
+          alt=""
+          loading="lazy"
+          style={focus(state.breathers[0])}
+          {...editAttrs({ kind: "breather", index: 0 })}
+          onPointerDown={editable ? onImagePointerDown : undefined}
+          onPointerMove={editable ? onImagePointerMove : undefined}
+          onPointerUp={editable ? onImagePointerUp : undefined}
+          onPointerCancel={editable ? onImagePointerCancel : undefined}
+        />
       </section>
 
       <section className="photo-section">
@@ -341,24 +551,54 @@ export function PhotographyView({
         <div className="strips-container">
           {state.collections.strips.images.map((image, index) => (
             <div className="strip" key={`${image.src}-${index}`}>
-              <img src={image.src} alt="" loading="lazy" style={focus(image)} />
+              <img
+                src={image.src}
+                alt=""
+                loading="lazy"
+                style={focus(image)}
+                {...editAttrs({ kind: "image", section: "strips", index })}
+                onPointerDown={editable ? onImagePointerDown : undefined}
+                onPointerMove={editable ? onImagePointerMove : undefined}
+                onPointerUp={editable ? onImagePointerUp : undefined}
+                onPointerCancel={editable ? onImagePointerCancel : undefined}
+              />
             </div>
           ))}
         </div>
       </section>
 
       <section className="photo-breather">
-        <img src={state.breathers[1].src} alt="" loading="lazy" style={focus(state.breathers[1])} />
+        <img
+          src={state.breathers[1].src}
+          alt=""
+          loading="lazy"
+          style={focus(state.breathers[1])}
+          {...editAttrs({ kind: "breather", index: 1 })}
+          onPointerDown={editable ? onImagePointerDown : undefined}
+          onPointerMove={editable ? onImagePointerMove : undefined}
+          onPointerUp={editable ? onImagePointerUp : undefined}
+          onPointerCancel={editable ? onImagePointerCancel : undefined}
+        />
       </section>
 
       <section className="photo-section">
         {collectionBlock("editorial")}
-        <EditorialGrid images={state.collections.editorial.images.map((image) => ({ src: image.src, position: `${image.focusX}% ${image.focusY}%` }))} />
+        <EditorialGrid
+          images={state.collections.editorial.images.map((image, index) => ({
+            src: image.src,
+            style: focus(image),
+            attrs: editAttrs({ kind: "image", section: "editorial", index }),
+          }))}
+          onImagePointerDown={editable ? onImagePointerDown : undefined}
+          onImagePointerMove={editable ? onImagePointerMove : undefined}
+          onImagePointerUp={editable ? onImagePointerUp : undefined}
+          onImagePointerCancel={editable ? onImagePointerCancel : undefined}
+        />
       </section>
 
       {state.showClosing && state.closing && (
         <section className="photo-closing">
-          <h2>{state.closing}</h2>
+          <h2 {...textProps("pe-in-closing")}>{state.closing}</h2>
         </section>
       )}
 
@@ -380,68 +620,37 @@ export function PhotographyView({
             <button type="button" onClick={() => setPanelOpen(false)} aria-label="Close editor">Close</button>
           </div>
 
+          <p className="editor-note">Sections below follow the page order. Click any photo or line of text on the page to jump straight to it here, and drag a photo on the page to reframe it.</p>
+
+          <HeroControls state={state} update={update} active={active} select={select} />
+
+          <CollectionControls id="contact" state={state} active={active} setActive={setActive} update={update} updateCollection={updateCollection} />
+          <CollectionControls id="fan" state={state} active={active} setActive={setActive} update={update} updateCollection={updateCollection} />
+          <BreatherControls index={0} state={state} update={update} active={active} select={select} />
+          <CollectionControls id="strips" state={state} active={active} setActive={setActive} update={update} updateCollection={updateCollection} />
+          <BreatherControls index={1} state={state} update={update} active={active} select={select} />
+          <CollectionControls id="editorial" state={state} active={active} setActive={setActive} update={update} updateCollection={updateCollection} />
+
           <section className="editor-section">
+            <h3>Closing line</h3>
             <label>
-              Page section
-              <select
-                value={panelSection}
-                onChange={(event) => {
-                  setPanelSection(event.target.value as PanelSection);
-                  setSelected(null);
-                }}
-              >
-                <option value="hero">Hero</option>
-                {sectionOrder.map((id) => (
-                  <option key={id} value={id}>
-                    {sectionNames[id]}: {state.collections[id].title || state.collections[id].label || id}
-                  </option>
-                ))}
-                <option value="breathers">Breather images</option>
-                <option value="closing">Closing line</option>
-              </select>
+              Text
+              <textarea
+                id="pe-in-closing"
+                rows={2}
+                value={state.closing}
+                onChange={(event) => update((current) => ({ ...current, closing: event.target.value }))}
+              />
+            </label>
+            <label className="photo-editor-check">
+              <input
+                type="checkbox"
+                checked={state.showClosing}
+                onChange={(event) => update((current) => ({ ...current, showClosing: event.target.checked }))}
+              />
+              Show closing line
             </label>
           </section>
-
-          {panelSection === "hero" && (
-            <HeroControls state={state} update={update} />
-          )}
-
-          {sectionOrder.includes(panelSection as SectionId) && (
-            <CollectionControls
-              id={panelSection as SectionId}
-              state={state}
-              selected={selected}
-              setSelected={setSelected}
-              update={update}
-              updateCollection={updateCollection}
-            />
-          )}
-
-          {panelSection === "breathers" && (
-            <BreatherControls state={state} update={update} />
-          )}
-
-          {panelSection === "closing" && (
-            <section className="editor-section">
-              <h3>Closing line</h3>
-              <label>
-                Text
-                <textarea
-                  rows={2}
-                  value={state.closing}
-                  onChange={(event) => update((current) => ({ ...current, closing: event.target.value }))}
-                />
-              </label>
-              <label className="photo-editor-check">
-                <input
-                  type="checkbox"
-                  checked={state.showClosing}
-                  onChange={(event) => update((current) => ({ ...current, showClosing: event.target.checked }))}
-                />
-                Show closing line
-              </label>
-            </section>
-          )}
 
           <div className="editor-actions">
             <button type="button" onClick={() => setPhonePreview(true)}>Phone preview</button>
@@ -462,7 +671,7 @@ export function PhotographyView({
                 window.localStorage.removeItem(STORAGE_KEY);
                 dirty.current = false;
                 setState(defaultState);
-                setSelected(null);
+                setActive(null);
               }}
             >
               Reset to source
@@ -485,6 +694,55 @@ export function PhotographyView({
         </div>
       )}
     </main>
+  );
+}
+
+function FocusControls({ image, onChange }: { image: PhotoImage; onChange: (next: PhotoImage) => void }) {
+  return (
+    <>
+      <div className="editor-two-column">
+        <label>
+          Crop focus X
+          <div className="range-row">
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={image.focusX}
+              onChange={(event) => onChange({ ...image, focusX: Number(event.target.value) })}
+            />
+            <output>{image.focusX}%</output>
+          </div>
+        </label>
+        <label>
+          Crop focus Y
+          <div className="range-row">
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={image.focusY}
+              onChange={(event) => onChange({ ...image, focusY: Number(event.target.value) })}
+            />
+            <output>{image.focusY}%</output>
+          </div>
+        </label>
+      </div>
+      <label>
+        Zoom
+        <div className="range-row">
+          <input
+            type="range"
+            min={100}
+            max={300}
+            step={5}
+            value={Math.round((image.zoom ?? 1) * 100)}
+            onChange={(event) => onChange({ ...image, zoom: Number(event.target.value) / 100 })}
+          />
+          <output>{Math.round((image.zoom ?? 1) * 100)}%</output>
+        </div>
+      </label>
+    </>
   );
 }
 
@@ -523,46 +781,24 @@ function ImagePicker({
   );
 }
 
-function FocusControls({ image, onChange }: { image: PhotoImage; onChange: (next: PhotoImage) => void }) {
+function HeroControls({
+  state,
+  update,
+  active,
+  select,
+}: {
+  state: PhotoState;
+  update: (patch: (current: PhotoState) => PhotoState) => void;
+  active: Active;
+  select: (target: ImageTarget) => void;
+}) {
   return (
-    <div className="editor-two-column">
-      <label>
-        Crop focus X
-        <div className="range-row">
-          <input
-            type="range"
-            min={0}
-            max={100}
-            value={image.focusX}
-            onChange={(event) => onChange({ ...image, focusX: Number(event.target.value) })}
-          />
-          <output>{image.focusX}%</output>
-        </div>
-      </label>
-      <label>
-        Crop focus Y
-        <div className="range-row">
-          <input
-            type="range"
-            min={0}
-            max={100}
-            value={image.focusY}
-            onChange={(event) => onChange({ ...image, focusY: Number(event.target.value) })}
-          />
-          <output>{image.focusY}%</output>
-        </div>
-      </label>
-    </div>
-  );
-}
-
-function HeroControls({ state, update }: { state: PhotoState; update: (patch: (current: PhotoState) => PhotoState) => void }) {
-  return (
-    <section className="editor-section">
+    <section className="editor-section" id="pe-thumb-hero">
       <h3>Hero</h3>
       <label>
         Headline
         <input
+          id="pe-in-hero-title"
           type="text"
           value={state.heroTitle}
           onChange={(event) => update((current) => ({ ...current, heroTitle: event.target.value }))}
@@ -571,38 +807,59 @@ function HeroControls({ state, update }: { state: PhotoState; update: (patch: (c
       <label>
         Supporting line
         <textarea
+          id="pe-in-hero-lede"
           rows={2}
           value={state.heroLede}
           onChange={(event) => update((current) => ({ ...current, heroLede: event.target.value }))}
         />
       </label>
-      <ImagePicker
-        legend="Hero"
-        image={state.hero}
-        onChange={(next) => update((current) => ({ ...current, hero: next }))}
-      />
+      <div className={`photo-editor-slot${active?.kind === "hero" ? " selected" : ""}`}>
+        <button type="button" className="photo-editor-thumb wide" onClick={() => select({ kind: "hero" })}>
+          <img src={state.hero.src} alt="" loading="lazy" />
+        </button>
+        <ImagePicker
+          legend="Hero"
+          image={state.hero}
+          onChange={(next) => update((current) => ({ ...current, hero: next }))}
+        />
+      </div>
     </section>
   );
 }
 
-function BreatherControls({ state, update }: { state: PhotoState; update: (patch: (current: PhotoState) => PhotoState) => void }) {
+function BreatherControls({
+  index,
+  state,
+  update,
+  active,
+  select,
+}: {
+  index: number;
+  state: PhotoState;
+  update: (patch: (current: PhotoState) => PhotoState) => void;
+  active: Active;
+  select: (target: ImageTarget) => void;
+}) {
+  const breather = state.breathers[index];
+  const isActive = active?.kind === "breather" && active.index === index;
   return (
-    <section className="editor-section">
-      <h3>Breather images</h3>
-      {state.breathers.map((breather, index) => (
-        <div key={index} className="photo-editor-breather">
-          <ImagePicker
-            legend={`Breather ${index + 1}`}
-            image={breather}
-            onChange={(next) =>
-              update((current) => ({
-                ...current,
-                breathers: current.breathers.map((entry, i) => (i === index ? next : entry)),
-              }))
-            }
-          />
-        </div>
-      ))}
+    <section className="editor-section" id={`pe-thumb-breather-${index}`}>
+      <h3>Breather {index + 1}</h3>
+      <div className={`photo-editor-slot${isActive ? " selected" : ""}`}>
+        <button type="button" className="photo-editor-thumb wide" onClick={() => select({ kind: "breather", index })}>
+          <img src={breather.src} alt="" loading="lazy" />
+        </button>
+        <ImagePicker
+          legend={`Breather ${index + 1}`}
+          image={breather}
+          onChange={(next) =>
+            update((current) => ({
+              ...current,
+              breathers: current.breathers.map((entry, i) => (i === index ? next : entry)),
+            }))
+          }
+        />
+      </div>
     </section>
   );
 }
@@ -610,15 +867,15 @@ function BreatherControls({ state, update }: { state: PhotoState; update: (patch
 function CollectionControls({
   id,
   state,
-  selected,
-  setSelected,
+  active,
+  setActive,
   update,
   updateCollection,
 }: {
   id: SectionId;
   state: PhotoState;
-  selected: number | null;
-  setSelected: (index: number | null) => void;
+  active: Active;
+  setActive: (target: Active) => void;
   update: (patch: (current: PhotoState) => PhotoState) => void;
   updateCollection: (id: SectionId, patch: Partial<Collection>) => void;
 }) {
@@ -627,6 +884,7 @@ function CollectionControls({
   const dragIndex = useRef<number | null>(null);
   const [dragOver, setDragOver] = useState<number | null>(null);
 
+  const selected = active?.kind === "image" && active.section === id ? active.index : null;
   const setImages = (images: PhotoImage[]) => updateCollection(id, { images });
 
   const reorder = (from: number, to: number) => {
@@ -635,152 +893,147 @@ function CollectionControls({
     const [moved] = images.splice(from, 1);
     images.splice(to, 0, moved);
     setImages(images);
-    setSelected(to);
+    setActive({ kind: "image", section: id, index: to });
   };
 
   const selectedImage = selected !== null ? c.images[selected] : null;
 
   return (
-    <>
-      <section className="editor-section">
-        <h3>{sectionNames[id]}</h3>
-        <label>
-          Client / source label
-          <input type="text" value={c.label} onChange={(event) => updateCollection(id, { label: event.target.value })} />
-        </label>
-        <label className="photo-editor-check">
-          <input type="checkbox" checked={c.showLabel} onChange={(event) => updateCollection(id, { showLabel: event.target.checked })} />
-          Show label
-        </label>
-        <label>
-          Heading
-          <input type="text" value={c.title} onChange={(event) => updateCollection(id, { title: event.target.value })} />
-        </label>
-        <label className="photo-editor-check">
-          <input type="checkbox" checked={c.showTitle} onChange={(event) => updateCollection(id, { showTitle: event.target.checked })} />
-          Show heading
-        </label>
-      </section>
+    <section className="editor-section">
+      <h3>{sectionNames[id]}</h3>
+      <label>
+        Client / source label
+        <input id={`pe-in-${id}-label`} type="text" value={c.label} onChange={(event) => updateCollection(id, { label: event.target.value })} />
+      </label>
+      <label className="photo-editor-check">
+        <input type="checkbox" checked={c.showLabel} onChange={(event) => updateCollection(id, { showLabel: event.target.checked })} />
+        Show label
+      </label>
+      <label>
+        Heading
+        <input id={`pe-in-${id}-title`} type="text" value={c.title} onChange={(event) => updateCollection(id, { title: event.target.value })} />
+      </label>
+      <label className="photo-editor-check">
+        <input type="checkbox" checked={c.showTitle} onChange={(event) => updateCollection(id, { showTitle: event.target.checked })} />
+        Show heading
+      </label>
 
-      <section className="editor-section">
-        <h3>Images ({c.images.length})</h3>
-        <div className="photo-editor-thumbs">
-          {c.images.map((image, index) => (
-            <button
-              type="button"
-              key={`${image.src}-${index}`}
-              className={`photo-editor-thumb${selected === index ? " selected" : ""}${dragOver === index ? " drag-over" : ""}`}
-              draggable
-              onDragStart={() => { dragIndex.current = index; }}
-              onDragOver={(event) => { event.preventDefault(); setDragOver(index); }}
-              onDragLeave={() => setDragOver(null)}
-              onDrop={(event) => {
-                event.preventDefault();
-                setDragOver(null);
-                if (dragIndex.current !== null) reorder(dragIndex.current, index);
-                dragIndex.current = null;
-              }}
-              onClick={() => setSelected(selected === index ? null : index)}
-            >
-              <img src={image.src} alt="" loading="lazy" />
-              <span>{index + 1}</span>
-            </button>
-          ))}
-        </div>
-        <p className="editor-note">Drag to reorder, or click an image for its controls.</p>
-
-        {selectedImage && selected !== null && (
-          <div className="photo-editor-selected">
-            <FocusControls
-              image={selectedImage}
-              onChange={(next) => setImages(c.images.map((entry, i) => (i === selected ? next : entry)))}
-            />
-            <div className="editor-two-column">
-              <button type="button" disabled={selected === 0} onClick={() => reorder(selected, selected - 1)}>Move earlier</button>
-              <button type="button" disabled={selected === c.images.length - 1} onClick={() => reorder(selected, selected + 1)}>Move later</button>
-            </div>
-            <label>
-              Move to
-              <select
-                value=""
-                onChange={(event) => {
-                  const target = event.target.value;
-                  if (!target) return;
-                  if (target === "hero") {
-                    update((current) => ({ ...current, hero: selectedImage }));
-                  } else if (target === "breather-0" || target === "breather-1") {
-                    const slot = target === "breather-0" ? 0 : 1;
-                    update((current) => ({
-                      ...current,
-                      breathers: current.breathers.map((entry, i) => (i === slot ? selectedImage : entry)),
-                    }));
-                  } else {
-                    const dest = target as SectionId;
-                    update((current) => ({
-                      ...current,
-                      collections: {
-                        ...current.collections,
-                        [id]: { ...current.collections[id], images: current.collections[id].images.filter((_, i) => i !== selected) },
-                        [dest]: { ...current.collections[dest], images: [...current.collections[dest].images, selectedImage] },
-                      },
-                    }));
-                    setSelected(null);
-                  }
-                }}
-              >
-                <option value="">Choose…</option>
-                {sectionOrder.filter((other) => other !== id).map((other) => (
-                  <option key={other} value={other}>{sectionNames[other]}</option>
-                ))}
-                <option value="hero">Use as hero</option>
-                <option value="breather-0">Use as breather 1</option>
-                <option value="breather-1">Use as breather 2</option>
-              </select>
-            </label>
-            <button
-              type="button"
-              className="photo-editor-remove"
-              onClick={() => {
-                setImages(c.images.filter((_, i) => i !== selected));
-                setSelected(null);
-              }}
-            >
-              Remove from collection
-            </button>
-          </div>
-        )}
-      </section>
-
-      <section className="editor-section">
-        <h3>Add image</h3>
-        <label>
-          Image URL
-          <input type="text" value={addUrl} onChange={(event) => setAddUrl(event.target.value)} placeholder="/photography/… or https://…" />
-        </label>
-        <div className="editor-two-column">
+      <h3 className="photo-editor-subhead">Images ({c.images.length})</h3>
+      <div className="photo-editor-thumbs">
+        {c.images.map((image, index) => (
           <button
             type="button"
-            disabled={!addUrl.trim()}
+            key={`${image.src}-${index}`}
+            id={`pe-thumb-${id}-${index}`}
+            className={`photo-editor-thumb${selected === index ? " selected" : ""}${dragOver === index ? " drag-over" : ""}`}
+            draggable
+            onDragStart={() => { dragIndex.current = index; }}
+            onDragOver={(event) => { event.preventDefault(); setDragOver(index); }}
+            onDragLeave={() => setDragOver(null)}
+            onDrop={(event) => {
+              event.preventDefault();
+              setDragOver(null);
+              if (dragIndex.current !== null) reorder(dragIndex.current, index);
+              dragIndex.current = null;
+            }}
+            onClick={() => setActive(selected === index ? null : { kind: "image", section: id, index })}
+          >
+            <img src={image.src} alt="" loading="lazy" />
+            <span>{index + 1}</span>
+          </button>
+        ))}
+      </div>
+
+      {selectedImage && selected !== null && (
+        <div className="photo-editor-selected">
+          <FocusControls
+            image={selectedImage}
+            onChange={(next) => setImages(c.images.map((entry, i) => (i === selected ? next : entry)))}
+          />
+          <p className="editor-note">Drag the photo on the page to reframe it. An image that fills its frame exactly, like the square contact crops, only moves once zoom is above 100%.</p>
+          <div className="editor-two-column">
+            <button type="button" disabled={selected === 0} onClick={() => reorder(selected, selected - 1)}>Move earlier</button>
+            <button type="button" disabled={selected === c.images.length - 1} onClick={() => reorder(selected, selected + 1)}>Move later</button>
+          </div>
+          <label>
+            Move to
+            <select
+              value=""
+              onChange={(event) => {
+                const target = event.target.value;
+                if (!target) return;
+                if (target === "hero") {
+                  update((current) => ({ ...current, hero: selectedImage }));
+                } else if (target === "breather-0" || target === "breather-1") {
+                  const slot = target === "breather-0" ? 0 : 1;
+                  update((current) => ({
+                    ...current,
+                    breathers: current.breathers.map((entry, i) => (i === slot ? selectedImage : entry)),
+                  }));
+                } else {
+                  const dest = target as SectionId;
+                  update((current) => ({
+                    ...current,
+                    collections: {
+                      ...current.collections,
+                      [id]: { ...current.collections[id], images: current.collections[id].images.filter((_, i) => i !== selected) },
+                      [dest]: { ...current.collections[dest], images: [...current.collections[dest].images, selectedImage] },
+                    },
+                  }));
+                  setActive(null);
+                }
+              }}
+            >
+              <option value="">Choose…</option>
+              {sectionOrder.filter((other) => other !== id).map((other) => (
+                <option key={other} value={other}>{sectionNames[other]}</option>
+              ))}
+              <option value="hero">Use as hero</option>
+              <option value="breather-0">Use as breather 1</option>
+              <option value="breather-1">Use as breather 2</option>
+            </select>
+          </label>
+          <button
+            type="button"
+            className="photo-editor-remove"
             onClick={() => {
-              setImages([...c.images, img(addUrl.trim())]);
-              setAddUrl("");
+              setImages(c.images.filter((_, i) => i !== selected));
+              setActive(null);
             }}
           >
-            Add by URL
+            Remove from collection
           </button>
-          <label className="photo-editor-upload">
-            Upload
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (file) setImages([...c.images, img(URL.createObjectURL(file))]);
-              }}
-            />
-          </label>
         </div>
-      </section>
-    </>
+      )}
+
+      <h3 className="photo-editor-subhead">Add image</h3>
+      <label>
+        Image URL
+        <input type="text" value={addUrl} onChange={(event) => setAddUrl(event.target.value)} placeholder="/photography/… or https://…" />
+      </label>
+      <div className="editor-two-column">
+        <button
+          type="button"
+          disabled={!addUrl.trim()}
+          onClick={() => {
+            setImages([...c.images, img(addUrl.trim())]);
+            setAddUrl("");
+          }}
+        >
+          Add by URL
+        </button>
+        <label className="photo-editor-upload">
+          Upload
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              if (file) setImages([...c.images, img(URL.createObjectURL(file))]);
+            }}
+          />
+        </label>
+      </div>
+    </section>
   );
 }
