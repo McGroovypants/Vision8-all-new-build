@@ -2513,6 +2513,22 @@
   color: #f0b8b8;
 }
 
+/* Publish is the one consequential button in the panel, so it alone carries
+   the teal. */
+.photo-editor-publish {
+  border-color: var(--teal-bright) !important;
+  color: var(--teal-bright) !important;
+}
+
+.photo-editor-publish:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.photo-editor-publish-msg {
+  color: var(--teal-bright) !important;
+}
+
 /* A labelled file input drawn as a button. */
 .photo-editor-upload {
   position: relative;

@@ -1,218 +1,51 @@
 "use client";
 
 /*
-  The Photography page and its editor, one component, the same architecture as
-  the homepage's HomepageV1103: `editable` is on only for /photography/editor
-  and gates the panel and every localStorage read and write; `previewSaved` is
-  on only for /photography/preview, which the editor's phone preview loads in
-  an iframe and which re-reads saved state on `storage` events so edits appear
-  live. The public /photography renders the source defaults below and never
-  touches localStorage, so nothing the editor does reaches visitors.
+  The Photography page and its editor, one component. `editable` is on only
+  for /photography/editor and gates the panel and every localStorage read and
+  write; `previewSaved` is on only for /photography/preview, which the
+  editor's phone preview loads in an iframe and which re-reads saved state on
+  `storage` events so edits appear live.
 
-  v1.11.36, on the client's mark: the panel lists every section vertically in
-  page order instead of behind a dropdown; clicking a picture or a line of
-  text on the page jumps the panel to that exact item; and images are
-  reframed by dragging them directly on the page. Dragging pans within the
-  crop, which for an image that exactly fills its frame (the square contact
-  crops in square cells) is a zero range: those need zoom above 100% before
-  any movement is possible, which is also why the v1.11.35 focus sliders
-  appeared to do nothing on the contact sheet.
+  Since v1.11.39 the page has three layers of truth, strongest last:
+  1. Source defaults in data.ts, the durable fallback, updated by handing
+     over Copy layout JSON to be baked in.
+  2. The published layout in Worker KV, written by the panel's Publish to
+     live button (token-guarded) and rendered server-side by the public page
+     via the `published` prop, so publishing needs no rebuild or deploy.
+  3. The editor's local draft in build-keyed localStorage, visible only in
+     this browser until published.
 
-  Collections mean photographs that belong together, not one client per
-  section: the client/source labels are editable and hideable here precisely
-  so that question can be settled by looking, not decided in source.
-
-  Images are served from public/photography/, downsized once at import time
-  (1800px cap, 640px for the square crops). The mockup's originals stay in the
-  mockup folder; never hotlink media.vision8.co.nz, its URLs expire to 403.
+  The panel lists every section vertically in page order; clicking a picture
+  or a line of text on the page jumps the panel to that exact item, and
+  dragging a photo on the page reframes it (v1.11.36). While the panel is
+  open the page docks beside it rather than running underneath.
 */
 
 import { useEffect, useRef, useState } from "react";
 import { BUILD, PageHeader } from "../portfolio-shell";
+import {
+  type Collection,
+  type PhotoImage,
+  type PhotoState,
+  type SectionId,
+  defaultState,
+  img,
+  mergeSaved,
+  sanitizeState,
+  sectionNames,
+  sectionOrder,
+} from "./data";
 import { EditorialGrid } from "./editorial-grid";
 
-const P = "/photography";
-
 // Same discipline as the homepage editor: saved tuning is keyed to the build,
-// so a stale selection cannot pin old media over a later deploy. Bump the
-// shared BUILD in portfolio-shell.tsx whenever these defaults change.
+// so a stale draft cannot pin old media over a later deploy. Bump the shared
+// BUILD in portfolio-shell.tsx whenever the defaults change.
 const STORAGE_KEY = `vision8-photography-editor-${BUILD}`;
 
-export type PhotoImage = { src: string; focusX: number; focusY: number; zoom: number };
-
-export type SectionId = "contact" | "fan" | "strips" | "editorial";
-
-export type Collection = {
-  label: string;
-  showLabel: boolean;
-  title: string;
-  showTitle: boolean;
-  images: PhotoImage[];
-};
-
-export type PhotoState = {
-  hero: PhotoImage;
-  heroTitle: string;
-  heroLede: string;
-  collections: Record<SectionId, Collection>;
-  breathers: PhotoImage[];
-  closing: string;
-  showClosing: boolean;
-};
-
-const img = (src: string): PhotoImage => ({ src, focusX: 50, focusY: 50, zoom: 1 });
-
-/*
-  v1.11.38: the defaults below are the client's first curation pass, made in
-  the editor on 15 Aug 2026 and handed over as Copy layout JSON. Contact
-  sheet down to 28 crops (imgc9205 and imgc5130-1600 dropped, light reorder),
-  editorial down to 8 (screen-shot 8-55-41 and imgc4800 dropped, four
-  reframed), three strips and the second breather reframed, and the Primary
-  ITO, OSPRI and Hikoi labels hidden; Coastguard stays visible. Dropped files
-  remain in public/photography/ and can return via Add by URL.
-*/
-
-// Coastguard, 28 face-aware square crops, client order.
-const contactSheet = [
-  "img-9882-1786678083-f2afb9ac.jpg",
-  "img-9945-1786678087-d802a26a.jpg",
-  "img-9848-1786678084-2feeddb1.jpg",
-  "imgc5125-1786679978-98ce3cd9.jpg",
-  "imgc5156-1786679980-fddd06ac.jpg",
-  "imgc5183-1786679980-e74fa471.jpg",
-  "imgc5145-1786679982-1ae7d3e5.jpg",
-  "imgc5152-1786679984-ce1e9b99.jpg",
-  "imgc5146-1786679984-aa9d737f.jpg",
-  "img-9839-1786734650-24c73033.jpg",
-  "img-9805-1786734650-358e3e09.jpg",
-  "imgc9164-1786734654-84d3bff1.jpg",
-  "imgc9191-1786734682-ffdcf6d7.jpg",
-  "screenshot-2026-05-08-at-8-00-09-am-1786734657-589e683c.jpg",
-  "screenshot-2026-05-08-at-7-59-58-am-1786734659-695db86e.jpg",
-  "imgc9198-1786734656-a8c4a4c1.jpg",
-  "imgc9076-1786734661-338ae127.jpg",
-  "img-9708-1786734661-968d33d9.jpg",
-  "screenshot-2026-05-08-at-8-00-25-am-1786734663-c971d587.jpg",
-  "imgc9207-1786734655-5935ae27.jpg",
-  "imgc9249-1786734663-fdd2f819.jpg",
-  "imgc9258-1786734666-6ee7051f.jpg",
-  "imgc9257-1786734669-6da9117a.jpg",
-  "imgc9195-1786734677-580cbd08.jpg",
-  "imgc9224-1786734683-a6d908fa.jpg",
-  "imgc5128-1600x1067-1786740334-cf37bf51.jpg",
-  "imgc5146-1600x1066-1786740338-cd4074cd.jpg",
-  "imgc5178-1600x1066-1786740340-eb17da65.jpg",
-].map((file) => img(`${P}/crops/${file}`));
-
-// Primary ITO, eight cards, three fully visible at rest, hover fans them all.
-const fanned = [
-  "p-ito-arb-sm-4-1600x1600-1786737303-7d992457.jpg",
-  "p-ito-arb-sm-8179-1600x1600-1786737303-42da1c0d.jpg",
-  "p-ito-arb-sm-2-4-1600x1600-1786737304-a2bfa171.jpg",
-  "p-ito-arb-sm-1600x1600-1786737304-2d244eff.jpg",
-  "p-ito-arb-sm-2-1600x1600-1786737304-ea1bf9d1.jpg",
-  "p-ito-arb-sm-2-2-1600x1600-1786737305-9f2a8920.jpg",
-  "p-ito-arb-sm-5-1600x1600-1786737305-70383a12.jpg",
-  "p-ito-arb-sm-6-1600x1600-1786737305-b08bc111.jpg",
-].map((file) => img(`${P}/${file}`));
-
-// OSPRI, eight vertical strips, hover expands. The last three carry the
-// client's reframes.
-const strips: PhotoImage[] = [
-  img(`${P}/imgc4355-1785813065.jpg`),
-  img(`${P}/imgc4385-1785813065.jpg`),
-  img(`${P}/imgc4226-1785813065.jpg`),
-  img(`${P}/imgc4401-1785813065.jpg`),
-  img(`${P}/imgc4007-1785813065.jpg`),
-  { ...img(`${P}/imgc1933-1786735898-19bed632.jpg`), focusX: 82 },
-  { ...img(`${P}/imgc1702-1786735899-65ad6ea4.jpg`), focusX: 46 },
-  { ...img(`${P}/imgc1711-1786735902-b8fabc66.jpg`), focusX: 42 },
-];
-
-// Hikoi and observational work. Eight images since the client's curation,
-// which happens to close the six-column span pattern into a full rectangle.
-const editorial: PhotoImage[] = [
-  img(`${P}/img-4112-1785781272.jpg`),
-  { ...img(`${P}/screen-shot-2018-10-01-at-8-57-08-pm-1785781422.jpg`), focusX: 7, focusY: 100, zoom: 1.1 },
-  img(`${P}/imgc4692-1786394460-dfc39369.jpg`),
-  { ...img(`${P}/imgc3882-1786394460-847a5f1a.jpg`), focusY: 0 },
-  img(`${P}/imgc4454-1786394464-18c566a0.jpg`),
-  img(`${P}/imgc4657-1786394468-f4afa50a.jpg`),
-  img(`${P}/imgc3884-1786394471-72c746a7.jpg`),
-  { ...img(`${P}/imgc4746-1786394475-9fee2875.jpg`), focusY: 69 },
-];
-
-export const defaultState: PhotoState = {
-  hero: img(`${P}/dragonfly-in-hongkong-1786678073-de2cf7f1.jpg`),
-  heroTitle: "Sometimes one frame is enough.",
-  heroLede: "Photography for people, places, products and the work behind them.",
-  collections: {
-    contact: { label: "Coastguard", showLabel: true, title: "Ready for anything", showTitle: true, images: contactSheet },
-    // Labels off for these three at the client's curation; the names stay in
-    // the data so the editor can turn them back on.
-    fan: { label: "Primary ITO", showLabel: false, title: "Hands on, every day", showTitle: true, images: fanned },
-    strips: { label: "OSPRI", showLabel: false, title: "Faces, places, purpose", showTitle: true, images: strips },
-    editorial: { label: "Hikoi & Observational", showLabel: false, title: "Because they just happen", showTitle: true, images: editorial },
-  },
-  breathers: [img(`${P}/z6-1786678073-6c134bec.jpg`), { ...img(`${P}/img-8268a-1785783280.jpg`), focusY: 92 }],
-  closing: "Sometimes all you need is a still image.",
-  showClosing: true,
-};
-
-const sectionOrder: SectionId[] = ["contact", "fan", "strips", "editorial"];
-
-const sectionNames: Record<SectionId, string> = {
-  contact: "Contact sheet",
-  fan: "Fanned collection",
-  strips: "Sliced collection",
-  editorial: "Editorial grid",
-};
-
-// Saved state is merged field by field over the defaults rather than taken
-// wholesale, so a save from an older shape (or a hand-edited one) degrades to
-// the source values instead of rendering an empty page.
-function mergeSaved(saved: unknown): PhotoState {
-  if (!saved || typeof saved !== "object") return defaultState;
-  const s = saved as Partial<PhotoState>;
-  const image = (candidate: unknown, fallback: PhotoImage): PhotoImage => {
-    const c = candidate as Partial<PhotoImage> | undefined;
-    if (!c || typeof c.src !== "string" || !c.src) return fallback;
-    return {
-      src: c.src,
-      focusX: typeof c.focusX === "number" ? c.focusX : 50,
-      focusY: typeof c.focusY === "number" ? c.focusY : 50,
-      zoom: typeof c.zoom === "number" ? c.zoom : 1,
-    };
-  };
-  const collection = (id: SectionId): Collection => {
-    const d = defaultState.collections[id];
-    const c = s.collections?.[id];
-    if (!c) return d;
-    return {
-      label: typeof c.label === "string" ? c.label : d.label,
-      showLabel: typeof c.showLabel === "boolean" ? c.showLabel : d.showLabel,
-      title: typeof c.title === "string" ? c.title : d.title,
-      showTitle: typeof c.showTitle === "boolean" ? c.showTitle : d.showTitle,
-      images: Array.isArray(c.images) ? c.images.map((entry) => image(entry, img(""))).filter((entry) => entry.src) : d.images,
-    };
-  };
-  return {
-    hero: image(s.hero, defaultState.hero),
-    heroTitle: typeof s.heroTitle === "string" ? s.heroTitle : defaultState.heroTitle,
-    heroLede: typeof s.heroLede === "string" ? s.heroLede : defaultState.heroLede,
-    collections: {
-      contact: collection("contact"),
-      fan: collection("fan"),
-      strips: collection("strips"),
-      editorial: collection("editorial"),
-    },
-    breathers: Array.isArray(s.breathers) && s.breathers.length === 2
-      ? [image(s.breathers[0], defaultState.breathers[0]), image(s.breathers[1], defaultState.breathers[1])]
-      : defaultState.breathers,
-    closing: typeof s.closing === "string" ? s.closing : defaultState.closing,
-    showClosing: typeof s.showClosing === "boolean" ? s.showClosing : defaultState.showClosing,
-  };
-}
+// The publish key is deliberately not build-keyed: it stays valid across
+// builds until the Worker secret is rotated.
+const PUBLISH_KEY_STORAGE = "vision8-photo-publish-key";
 
 function readSaved(): PhotoState | null {
   try {
@@ -265,19 +98,24 @@ const parseTarget = (key: string | undefined): ImageTarget | null => {
 export function PhotographyView({
   editable = false,
   previewSaved = false,
+  published = null,
 }: {
   editable?: boolean;
   previewSaved?: boolean;
+  published?: PhotoState | null;
 }) {
-  const [state, setState] = useState<PhotoState>(defaultState);
+  const [state, setState] = useState<PhotoState>(published ?? defaultState);
   const [loaded, setLoaded] = useState(false);
   const [panelOpen, setPanelOpen] = useState(editable);
   const [active, setActive] = useState<Active>(null);
   const [phonePreview, setPhonePreview] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [publishKey, setPublishKey] = useState("");
+  const [liveStatus, setLiveStatus] = useState<"unknown" | "published" | "defaults">("unknown");
+  const [publishMsg, setPublishMsg] = useState("");
   // Same guard as the homepage editor: nothing is written to localStorage
   // until the user actually changes something, so opening the editor to look
-  // never pins the current defaults over a later deploy.
+  // never pins the current state over a later deploy.
   const dirty = useRef(false);
   const drag = useRef<{
     target: ImageTarget;
@@ -299,6 +137,12 @@ export function PhotographyView({
       if (!editable && !previewSaved) return;
       const saved = readSaved();
       if (saved) setState(saved);
+      if (editable) {
+        setPublishKey(window.localStorage.getItem(PUBLISH_KEY_STORAGE) ?? "");
+        fetch("/photography/layout.json", { cache: "no-store" })
+          .then((response) => setLiveStatus(response.ok ? "published" : "defaults"))
+          .catch(() => setLiveStatus("unknown"));
+      }
       setLoaded(true);
     }, 0);
     return () => window.clearTimeout(timer);
@@ -311,30 +155,15 @@ export function PhotographyView({
     const onStorage = (event: StorageEvent) => {
       if (event.key !== STORAGE_KEY) return;
       const saved = readSaved();
-      setState(saved ?? defaultState);
+      setState(saved ?? published ?? defaultState);
     };
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
-  }, [previewSaved]);
+  }, [previewSaved, published]);
 
   useEffect(() => {
     if (!editable || !loaded || !dirty.current) return;
-    // blob: URLs die with the session, so persisting them would leave broken
-    // images on the next load. Uploads fall back to the source image (hero,
-    // breathers) or drop out of the saved list (collections), matching the
-    // homepage editor's handling and the session-only note in the panel.
-    const persisted: PhotoState = {
-      ...state,
-      hero: state.hero.src.startsWith("blob:") ? defaultState.hero : state.hero,
-      breathers: state.breathers.map((entry, i) => (entry.src.startsWith("blob:") ? defaultState.breathers[i] : entry)) as PhotoState["breathers"],
-      collections: Object.fromEntries(
-        (Object.keys(state.collections) as SectionId[]).map((id) => [
-          id,
-          { ...state.collections[id], images: state.collections[id].images.filter((entry) => !entry.src.startsWith("blob:")) },
-        ]),
-      ) as PhotoState["collections"],
-    };
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(persisted));
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(sanitizeState(state)));
   }, [editable, loaded, state]);
 
   // Clicking an element on the page lands the panel on that exact item.
@@ -398,13 +227,55 @@ export function PhotographyView({
     }, 60);
   };
 
+  const savePublishKey = (value: string) => {
+    setPublishKey(value);
+    window.localStorage.setItem(PUBLISH_KEY_STORAGE, value);
+  };
+
+  const publish = () => {
+    setPublishMsg("Publishing…");
+    fetch("/photography/publish", {
+      method: "POST",
+      headers: { authorization: `Bearer ${publishKey}`, "content-type": "application/json" },
+      body: JSON.stringify(sanitizeState(state)),
+    })
+      .then((response) => {
+        if (response.status === 204) {
+          setLiveStatus("published");
+          setPublishMsg("Published. The live page now shows this layout.");
+        } else if (response.status === 401) {
+          setPublishMsg("Publish key rejected. Check the key and try again.");
+        } else if (response.status === 503) {
+          setPublishMsg("Publishing is not configured on the server.");
+        } else {
+          setPublishMsg(`Publish failed (${response.status}).`);
+        }
+      })
+      .catch(() => setPublishMsg("Publish failed: network error."));
+  };
+
+  const revertLive = () => {
+    setPublishMsg("Reverting…");
+    fetch("/photography/publish", {
+      method: "DELETE",
+      headers: { authorization: `Bearer ${publishKey}` },
+    })
+      .then((response) => {
+        if (response.status === 204) {
+          setLiveStatus("defaults");
+          setPublishMsg("Live page reverted to the built-in layout.");
+        } else if (response.status === 401) {
+          setPublishMsg("Publish key rejected. Check the key and try again.");
+        } else {
+          setPublishMsg(`Revert failed (${response.status}).`);
+        }
+      })
+      .catch(() => setPublishMsg("Revert failed: network error."));
+  };
+
   /*
     Drag-to-reframe, on the page images themselves. A press that moves under
-    4px is a click and selects the image in the panel instead. The pan range
-    is the cover overflow (natural size scaled to cover, times zoom, minus the
-    frame): dragging maps 1:1 through that range, and a zero range, square
-    crop in a square cell at 100% zoom, means there is nothing to pan until
-    zoom is raised.
+    4px is a click and selects the image in the panel instead.
   */
   const onImagePointerDown = (event: React.PointerEvent<HTMLImageElement>) => {
     const el = event.currentTarget;
@@ -417,7 +288,7 @@ export function PhotographyView({
     const zoom = image.zoom ?? 1;
     /*
       Above 100% the drag pans the crop overflow. Below 100% (v1.11.37: the
-      zoom range now reaches down to 20%) the shrunken image slides inside its
+      zoom range reaches down to 20%) the shrunken image slides inside its
       frame instead, and the focal origin moves it the opposite way, so the
       range is stored negative to flip the drag direction and keep the image
       following the pointer.
@@ -673,12 +544,42 @@ export function PhotographyView({
             </label>
           </section>
 
+          <section className="editor-section">
+            <h3>Publish</h3>
+            <p className="editor-note">
+              {liveStatus === "published"
+                ? "The live page is showing a published layout."
+                : liveStatus === "defaults"
+                  ? "The live page is showing the built-in layout."
+                  : "Live status unknown."}
+            </p>
+            <label>
+              Publish key
+              <input
+                type="password"
+                autoComplete="off"
+                value={publishKey}
+                onChange={(event) => savePublishKey(event.target.value)}
+              />
+            </label>
+            <div className="editor-two-column">
+              <button type="button" className="photo-editor-publish" disabled={!publishKey} onClick={publish}>
+                Publish to live
+              </button>
+              <button type="button" disabled={!publishKey} onClick={revertLive}>
+                Revert live to built-in
+              </button>
+            </div>
+            {publishMsg && <p className="editor-note photo-editor-publish-msg">{publishMsg}</p>}
+            <p className="editor-note">Publish makes this exact layout the public /photography page immediately. The key is remembered in this browser.</p>
+          </section>
+
           <div className="editor-actions">
             <button type="button" onClick={() => setPhonePreview(true)}>Phone preview</button>
             <button
               type="button"
               onClick={() => {
-                navigator.clipboard?.writeText(JSON.stringify(state, null, 2)).then(() => {
+                navigator.clipboard?.writeText(JSON.stringify(sanitizeState(state), null, 2)).then(() => {
                   setCopied(true);
                   window.setTimeout(() => setCopied(false), 2000);
                 });
@@ -698,7 +599,7 @@ export function PhotographyView({
               Reset to source
             </button>
           </div>
-          <p className="editor-note">Changes live in this browser only; the public page is unchanged until a selection is handed over and built into source. Copy layout JSON captures everything here for that handover. Uploaded files are previewed for this session only; images added by URL persist.</p>
+          <p className="editor-note">Reset to source discards this browser&rsquo;s draft and shows the built-in layout; it does not change the live page. Uploaded files are previewed for this session only; images added by URL persist and publish.</p>
         </aside>
       )}
 

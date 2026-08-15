@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PhotographyView } from "../photography-view";
+import { readPublishedLayout } from "../published";
 
 export const metadata: Metadata = {
   title: "Vision8 photography editor",
@@ -17,6 +18,9 @@ export const metadata: Metadata = {
   one browser's localStorage under a build-keyed name; nothing reaches the
   public site or another machine.
 */
-export default function PhotographyEditorPage() {
-  return <PhotographyView editable />;
+// The editor starts from what is actually live (the published layout when one
+// exists), then any local draft in this browser overlays it on load.
+export default async function PhotographyEditorPage() {
+  const published = await readPublishedLayout();
+  return <PhotographyView editable published={published} />;
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PhotographyView } from "./photography-view";
+import { readPublishedLayout } from "./published";
 
 /*
   Ported from the approved mockup v3.2 in "Photo page/v8-photo-mockup", with
@@ -8,10 +9,10 @@ import { PhotographyView } from "./photography-view";
   below the hero, so breadth is the first thing the page says. The two arty
   breathers keep their pacing role between the remaining collections.
 
-  The page itself, its source-truth images and copy, and the editor all live
-  in photography-view.tsx: the public page here renders the defaults and never
-  reads the editor's localStorage. Curation happens on /photography/editor and
-  reaches this page only when a chosen layout is built back into the defaults.
+  Since v1.11.39 the page renders the layout published from the editor's
+  Publish to live button (Worker KV, read server-side each request) when one
+  exists, and the source defaults in data.ts otherwise. The editor's unsaved
+  browser draft still never reaches this page.
 */
 
 export const metadata: Metadata = {
@@ -19,6 +20,7 @@ export const metadata: Metadata = {
   description: "Vision8 photography for people, organisations and events.",
 };
 
-export default function PhotographyPage() {
-  return <PhotographyView />;
+export default async function PhotographyPage() {
+  const published = await readPublishedLayout();
+  return <PhotographyView published={published} />;
 }

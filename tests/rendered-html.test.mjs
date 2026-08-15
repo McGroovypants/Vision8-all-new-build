@@ -22,14 +22,14 @@ async function render(pathname = "/") {
   );
 }
 
-test("server-renders the Vision8 v1.11.38 homepage", async () => {
+test("server-renders the Vision8 v1.11.39 homepage", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /Vision8 homepage/);
-  assert.match(html, /Build <!-- -->v1\.11\.38/);
+  assert.match(html, /Build <!-- -->v1\.11\.39/);
   assert.match(html, /aria-label="Vision8 home"/);
   assert.match(html, /Audio/);
   assert.match(html, /Tech Solutions/);
@@ -63,7 +63,7 @@ for (const [pathname, expected] of routes) {
 
     const html = await response.text();
     assert.match(html, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.match(html, /Build (?:<!-- -->)?v1\.11\.38/);
+    assert.match(html, /Build (?:<!-- -->)?v1\.11\.39/);
     assert.match(html, />Home</);
     assert.match(html, />About us</);
     assert.match(html, />Our mahi</);
@@ -138,6 +138,26 @@ test("the photography preview route renders and is not indexable", async () => {
   assert.match(html, /Sometimes one frame is enough\./);
   assert.match(html, /noindex/);
   assert.doesNotMatch(html, /editor-panel/);
+});
+
+// Publish to live (v1.11.39). The test Worker runs with no KV binding and no
+// token, so the routes must degrade cleanly: no layout, and publishing
+// declared unconfigured rather than crashing or silently accepting writes.
+test("photography layout endpoint 404s with no published layout", async () => {
+  const response = await render("/photography/layout.json");
+  assert.equal(response.status, 404);
+});
+
+test("photography publish endpoint refuses when unconfigured", async () => {
+  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
+  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}-publish`);
+  const { default: worker } = await import(workerUrl.href);
+  const response = await worker.fetch(
+    new Request("http://localhost/photography/publish", { method: "POST", body: "{}" }),
+    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
+    { waitUntil() {}, passThroughOnException() {} },
+  );
+  assert.equal(response.status, 503);
 });
 
 test("internal Video and About navigation replace the external GitHub page", async () => {

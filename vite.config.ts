@@ -14,6 +14,15 @@ const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
 const localBindingConfig = {
   main: "./worker/index.ts",
   compatibility_flags: ["nodejs_compat"],
+  // The photography editor's Publish to live store (v1.11.39). Local dev gets
+  // a Miniflare-simulated namespace; the id is the real namespace used by the
+  // deployed Worker.
+  kv_namespaces: [
+    {
+      binding: "PHOTO_LAYOUT",
+      id: "fce6031de56c488193a1be9f7320637a",
+    },
+  ],
   d1_databases: d1
     ? [
         {

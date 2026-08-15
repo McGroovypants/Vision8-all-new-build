@@ -46,3 +46,4 @@ tsconfig.tsbuildinfo
 
 # stray archives
 *.zip
+.dev.vars

@@ -97,7 +97,7 @@ const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_
 const VIDEO_SITE = "/video";
 const PEOPLE = "/about";
 const VIDEO_IMAGE = `${CLOUD}/image/upload/f_auto,q_auto,w_1800/v1785665173/Adventuresmart_still_7_kbz7fl.png`;
-const BUILD = "v1.11.38";
+const BUILD = "v1.11.39";
 
 // Keyed by build on purpose. The persist effect writes every record, mediaUrl
 // included, on first visit whether or not the editor was opened, and the load
