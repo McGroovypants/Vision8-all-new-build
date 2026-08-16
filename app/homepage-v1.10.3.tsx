@@ -97,7 +97,7 @@ const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_
 const VIDEO_SITE = "/video";
 const PEOPLE = "/about";
 const VIDEO_IMAGE = `${CLOUD}/image/upload/f_auto,q_auto,w_1800/v1785665173/Adventuresmart_still_7_kbz7fl.png`;
-const BUILD = "v1.11.39";
+const BUILD = "v1.11.40";
 
 // Keyed by build on purpose. The persist effect writes every record, mediaUrl
 // included, on first visit whether or not the editor was opened, and the load
@@ -1098,9 +1098,39 @@ export function HomepageV1103({
     "--editor-header-size": `${1.15 * (styles.header.scale / 100)}rem`,
     "--editor-header-color": colorWithBrightness(styles.header.color, styles.header.brightness),
     "--editor-header-font": styles.header.fontFamily || defaultFont,
+    /*
+      v1.11.40: the fan label bases are the v1.11.39 values times 1.25, on the
+      client's mark that the fan and its text read 25 percent larger. They are
+      baked into the bases rather than the editor's scale so 100 percent in the
+      panel still means the shipped default. The matching geometry uplift is
+      --fan-scale in homepage-v1.10.3.css; change the two together.
+    */
+    /*
+      The floor stays at the v1.11.39 value. clamp()'s minimum beats the vh
+      guard, so scaling it too reintroduced the uplift on exactly the screens
+      the guard exists to protect: short laptops, where it put the Video and
+      Real Estate labels back together at 1280x660. Only the vw term and the
+      ceiling carry the 25 percent.
+    */
     "--editor-fan-min": `${0.72 * (styles.fan.scale / 100)}rem`,
-    "--editor-fan-vw": `${1.05 * (styles.fan.scale / 100)}vw`,
-    "--editor-fan-max": `${0.94 * (styles.fan.scale / 100)}rem`,
+    "--editor-fan-vw": `${1.3125 * (styles.fan.scale / 100)}vw`,
+    /*
+      The height guard on the label type. The arms are capped by viewport
+      height, so on a short laptop they barely grow; without a matching cap the
+      type outgrows the geometry and the Video and Real Estate labels touch at
+      1366x768. Measured: 14.6px at 768 tall, 17.1px at 900, the full 18.8px at
+      1050 and above. Scaled with the editor's control so the panel still works.
+    */
+    "--editor-fan-vh": `${1.9 * (styles.fan.scale / 100)}vh`,
+    /*
+      The floor under the guard: the v1.11.39 vw term. A wide, short window
+      (1280x660) has a viewport ratio past 1.81, where 1.9vh falls below the
+      old 1.05vw and the guard would shrink the labels rather than hold them.
+      Scaled with the control like every other term, so the panel still owns
+      the final size.
+    */
+    "--editor-fan-floor": `${1.05 * (styles.fan.scale / 100)}vw`,
+    "--editor-fan-max": `${1.175 * (styles.fan.scale / 100)}rem`,
     "--editor-fan-color": colorWithBrightness(styles.fan.color, styles.fan.brightness),
     "--editor-fan-font": styles.fan.fontFamily || defaultFont,
     "--editor-kicker-size": `${0.66 * (styles.kicker.scale / 100)}rem`,

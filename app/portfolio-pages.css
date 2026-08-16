@@ -2489,7 +2489,8 @@
 .photo-editor-selected button,
 .photo-editor-remove,
 .photo-editor-upload,
-.editor-section > .editor-two-column > button {
+.editor-section > .editor-two-column > button,
+.editor-publish-bar > .editor-two-column > button {
   min-height: 38px;
   padding: 0 14px;
   display: inline-flex;
@@ -2624,4 +2625,69 @@
   background: rgba(0, 0, 0, 0.5);
   cursor: pointer;
   font: 600 0.72rem/1 var(--font);
+}
+
+/* ============================================================
+   v1.11.40: docked heading and Publish bar for the photography editor.
+   Sticky inside .editor-panel, which is the scroll container, so the one
+   action with a consequence outside this browser stays reachable however far
+   down the six collections the client has scrolled.
+   ============================================================ */
+
+.editor-dock {
+  position: sticky;
+  /*
+    -22px, not 0. Sticky constrains the margin box, and the -22px top margin
+    below pulls that box 22px above the border box, so top: 0 pinned the dock
+    22px down the panel and let the scrolled controls show through the strip
+    above it. Offsetting by the same 22px pins the border box flush.
+  */
+  top: -22px;
+  z-index: 4;
+  /*
+    .editor-panel's 22px padding sits inside its scrollport, so a sticky child
+    at top: 0 would let controls slide through the gap at its sides and above
+    it. The negative margins take the dock out to the panel's edges and the
+    padding puts its own content back on the panel's alignment.
+  */
+  margin: -22px -22px 0;
+  padding: 22px 22px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  background: #0a0c0c;
+  box-shadow: 0 16px 26px rgba(10, 12, 12, 0.92);
+}
+
+/* The panel's own divider is redundant against the dock's edge. */
+.editor-dock .editor-heading {
+  padding-bottom: 14px;
+  border-bottom: 0;
+}
+
+.editor-publish-bar {
+  display: grid;
+  gap: 10px;
+}
+
+.editor-publish-bar label {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.editor-publish-bar input {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.17);
+  border-radius: 3px;
+  color: #f2f3ef;
+  background: #131616;
+  font: 400 0.82rem/1.35 var(--font);
+}
+
+.editor-publish-bar > p {
+  margin: 0;
 }

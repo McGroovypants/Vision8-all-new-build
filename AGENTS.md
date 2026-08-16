@@ -64,11 +64,11 @@ These have each cost a session. Read before styling or debugging anything visual
 Never report a change as working from source alone. The build stamp is the authority:
 
 ```
-curl -s http://localhost:3003/ | grep -o "Build <!-- -->v1\.10\.[0-9]*"
-curl -s https://vision8-all-new-build.andy-96d.workers.dev/ | grep -o "Build <!-- -->v1\.10\.[0-9]*"
+curl -s http://localhost:3003/ | grep -o "Build <!-- -->v1\.[0-9]*\.[0-9]*"
+curl -s https://vision8-all-new-build.andy-96d.workers.dev/ | grep -o "Build <!-- -->v1\.[0-9]*\.[0-9]*"
 ```
 
-The `<!-- -->` is React's text-node separator and is expected. **Keep the trailing `*`**: without it the pattern matches `v1.10.1` inside `v1.10.12` and silently reports the wrong build.
+The `<!-- -->` is React's text-node separator and is expected. **Keep the trailing `*` on both number groups**: without the last one the pattern matches `v1.11.1` inside `v1.11.12` and silently reports the wrong build. The minor number is a wildcard too as of v1.11.40: the pattern was pinned to `v1\.10\.` and had matched nothing at all since v1.11.0, so a deploy check could return empty and read as a failed deploy.
 
 For anything visual, drive a real browser rather than reasoning about the cascade. Playwright with `channel: 'chrome'` works against the dev server and settles questions that source reading cannot. Check computed opacity, the `active` class, and network failures together.
 
@@ -125,7 +125,7 @@ This project moves fast: five builds landed in a single afternoon. Any build num
 grep -n 'const BUILD' app/homepage-v1.10.3.tsx      # what the source is
 git status -sb                                      # local vs origin
 git log --oneline origin/main..HEAD                 # what is unpushed
-curl -s https://vision8-all-new-build.andy-96d.workers.dev/ | grep -o "Build <!-- -->v1\.10\.[0-9]*"
+curl -s https://vision8-all-new-build.andy-96d.workers.dev/ | grep -o "Build <!-- -->v1\.[0-9]*\.[0-9]*"
 ```
 
 Three things drift apart and regularly disagree: **local source, GitHub, and the live Worker.** They are updated by separate actions. Local can be ahead of GitHub while the Worker is ahead of both. Check all three rather than assuming a push or a deploy implied the other.

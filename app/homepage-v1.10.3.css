@@ -386,3 +386,167 @@
 .copy-row .stage-body {
   font-size: clamp(var(--editor-photo-body-min), var(--editor-photo-body-vw), var(--editor-photo-body-max));
 }
+
+/*
+  ============================================================
+  v1.11.40: the fan 25 percent larger, on the client's mark. Last block in the
+  chain deliberately, so it is the final word on the geometry and nothing below
+  reinstates the v1.11.39 sizes.
+
+  --fan-scale multiplies the lengths that make the fan the size it is: the
+  container, the arm lengths, the logo core, the apex gap and the label offset.
+  Scaling any of them alone shears the assembly, because the branch bottom is
+  derived from --core-height and the label sits at the arm tip.
+
+  [CRITICAL] The vh terms inside the min() lists are deliberately NOT scaled,
+  and the label type carries a matching vh cap (--editor-fan-vh, set in
+  homepage-v1.10.3.tsx). They are the height guard. The fan lives in the band
+  between the header and the division copy, and that band does not grow with
+  the arms: measured at v1.11.39 it is 795px tall at 1920x1080, 628px at
+  1440x900 and 505px at 1366x768. Scaling the vh terms too put the logo through
+  the headline on a 768-tall laptop; scaling the type past the guard closed the
+  6px gap between the Video and Real Estate labels at the same size. Left
+  unscaled they hand the full 25 percent to screens with the room and taper it
+  on shorter ones, and because every term is greater than or equal to its
+  v1.11.39 value the fan can never come out smaller than it was.
+
+  Measured result, arms and type together: full 25 percent at 1080 tall and
+  above, 19 percent at 900, 2 percent at 768, no label pair closer than the
+  v1.11.39 spacing at any of them.
+
+  Phones and short screens keep v1.11.39 exactly, restated in the two blocks at
+  the foot of this file. The v1.11.27 pass tuned the phone geometry against
+  measured pairwise label overlap on a 390pt iPhone and a 320pt SE, and it left
+  12.8px between the outer label boxes and the screen edge at 390pt. A 25
+  percent uplift costs about 30px of that on each side, so the outer three
+  labels clip the edge; even 12 percent takes it to -9px. There is no room to
+  give on a phone.
+  ============================================================
+*/
+.fan {
+  --fan-scale: 1.25;
+  --apex-gap: calc(7px * var(--fan-scale));
+  --core-width: calc(clamp(190px, 19vw, 258px) * var(--fan-scale));
+  --core-height: calc(clamp(68px, 6.76vw, 92px) * var(--fan-scale));
+  --fan-line-base-top: calc(46px * var(--fan-scale));
+  /*
+    70vh, not 60vh x 1.25: the container's bottom edge carries the logo, and
+    measured against the copy block it can drop to 70vh before the two meet on
+    a 900-tall laptop. The px cap is the v1.11.39 cap scaled.
+  */
+  height: min(70vh, calc(540px * var(--fan-scale)));
+}
+
+.branch-motion,
+.branch-ai {
+  --branch-base-height: min(calc(23vw * var(--fan-scale)), 40vh, calc(300px * var(--fan-scale)));
+}
+
+.branch-photography,
+.branch-websites {
+  --branch-base-height: min(calc(25vw * var(--fan-scale)), 43vh, calc(330px * var(--fan-scale)));
+}
+
+.branch-audio,
+.branch-real-estate {
+  --branch-base-height: min(calc(27vw * var(--fan-scale)), 46vh, calc(355px * var(--fan-scale)));
+}
+
+.branch-filming {
+  --branch-base-height: min(calc(29vw * var(--fan-scale)), 49vh, calc(370px * var(--fan-scale)));
+}
+
+.fan-node {
+  /* The box grows with the type, or the longer labels wrap where they did not. */
+  max-width: calc(168px * var(--fan-scale));
+  /*
+    Read from the inside out: the uplifted vw term, capped by the height guard
+    so the type never outgrows the arms, floored at the v1.11.39 vw term so it
+    can only ever come out larger than it was, then clamped by the editor's own
+    minimum and maximum. All four terms carry the editor's scale control.
+  */
+  font-size: clamp(
+    var(--editor-fan-min),
+    max(var(--editor-fan-floor), min(var(--editor-fan-vw), var(--editor-fan-vh))),
+    var(--editor-fan-max)
+  );
+}
+
+/*
+  Short screens keep the v1.11.39 fan. homepage-v1.8.2.css already shrinks the
+  logo here, and the rules above would otherwise overrule it from further down
+  the chain and put a 25 percent larger logo on the screen with the least room
+  for it. The arms and type need no restatement: their vh guards already bind
+  at this height.
+*/
+@media (max-height: 700px) {
+  .fan {
+    --fan-scale: 1;
+    --core-width: 184px;
+    --core-height: 66px;
+    /*
+      homepage-v1.8.1.css line 515, restated. This tier has its own shorter
+      container, and the rule above would otherwise replace it from further
+      down the chain and drop the whole assembly 40px. Measured identical to
+      v1.11.39 at 1280x700 and 1280x660 with this line in place.
+    */
+    height: min(58vh, 380px);
+  }
+}
+
+/*
+  Phones: the v1.11.39 numbers in full, restated rather than inherited. The
+  rules above sit after the v1.11.27 phone block with the same specificity, so
+  they win at every width unless the phone values are written again here.
+*/
+@media (max-width: 720px) {
+  .fan {
+    --fan-scale: 1;
+    --apex-gap: 6px;
+    --core-width: 164px;
+    --core-height: 59px;
+    --fan-line-base-top: 40px;
+    height: min(58vh, 460px);
+  }
+
+  .fan-branch {
+    bottom: calc(var(--core-height) + 6px);
+  }
+
+  .branch-motion,
+  .branch-ai {
+    --branch-base-height: min(32vw, 23vh, 150px);
+  }
+
+  .branch-photography,
+  .branch-websites {
+    --branch-base-height: min(42vw, 30vh, 192px);
+  }
+
+  .branch-audio,
+  .branch-real-estate {
+    --branch-base-height: min(52vw, 37vh, 234px);
+  }
+
+  .branch-filming {
+    --branch-base-height: min(62vw, 44vh, 276px);
+  }
+
+  .fan-node {
+    max-width: 132px;
+    font-size: clamp(0.8rem, 3.6vw, 0.95rem);
+  }
+}
+
+@media (max-width: 720px) and (max-height: 700px) {
+  .fan {
+    --core-width: 164px;
+    --core-height: 59px;
+  }
+}
+
+@media (max-width: 380px) {
+  .fan-node {
+    max-width: 118px;
+  }
+}

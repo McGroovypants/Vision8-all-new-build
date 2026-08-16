@@ -504,13 +504,54 @@ export function PhotographyView({
 
       {editable && panelOpen && (
         <aside className="editor-panel" aria-label="Vision8 photography editor">
-          <div className="editor-heading">
-            <div>
-              <p>Vision8 photography editor</p>
-              <h2>Photography editor</h2>
+          {/*
+            v1.11.40: the heading and Publish are docked, on the client's mark.
+            Publish is the one action with a consequence outside this browser,
+            and the panel is long enough that it used to scroll out of reach
+            below six collections of controls. Sticky rather than a second
+            fixed element, so it spans the panel's own scrollport and cannot
+            drift out of step with the panel width.
+          */}
+          <div className="editor-dock">
+            <div className="editor-heading">
+              <div>
+                <p>Vision8 photography editor</p>
+                <h2>Photography editor</h2>
+              </div>
+              <button type="button" onClick={() => setPanelOpen(false)} aria-label="Close editor">Close</button>
             </div>
-            <button type="button" onClick={() => setPanelOpen(false)} aria-label="Close editor">Close</button>
+
+            <div className="editor-publish-bar">
+              <label>
+                Publish key
+                <input
+                  type="password"
+                  autoComplete="off"
+                  value={publishKey}
+                  onChange={(event) => savePublishKey(event.target.value)}
+                />
+              </label>
+              <div className="editor-two-column">
+                <button type="button" className="photo-editor-publish" disabled={!publishKey} onClick={publish}>
+                  Publish to live
+                </button>
+                <button type="button" disabled={!publishKey} onClick={revertLive}>
+                  Revert live
+                </button>
+              </div>
+              <p className={publishMsg ? "editor-note photo-editor-publish-msg" : "editor-note"}>
+                {publishMsg
+                  ? publishMsg
+                  : liveStatus === "published"
+                    ? "The live page is showing a published layout."
+                    : liveStatus === "defaults"
+                      ? "The live page is showing the built-in layout."
+                      : "Live status unknown."}
+              </p>
+            </div>
           </div>
+
+          <p className="editor-note">Publish makes this exact layout the public /photography page immediately. The key is remembered in this browser.</p>
 
           <p className="editor-note">Sections below follow the page order. Click any photo or line of text on the page to jump straight to it here, and drag a photo on the page to reframe it.</p>
 
@@ -542,36 +583,6 @@ export function PhotographyView({
               />
               Show closing line
             </label>
-          </section>
-
-          <section className="editor-section">
-            <h3>Publish</h3>
-            <p className="editor-note">
-              {liveStatus === "published"
-                ? "The live page is showing a published layout."
-                : liveStatus === "defaults"
-                  ? "The live page is showing the built-in layout."
-                  : "Live status unknown."}
-            </p>
-            <label>
-              Publish key
-              <input
-                type="password"
-                autoComplete="off"
-                value={publishKey}
-                onChange={(event) => savePublishKey(event.target.value)}
-              />
-            </label>
-            <div className="editor-two-column">
-              <button type="button" className="photo-editor-publish" disabled={!publishKey} onClick={publish}>
-                Publish to live
-              </button>
-              <button type="button" disabled={!publishKey} onClick={revertLive}>
-                Revert live to built-in
-              </button>
-            </div>
-            {publishMsg && <p className="editor-note photo-editor-publish-msg">{publishMsg}</p>}
-            <p className="editor-note">Publish makes this exact layout the public /photography page immediately. The key is remembered in this browser.</p>
           </section>
 
           <div className="editor-actions">
