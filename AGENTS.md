@@ -17,9 +17,11 @@ The parent folder is not in git. This repo is the git root: `vision8-concepts-v1
 ```
 npm run dev -- --port 3003     # local, http://localhost:3003/
 npm run build                  # must pass before any deploy
-npm test                       # build plus route and homepage tests
+npm test                       # build, route tests, fan geometry in a browser
 npm run lint
 ```
+
+`npm test` runs every file in `tests/`: the route tests against the built Worker, then `fan-geometry.test.mjs`, which measures the homepage in WebKit at twelve viewports and fails on a label that clips the screen, sits under the header, wraps, or overlaps another label or the logo. Fifteen findings are accepted in `tests/fan-geometry.baseline.json`; anything else is a regression. `UPDATE_BASELINE=1` rewrites that file, `SKIP_BROWSER_TESTS=1` runs the route tests alone. Full notes are in the test's own header.
 
 ## Layout
 
