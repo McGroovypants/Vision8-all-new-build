@@ -1473,44 +1473,16 @@
 }
 
 /*
-  The keyword headings the client asked for by name: short noun runs at
-  display scale, where the copy between sections was reading as small
-  floating text.
+  v1.11.45: the "Thoughtful. Fast. Easy to work with." line is removed, and
+  .re-keywords, its span and .re-keywords-sub go with it. git show
+  v1.11.44:app/portfolio-pages.css has them, including the container-derived
+  size that kept the line off a second row.
 
-  [CRITICAL] Two classes, not a lone `.re-keywords`. This page sets defaults
-  on `.real-estate-page p` and `.real-estate-page h2`, a class plus an
-  element, and a single class loses to that regardless of source order.
+  [CRITICAL] The lesson those rules carried still applies to anything new here.
+  This page sets defaults on `.real-estate-page p` and `.real-estate-page h2`,
+  a class plus an element, so a lone class on a paragraph does not beat them and
+  wins only on source order. Prefix new copy rules with `.real-estate-page`.
 */
-.real-estate-page .re-keywords {
-  margin: 0 0 clamp(36px, 4.4vw, 60px);
-  color: var(--white);
-  /*
-    [CRITICAL] The line must not wrap, on the client's instruction, so the size
-    is derived from the container rather than clamped independently of it: the
-    statement measures just under 20em at this weight and tracking, and the
-    container is min(1280px, 100% - 2 gutters). A static clamp here wraps at
-    whichever width its slope happens to cross the container.
-  */
-  font-size: min(4.2rem, calc(min(1280px, 100vw - (2 * var(--gutter)) - 12px) / 20));
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.035em;
-  white-space: nowrap;
-}
-
-/* The accent lands on the full stops, so the teal marks the rhythm of the
-   line rather than promoting one word into a claim. */
-.real-estate-page .re-keywords span {
-  color: var(--teal-bright);
-}
-
-/* The band variant sits under an h2 that already carries the argument, so it
-   holds a step below the statement scale. */
-.real-estate-page .re-keywords-sub {
-  margin: 32px 0 0;
-  font-size: clamp(1.5rem, 2.8vw, 2.5rem);
-  white-space: normal;
-}
 
 /* A faint teal fall-off at the top of the first scrolled section, so the
    page does not go flat the moment the reel leaves the screen. The band's
@@ -1674,10 +1646,18 @@
 .re-collab {
   display: grid;
   grid-template-columns: 230px minmax(0, 1fr) 230px;
-  gap: clamp(24px, 3vw, 44px);
+  gap: clamp(20px, 2.2vw, 32px);
   align-items: center;
-  max-width: 1080px;
-  margin-top: clamp(40px, 5vw, 64px);
+  /*
+    940px centred, not 1080 left: the copy between the frames was 534px wide and
+    held the two of them nearly the full measure apart. At 940 with a tighter
+    gap the middle column is about 410px, the frames come roughly 140px closer,
+    and the group is centred on the page rather than hanging on the section's
+    left edge. It is the one centred block in a left-aligned section, which is
+    deliberate: the client asked for it centred.
+  */
+  max-width: 940px;
+  margin: clamp(40px, 5vw, 64px) auto 0;
 }
 
 .re-collab figure {
@@ -1692,8 +1672,15 @@
   border-radius: 2px;
 }
 
-.re-collab > p {
+/*
+  Two points under the Experience copy above it, on the client's mark: that runs
+  at 1.375rem, 22px, so this is 1.25rem, 20px, against the page body's 1.1rem.
+  Prefixed, per the specificity note further up this file: `.re-collab > p`
+  alone ties with `.real-estate-page p` and would win on source order only.
+*/
+.real-estate-page .re-collab > p {
   margin: 0;
+  font-size: 1.25rem;
 }
 
 /*

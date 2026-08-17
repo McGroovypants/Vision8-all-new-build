@@ -288,9 +288,6 @@ export default function RealEstateMediaPage() {
             </figure>
           </div>
 
-          <p className="re-keywords re-keywords-sub">
-            Thoughtful<span>.</span> Fast<span>.</span> Easy to work with<span>.</span>
-          </p>
           <blockquote className="re-voice">
             <p>{VOICE.working}</p>
           </blockquote>
@@ -349,7 +346,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.44</p>
+      <p className="portfolio-build">Build v1.11.45</p>
     </main>
   );
 }
