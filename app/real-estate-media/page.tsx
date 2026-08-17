@@ -238,6 +238,47 @@ export default function RealEstateMediaPage() {
             <img src="/real-estate/villa-entrance.jpg" alt="Villa entrance with clipped hedges and stone driveway" loading="lazy" />
             <img src="/real-estate/karaka-dusk.jpg" alt="Covered deck at dusk with lit timber walls and rural outlook" loading="lazy" />
           </div>
+          {/*
+            v1.11.43. The two of us, one frame each, above the plans.
+
+            Helen's portrait comes from the v8-photos collection, not
+            vision8-website like everything else on this page, and the public
+            form of the URL is the only one the site can read: the address
+            copied out of the portal, /library/vision8/website/photography-page/
+            <slug>/optimised.jpg, answers 403 to anyone not logged in, as does
+            the same slug under collections-media/vision8-website/. The manifest
+            at /library/public/collections/v8-photos.json is what to read if
+            this slug ever moves. Verified from outside before wiring in, as
+            this page requires: 200, image/jpeg, 1339x1600.
+
+            Andy's frame moved here from the Experience band, which returns to
+            the full-width centred copy its own comment describes as the rhythm
+            break. The same picture in two places on one page reads as a stock
+            library, not a pair.
+
+            Both frames take the same 4/5 crop at the same column width, so the
+            two are identical in size whatever their sources measure: Helen's is
+            1339x1600, the stabiliser frame 1466x2500.
+          */}
+          <div className="re-collab">
+            <div className="re-collab-pair">
+              <figure>
+                <img src={HELEN_PORTRAIT} alt="Helen Gwyther adjusting a flash-mounted camera on a tripod" loading="lazy" />
+                <figcaption>Helen Gwyther - <span>Photographer</span></figcaption>
+              </figure>
+              <figure>
+                <img src="/real-estate/andy-stabiliser.jpg" alt="Andy McGrath filming inside a home with a gimbal-mounted camera" loading="lazy" />
+                <figcaption>Andy McGrath - <span>Video Producer</span></figcaption>
+              </figure>
+            </div>
+            <p>
+              I often team up with photographer Helen on real estate projects. With more than 10 years’ experience in
+              real estate photography, and more recently virtual staging, Helen is a consummate professional. She has
+              been great to work with and also a great mentor to me in recent years. Clients know their property is in
+              very safe hands when Helen is behind the camera.
+            </p>
+          </div>
+
           <div className="re-plans-block re-split">
             <figure className="re-plan">
               <img src="/real-estate/floor-plan-example.jpg" alt="Three-floor plan example with room dimensions" loading="lazy" />
@@ -252,32 +293,6 @@ export default function RealEstateMediaPage() {
             </div>
           </div>
 
-          {/*
-            v1.11.42. The portrait comes from the v8-photos collection, not
-            vision8-website like everything else on this page, and the public
-            form of the URL is the only one the site can read: the address
-            copied out of the portal, /library/vision8/website/photography-page/
-            <slug>/optimised.jpg, answers 403 to anyone not logged in, as does
-            the same slug under collections-media/vision8-website/. The manifest
-            at /library/public/collections/v8-photos.json is what to read if
-            this slug ever moves. Verified from outside before wiring in, as
-            this page requires: 200, image/jpeg, 1339x1600.
-          */}
-          <div className="re-collab">
-            <figure>
-              <img src={HELEN_PORTRAIT} alt="Helen Gwyther adjusting a flash-mounted camera on a tripod" loading="lazy" />
-              <figcaption>Helen Gwyther</figcaption>
-            </figure>
-            <div>
-              <h3>Helen Gwyther, photographer</h3>
-              <p>
-                I often team up with photographer Helen Gwyther on real estate projects. With more than 10 years’
-                experience in real estate photography, and more recently virtual staging, Helen is a consummate
-                professional. She has been great to work with and also a great mentor to me in recent years. Clients
-                know their property is in very safe hands when Helen is behind the camera.
-              </p>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -288,34 +303,21 @@ export default function RealEstateMediaPage() {
       */}
       <section className="re-band">
         <div className="re-band-copy">
-          {/* The picture sits beside this copy rather than behind it: it is a
-              portrait frame, and a portrait behind centred text is a wash, not
-              a photograph. The band keeps its tinted full-bleed ground, which
-              is what makes it read as the break in the page's rhythm. */}
-          <div className="re-band-split">
-            <figure>
-              <img
-                src="/real-estate/andy-stabiliser.jpg"
-                alt="Andy McGrath filming inside a home with a gimbal-mounted camera"
-                loading="lazy"
-              />
-              <figcaption>On location</figcaption>
-            </figure>
-            <div>
-              <p className="re-eyebrow"><span className="re-index">04</span>Experience</p>
-              <h2>Experience is useful when you know what to do with it.</h2>
-              <p>Vision8 comes from a much wider world than property marketing.</p>
-              <p>
-                Years behind cameras and in control rooms across television, commercials, concerts and major live
-                events have taught us how to make decisions quickly, work comfortably with people and recognise the
-                moment worth capturing.
-              </p>
-              <p>That experience now comes to a property shoot without bringing a television crew with it.</p>
-              <p className="re-keywords re-keywords-sub">
-                Thoughtful<span>.</span> Fast<span>.</span> Easy to work with<span>.</span>
-              </p>
-            </div>
-          </div>
+          {/* v1.11.43: back to copy alone, centred and full width, which is
+              what the comment above describes. The stabiliser frame moved up to
+              the pair in the photography section; it cannot sit in both. */}
+          <p className="re-eyebrow"><span className="re-index">04</span>Experience</p>
+          <h2>Experience is useful when you know what to do with it.</h2>
+          <p>Vision8 comes from a much wider world than property marketing.</p>
+          <p>
+            Years behind cameras and in control rooms across television, commercials, concerts and major live events
+            have taught us how to make decisions quickly, work comfortably with people and recognise the moment worth
+            capturing.
+          </p>
+          <p>That experience now comes to a property shoot without bringing a television crew with it.</p>
+          <p className="re-keywords re-keywords-sub">
+            Thoughtful<span>.</span> Fast<span>.</span> Easy to work with<span>.</span>
+          </p>
           <blockquote className="re-voice">
             <p>{VOICE.working}</p>
           </blockquote>
@@ -359,7 +361,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.42</p>
+      <p className="portfolio-build">Build v1.11.43</p>
     </main>
   );
 }

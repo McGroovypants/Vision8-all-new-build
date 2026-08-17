@@ -1661,25 +1661,38 @@
 }
 
 /*
-  v1.11.41, portrait added v1.11.42: the Helen Gwyther note at the foot of the
-  photography section. The same top gap as the plans block above it, which it
-  would otherwise sit flush against, under that block's figcaption.
+  v1.11.43: the two-portrait pair and its note, above the plans block.
 
-  Its own grid rather than .re-split, which gives the figure 7 of 12 columns:
-  fine for the landscape floor plan, but a 750px-wide portrait beside four
-  sentences is a picture with a caption attached. 4 and 8 of a 1000px measure
-  puts the portrait at about 330px and leaves the copy near the 760px the
-  section heads use. The 4/5 crop is the same treatment the band gives Andy's
-  portrait, for the same reason: run at its own ratio it is a column of picture
-  and nothing else.
+  The pair sits on the narrow side with the copy beside it, not beneath it: two
+  frames on a 760px measure came out 360px each, taller than the four sentences
+  next to them and reading as a gallery with a caption. At 5 of 12 columns they
+  are about 210px each, the copy takes the 7 and runs to five lines, and the two
+  halves finish within about 40px of each other.
+
+  The 4/5 crop on both is what makes them identical in size: the sources are
+  1339x1600 and 1466x2500, which side by side at their own ratios would be
+  visibly mismatched frames. It is also the treatment the band gave the
+  stabiliser frame, for the reason recorded there.
 */
 .re-collab {
   display: grid;
-  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
-  gap: clamp(28px, 3.4vw, 56px);
+  /*
+    A fixed pair column rather than a fraction: the captions carry a name and a
+    role, and at the 205px a 5fr share gave them both wrapped mid-phrase. 480px
+    holds two 230px frames, which is the narrowest that keeps
+    "Andy McGrath - Video Producer" on one line at the tracking below.
+  */
+  grid-template-columns: minmax(0, 480px) minmax(0, 1fr);
+  gap: clamp(28px, 3.4vw, 52px);
   align-items: center;
-  max-width: 1000px;
+  max-width: 1120px;
   margin-top: clamp(48px, 6vw, 80px);
+}
+
+.re-collab-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(12px, 1.4vw, 20px);
 }
 
 .re-collab figure {
@@ -1692,6 +1705,29 @@
   aspect-ratio: 4 / 5;
   object-fit: cover;
   border-radius: 2px;
+}
+
+.re-collab > p {
+  margin: 0;
+}
+
+/*
+  Tighter than the page's other captions, which are two or three words. These
+  carry a name and a role and need the room; the wrap they took at the page
+  default broke "Video / Producer" across lines.
+*/
+.re-collab figcaption {
+  letter-spacing: 0.06em;
+  font-size: 0.72rem;
+}
+
+/*
+  The role held together, so where the caption has to wrap, on a phone the
+  frames are about 170px, it breaks after the name rather than through
+  "Video / Producer".
+*/
+.re-collab figcaption span {
+  white-space: nowrap;
 }
 
 .real-estate-page .re-plan {
@@ -1858,44 +1894,17 @@
 }
 
 .re-band-copy {
-  /* Wider than the 880px it held when this band was copy only: it now carries a
-     picture pair, and the quote below keeps its own narrower measure. */
-  max-width: 1180px;
+  /* Back to 880px at v1.11.43: 1180px was for the picture pair that used to sit
+     here, and centred copy on that measure runs too long a line. */
+  max-width: 880px;
   margin: 0 auto;
 }
 
 /*
-  The band's picture pair. 5fr/7fr with the frame on the narrow side, which is
-  the reverse of `.re-split` elsewhere and deliberate: the stabiliser frame is
-  portrait, and on the 7fr side it would stand over 1200px tall beside five
-  short paragraphs.
+  v1.11.43: .re-band-split and its eyebrow override are gone with the picture
+  they positioned. The band is copy alone again, as .re-band's own comment
+  describes, so the eyebrow returns to the centred default.
 */
-.re-band-split {
-  display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  gap: clamp(32px, 4.4vw, 64px);
-  align-items: center;
-  text-align: left;
-}
-
-.re-band-split figure {
-  margin: 0;
-}
-
-/* Cropped to a settled portrait rather than run at its own 1466 by 2500, which
-   beside this copy is a column of picture and nothing else. */
-.re-band-split img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
-  border-radius: 2px;
-}
-
-/* The band centres its eyebrow; inside the pair it hangs left with the copy. */
-.real-estate-page .re-band-split .re-eyebrow {
-  justify-content: flex-start;
-}
 
 /* A quarter over the new body size, on the client's mark for this blurb. */
 .real-estate-page .re-band p {
@@ -2015,7 +2024,6 @@
   }
 
   .re-pair,
-  .re-band-split,
   .re-collab {
     grid-template-columns: 1fr;
   }
