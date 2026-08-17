@@ -243,6 +243,33 @@ export default function RealEstateMediaPage() {
               </p>
             </div>
           </div>
+
+          {/*
+            v1.11.41. Text only for now, deliberately.
+
+            The supplied portrait is
+            media.vision8.co.nz/library/vision8/website/photography-page/
+            helen-w-camera-2025-website-1339x1600-1786942580-35a562ef/optimised.jpg
+            and it answers 403 to an anonymous request, as do the same slug
+            under /library/public/collections-media/vision8-website/ and the
+            original.jpg alongside it. That path has no `public/collections-media`
+            segment, which every working asset on this page does have, so it
+            reads as the portal's private library rather than the published
+            collection. It needs publishing to the vision8-website collection;
+            the public URL that comes back then goes in a figure here, as a
+            .re-split with the copy, matching the plans block above. Verified
+            from outside before wiring in, as this page requires: a 403 asset
+            took the whole page down once already.
+          */}
+          <div className="re-collab">
+            <h3>Helen Gwyther, photographer</h3>
+            <p>
+              I often team up with photographer Helen Gwyther on real estate projects. With more than 10 years’
+              experience in real estate photography, and more recently virtual staging, Helen is a consummate
+              professional. She has been great to work with and also a great mentor to me in recent years. Clients
+              know their property is in very safe hands when Helen is behind the camera.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -324,7 +351,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.40</p>
+      <p className="portfolio-build">Build v1.11.41</p>
     </main>
   );
 }

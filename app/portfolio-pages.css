@@ -1660,6 +1660,19 @@
   margin-top: clamp(48px, 6vw, 80px);
 }
 
+/*
+  v1.11.41: the Helen Gwyther note at the foot of the photography section. The
+  same top gap as the plans block above it, which it would otherwise sit flush
+  against, under that block's figcaption. 760px matches .re-section-head: at
+  the full 1280px of .re-inner the measure runs to about 150 characters, twice
+  anything else on the page. When the portrait is published this becomes a
+  .re-split and the max-width comes off, the column will set the measure.
+*/
+.re-collab {
+  max-width: 760px;
+  margin-top: clamp(48px, 6vw, 80px);
+}
+
 .real-estate-page .re-plan {
   margin: 0;
 }
