@@ -46,6 +46,14 @@ const PROPERTY_REEL = `${MEDIA}/vision8-real-estate-promo-v2-reduced/download.mp
 // re-checked, not just the file that changed.
 const PEOPLE_VIDEO = `${MEDIA}/testimonial-2026c-2/download.mp4`;
 const MATTERPORT_VIDEO = `${MEDIA}/matterport-video-examples/download.mp4`;
+/*
+  Helen's portrait sits in the v8-photos collection rather than vision8-website,
+  so it does not hang off MEDIA above. Same 300 second max-age and the same
+  dependency: unpublishing that collection takes this picture down within five
+  minutes.
+*/
+const HELEN_PORTRAIT =
+  "https://media.vision8.co.nz/library/public/collections-media/v8-photos/helen-w-camera-2025-website-1339x1600-1786942580-35a562ef/optimised.jpg";
 
 /*
   A live tour, when there is one. A public link rather than an inline embed: an
@@ -245,30 +253,30 @@ export default function RealEstateMediaPage() {
           </div>
 
           {/*
-            v1.11.41. Text only for now, deliberately.
-
-            The supplied portrait is
-            media.vision8.co.nz/library/vision8/website/photography-page/
-            helen-w-camera-2025-website-1339x1600-1786942580-35a562ef/optimised.jpg
-            and it answers 403 to an anonymous request, as do the same slug
-            under /library/public/collections-media/vision8-website/ and the
-            original.jpg alongside it. That path has no `public/collections-media`
-            segment, which every working asset on this page does have, so it
-            reads as the portal's private library rather than the published
-            collection. It needs publishing to the vision8-website collection;
-            the public URL that comes back then goes in a figure here, as a
-            .re-split with the copy, matching the plans block above. Verified
-            from outside before wiring in, as this page requires: a 403 asset
-            took the whole page down once already.
+            v1.11.42. The portrait comes from the v8-photos collection, not
+            vision8-website like everything else on this page, and the public
+            form of the URL is the only one the site can read: the address
+            copied out of the portal, /library/vision8/website/photography-page/
+            <slug>/optimised.jpg, answers 403 to anyone not logged in, as does
+            the same slug under collections-media/vision8-website/. The manifest
+            at /library/public/collections/v8-photos.json is what to read if
+            this slug ever moves. Verified from outside before wiring in, as
+            this page requires: 200, image/jpeg, 1339x1600.
           */}
           <div className="re-collab">
-            <h3>Helen Gwyther, photographer</h3>
-            <p>
-              I often team up with photographer Helen Gwyther on real estate projects. With more than 10 years’
-              experience in real estate photography, and more recently virtual staging, Helen is a consummate
-              professional. She has been great to work with and also a great mentor to me in recent years. Clients
-              know their property is in very safe hands when Helen is behind the camera.
-            </p>
+            <figure>
+              <img src={HELEN_PORTRAIT} alt="Helen Gwyther adjusting a flash-mounted camera on a tripod" loading="lazy" />
+              <figcaption>Helen Gwyther</figcaption>
+            </figure>
+            <div>
+              <h3>Helen Gwyther, photographer</h3>
+              <p>
+                I often team up with photographer Helen Gwyther on real estate projects. With more than 10 years’
+                experience in real estate photography, and more recently virtual staging, Helen is a consummate
+                professional. She has been great to work with and also a great mentor to me in recent years. Clients
+                know their property is in very safe hands when Helen is behind the camera.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -351,7 +359,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.41</p>
+      <p className="portfolio-build">Build v1.11.42</p>
     </main>
   );
 }

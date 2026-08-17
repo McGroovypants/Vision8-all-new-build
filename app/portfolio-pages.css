@@ -1661,16 +1661,37 @@
 }
 
 /*
-  v1.11.41: the Helen Gwyther note at the foot of the photography section. The
-  same top gap as the plans block above it, which it would otherwise sit flush
-  against, under that block's figcaption. 760px matches .re-section-head: at
-  the full 1280px of .re-inner the measure runs to about 150 characters, twice
-  anything else on the page. When the portrait is published this becomes a
-  .re-split and the max-width comes off, the column will set the measure.
+  v1.11.41, portrait added v1.11.42: the Helen Gwyther note at the foot of the
+  photography section. The same top gap as the plans block above it, which it
+  would otherwise sit flush against, under that block's figcaption.
+
+  Its own grid rather than .re-split, which gives the figure 7 of 12 columns:
+  fine for the landscape floor plan, but a 750px-wide portrait beside four
+  sentences is a picture with a caption attached. 4 and 8 of a 1000px measure
+  puts the portrait at about 330px and leaves the copy near the 760px the
+  section heads use. The 4/5 crop is the same treatment the band gives Andy's
+  portrait, for the same reason: run at its own ratio it is a column of picture
+  and nothing else.
 */
 .re-collab {
-  max-width: 760px;
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  gap: clamp(28px, 3.4vw, 56px);
+  align-items: center;
+  max-width: 1000px;
   margin-top: clamp(48px, 6vw, 80px);
+}
+
+.re-collab figure {
+  margin: 0;
+}
+
+.re-collab img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 2px;
 }
 
 .real-estate-page .re-plan {
@@ -1994,7 +2015,8 @@
   }
 
   .re-pair,
-  .re-band-split {
+  .re-band-split,
+  .re-collab {
     grid-template-columns: 1fr;
   }
 
