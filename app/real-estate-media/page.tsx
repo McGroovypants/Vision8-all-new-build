@@ -88,7 +88,7 @@ const VOICE = {
   breadth:
     "Whether it\u2019s shooting, editing, photography, 3D walkthroughs or helping bring an idea to life, Vision8 understands what is needed and delivers.",
   working:
-    "What really sets Vision8 apart is how easy Vision8 are to deal with \u2014 professional, reliable, creative and always willing to go the extra mile to get the right result.",
+    "What really sets Vision8 apart is how easy Vision8 are to deal with. Professional, reliable, creative and always willing to go the extra mile to get the right result.",
 };
 
 export const metadata: Metadata = {
@@ -189,14 +189,14 @@ export default function RealEstateMediaPage() {
               <div className="re-video">
                 <video src={MATTERPORT_VIDEO} muted loop playsInline preload="none" controls />
               </div>
-              <figcaption>Matterport walkthrough examples</figcaption>
+              <figcaption>360° tour examples</figcaption>
             </figure>
             <div>
-              <p className="re-eyebrow"><span className="re-index">02</span>Matterport</p>
+              <p className="re-eyebrow"><span className="re-index">02</span>360° virtual tours</p>
               <h2>Walk through before walking in.</h2>
               <p>
-                Matterport 3D walkthroughs let buyers explore a home in their own time and understand how the spaces
-                actually connect.
+                360° tours let buyers explore a home in their own time and understand how the spaces actually
+                connect.
               </p>
               <p>
                 We take care over camera position, coverage and the flow through the property so the finished
@@ -217,10 +217,35 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
+      {/*
+        v1.11.46: floor plans out of the photography section and up here, right
+        after the 360 tours, on the client's mark. Its own section rather than a
+        block inside the tours: a floor plan is not a 360 tour, and it carries
+        its own h3. No eyebrow, so 01, 02, 03 still run in order with nothing
+        after it renumbered.
+      */}
+      <section className="re-section">
+        <div className="re-inner">
+          <div className="re-split">
+            <figure className="re-plan">
+              <img src="/real-estate/floor-plan-example.jpg" alt="Three-floor plan example with room dimensions" loading="lazy" />
+              <figcaption>Floor plan example</figcaption>
+            </figure>
+            <div>
+              <h3>Photos show how a home feels. A floor plan shows how it works.</h3>
+              <p>
+                Clear 2D plans help buyers understand the layout, room sizes and flow at a glance, and give them
+                something useful to return to after a viewing.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="re-section">
         <div className="re-inner">
           <div className="re-section-head">
-            <p className="re-eyebrow"><span className="re-index">03</span>Photography and floor plans</p>
+            <p className="re-eyebrow"><span className="re-index">03</span>Photography</p>
             <h2>The essentials still matter.</h2>
           </div>
           <div>
@@ -292,20 +317,6 @@ export default function RealEstateMediaPage() {
             <p>{VOICE.working}</p>
           </blockquote>
 
-          <div className="re-plans-block re-split">
-            <figure className="re-plan">
-              <img src="/real-estate/floor-plan-example.jpg" alt="Three-floor plan example with room dimensions" loading="lazy" />
-              <figcaption>Floor plan example</figcaption>
-            </figure>
-            <div>
-              <h3>Photos show how a home feels. A floor plan shows how it works.</h3>
-              <p>
-                Clear 2D plans help buyers understand the layout, room sizes and flow at a glance, and give them
-                something useful to return to after a viewing.
-              </p>
-            </div>
-          </div>
-
         </div>
       </section>
 
@@ -346,7 +357,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.45</p>
+      <p className="portfolio-build">Build v1.11.46</p>
     </main>
   );
 }

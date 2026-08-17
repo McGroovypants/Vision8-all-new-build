@@ -1627,9 +1627,11 @@
   glowing cut-out, so it sits on its own white card, which is how plans are
   printed and how they carry on dark sites.
 */
-.re-plans-block {
-  margin-top: clamp(48px, 6vw, 80px);
-}
+/*
+  v1.11.46: .re-plans-block is gone with the move. Floor plans are their own
+  section now, after the 360 tours, so the section's own padding sets the space
+  that this top margin used to.
+*/
 
 /*
   v1.11.44: a frame each side of the note, with the Experience copy full width
