@@ -232,7 +232,7 @@ export default function RealEstateMediaPage() {
               <figcaption>Floor plan example</figcaption>
             </figure>
             <div>
-              <h3>Photos show how a home feels. A floor plan shows how it works.</h3>
+              <h3>Photos show how a home feels.<br />A floor plan shows how it works.</h3>
               <p>
                 Clear 2D plans help buyers understand the layout, room sizes and flow at a glance, and give them
                 something useful to return to after a viewing.
@@ -357,7 +357,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.46</p>
+      <p className="portfolio-build">Build v1.11.47</p>
     </main>
   );
 }

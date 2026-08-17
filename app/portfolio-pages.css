@@ -1399,7 +1399,8 @@
   display: block;
   max-width: 400px;
   color: var(--white);
-  font-size: clamp(0.88rem, 1.02vw, 0.96rem);
+  /* v1.11.47: on the page's 1.25rem prose floor, up from a 0.88 to 0.96rem clamp. */
+  font-size: 1.25rem;
   line-height: 1.5;
 }
 
@@ -1450,13 +1451,15 @@
   text-transform: uppercase;
 }
 
-.real-estate-page .re-eyebrow::before {
-  content: "";
-  flex: none;
-  width: 24px;
-  height: 2px;
-  background: var(--teal-bright);
-}
+/*
+  v1.11.47: the 24px teal rule that led each section label is gone on the
+  client's mark. The gap and flex row stay, harmless with one child, and are what
+  the number and label still sit on.
+
+  [NOTE] Not to be confused with the teal hyphens between the hero's service
+  names: those are `content: "-"` further up this file and are the client's own
+  separator, deliberately kept.
+*/
 
 /* Dimmer than the label so the section's name, not its number, registers
    first. 0.55 stays above the 50% floor the house style sets. */
@@ -1506,12 +1509,22 @@
   font-weight: 700;
 }
 
+/*
+  v1.11.47: 1.25rem, 20px, is the floor for prose on this page, on the client's
+  mark, set from the size the collaborator note was given. Lifted from 1.1rem,
+  itself lifted from 1rem earlier; brightness went up a fifth to 0.94 in the same
+  earlier pass.
+
+  The four prose rules that sat under the floor came up with it: this one, the
+  hero lede, the pricing note and the photography credit. Labels and controls did
+  not, deliberately: captions, section labels, the nav, the buttons, the playbar
+  and the build stamp run from 8.8px to 18.4px, and at 20px a caption is
+  indistinguishable from the copy it captions.
+*/
 .real-estate-page p {
   margin: 0 0 18px;
-  /* Brightness and size both lifted on the client's call against the built
-     page: 0.78 up a fifth, 1rem up a tenth. */
   color: rgba(243, 244, 239, 0.94);
-  font-size: 1.1rem;
+  font-size: 1.25rem;
   line-height: 1.65;
 }
 
@@ -1543,7 +1556,8 @@
 .real-estate-page .re-pending {
   margin-top: 22px;
   color: rgba(243, 244, 239, 0.55);
-  font-size: 0.92rem;
+  /* v1.11.47: on the prose floor. Quiet by its 0.55 alpha, not by its size. */
+  font-size: 1.25rem;
 }
 
 /*
@@ -1801,7 +1815,8 @@
   max-width: 620px;
   margin: clamp(38px, 4.5vw, 56px) auto 0;
   color: rgba(243, 244, 239, 0.55);
-  font-size: 0.92rem;
+  /* v1.11.47: on the prose floor. Quiet by its 0.55 alpha, not by its size. */
+  font-size: 1.25rem;
 }
 
 /*
