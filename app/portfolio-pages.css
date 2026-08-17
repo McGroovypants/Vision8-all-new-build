@@ -1465,10 +1465,9 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* The band and the closing centre their copy, but a flex row keeps its
-   children left unless told otherwise, and a left-hung label reads as broken
-   inside a centred block. */
-.real-estate-page .re-band .re-eyebrow,
+/* The closing centres its copy, but a flex row keeps its children left unless
+   told otherwise, and a left-hung label reads as broken inside a centred
+   block. */
 .real-estate-page .re-closing .re-eyebrow {
   justify-content: center;
 }
@@ -1661,38 +1660,24 @@
 }
 
 /*
-  v1.11.43: the two-portrait pair and its note, above the plans block.
-
-  The pair sits on the narrow side with the copy beside it, not beneath it: two
-  frames on a 760px measure came out 360px each, taller than the four sentences
-  next to them and reading as a gallery with a caption. At 5 of 12 columns they
-  are about 210px each, the copy takes the 7 and runs to five lines, and the two
-  halves finish within about 40px of each other.
+  v1.11.44: a frame each side of the note, with the Experience copy full width
+  above it. Fixed 230px side columns rather than fractions: the captions carry a
+  name and a role, and 230px is the narrowest that keeps
+  "Andy McGrath - Video Producer" on one line at the tracking below. The copy
+  takes what is left, about 530px on this measure, and runs to six lines, so the
+  three columns finish within about 30px of each other.
 
   The 4/5 crop on both is what makes them identical in size: the sources are
   1339x1600 and 1466x2500, which side by side at their own ratios would be
-  visibly mismatched frames. It is also the treatment the band gave the
-  stabiliser frame, for the reason recorded there.
+  visibly mismatched frames.
 */
 .re-collab {
   display: grid;
-  /*
-    A fixed pair column rather than a fraction: the captions carry a name and a
-    role, and at the 205px a 5fr share gave them both wrapped mid-phrase. 480px
-    holds two 230px frames, which is the narrowest that keeps
-    "Andy McGrath - Video Producer" on one line at the tracking below.
-  */
-  grid-template-columns: minmax(0, 480px) minmax(0, 1fr);
-  gap: clamp(28px, 3.4vw, 52px);
+  grid-template-columns: 230px minmax(0, 1fr) 230px;
+  gap: clamp(24px, 3vw, 44px);
   align-items: center;
-  max-width: 1120px;
-  margin-top: clamp(48px, 6vw, 80px);
-}
-
-.re-collab-pair {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(12px, 1.4vw, 20px);
+  max-width: 1080px;
+  margin-top: clamp(40px, 5vw, 64px);
 }
 
 .re-collab figure {
@@ -1713,8 +1698,7 @@
 
 /*
   Tighter than the page's other captions, which are two or three words. These
-  carry a name and a role and need the room; the wrap they took at the page
-  default broke "Video / Producer" across lines.
+  carry a name and a role and need the room.
 */
 .re-collab figcaption {
   letter-spacing: 0.06em;
@@ -1723,11 +1707,38 @@
 
 /*
   The role held together, so where the caption has to wrap, on a phone the
-  frames are about 170px, it breaks after the name rather than through
-  "Video / Producer".
+  frames are about half the screen, it breaks after the name rather than
+  through "Video / Producer".
 */
 .re-collab figcaption span {
   white-space: nowrap;
+}
+
+/*
+  The Experience copy, full width above the pair and sharing its left and right
+  edges so the two read as one block. The sizes are the band's, moved here with
+  the copy on the client's mark: a quarter over the page body size, and an h2
+  held under the section h2 scale because it is a nine word sentence that at
+  full display size reads as a paragraph promoted to a headline.
+
+  The paragraphs stop at 900px while the heading takes the full 1080px. At the
+  full width this copy runs to about 98 characters a line at its own size,
+  half again what the rest of the page sets.
+*/
+.re-experience {
+  max-width: 1080px;
+  margin-top: clamp(48px, 6vw, 80px);
+}
+
+.real-estate-page .re-experience p {
+  max-width: 900px;
+  font-size: 1.375rem;
+}
+
+.real-estate-page .re-experience h2 {
+  font-size: clamp(1.55rem, 2.7vw, 2.35rem);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
 }
 
 .real-estate-page .re-plan {
@@ -1880,45 +1891,11 @@
 }
 
 /*
-  The rhythm break, full width and centred with no picture pair, placed after
-  the fifth two-column section. Toned rather than photographic so it does not
-  wait on an asset; a background image can be added here alone later.
+  v1.11.44: .re-band and its rules are gone with the section. Its copy moved
+  into .re-experience above, which carries the sizes that were set here; the
+  tinted full-bleed ground and the centring went with the band itself. git
+  history has the block if the page ever wants a rhythm break again.
 */
-.re-band {
-  padding: clamp(90px, 11vw, 150px) var(--gutter);
-  text-align: center;
-  border-bottom: 1px solid var(--line);
-  background:
-    radial-gradient(120% 90% at 50% 0%, rgba(11, 183, 163, 0.18), rgba(3, 4, 4, 0) 62%),
-    #070909;
-}
-
-.re-band-copy {
-  /* Back to 880px at v1.11.43: 1180px was for the picture pair that used to sit
-     here, and centred copy on that measure runs too long a line. */
-  max-width: 880px;
-  margin: 0 auto;
-}
-
-/*
-  v1.11.43: .re-band-split and its eyebrow override are gone with the picture
-  they positioned. The band is copy alone again, as .re-band's own comment
-  describes, so the eyebrow returns to the centred default.
-*/
-
-/* A quarter over the new body size, on the client's mark for this blurb. */
-.real-estate-page .re-band p {
-  font-size: 1.375rem;
-}
-
-/* Held under the section h2 size: this is a nine word sentence, and at the full
-   display size it reads as a paragraph promoted to a headline. */
-.real-estate-page .re-band h2 {
-  font-size: clamp(1.55rem, 2.7vw, 2.35rem);
-  line-height: 1.25;
-  letter-spacing: -0.01em;
-}
-
 .re-closing {
   padding: clamp(90px, 11vw, 150px) var(--gutter);
   text-align: center;
@@ -2023,9 +2000,22 @@
     order: -1;
   }
 
-  .re-pair,
-  .re-collab {
+  .re-pair {
     grid-template-columns: 1fr;
+  }
+
+  /*
+    The frames stay side by side on a phone: they are a pair, and stacking them
+    reads as two unrelated portraits. The copy drops below both, across the
+    full width. .re-photo-grid above goes 2-up here for the same reason.
+  */
+  .re-collab {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .re-collab > p {
+    grid-column: 1 / -1;
+    order: 1;
   }
 
   .re-photo-grid {

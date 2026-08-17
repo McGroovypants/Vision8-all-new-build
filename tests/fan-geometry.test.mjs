@@ -165,7 +165,13 @@ async function measure(browser, vp, origin) {
       text width decides every label box, and the fallback's metrics are not
       the shipped ones.
     */
-    await page.goto(`${origin}/?skipintro=1`, { waitUntil: "load" });
+    /*
+      domcontentloaded, not load: the homepage's media comes from Cloudinary and
+      "load" waits on all of it. A slow CDN failed this test on a navigation
+      timeout with nothing wrong in the layout, which is exactly the false alarm
+      a gate must not raise. Nothing measured here depends on those images.
+    */
+    await page.goto(`${origin}/?skipintro=1`, { waitUntil: "domcontentloaded" });
     await page.waitForSelector(".fan-node", { state: "attached" });
     await page.evaluate(() => document.fonts.ready);
     await page.waitForTimeout(250);
