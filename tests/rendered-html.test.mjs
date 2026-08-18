@@ -22,14 +22,14 @@ async function render(pathname = "/") {
   );
 }
 
-test("server-renders the Vision8 v1.11.48 homepage", async () => {
+test("server-renders the Vision8 v1.11.49 homepage", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /Vision8 homepage/);
-  assert.match(html, /Build <!-- -->v1\.11\.48/);
+  assert.match(html, /Build <!-- -->v1\.11\.49/);
   assert.match(html, /aria-label="Vision8 home"/);
   assert.match(html, /Audio/);
   assert.match(html, /Tech Solutions/);
@@ -63,7 +63,7 @@ for (const [pathname, expected] of routes) {
 
     const html = await response.text();
     assert.match(html, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.match(html, /Build (?:<!-- -->)?v1\.11\.48/);
+    assert.match(html, /Build (?:<!-- -->)?v1\.11\.49/);
     assert.match(html, />Home</);
     assert.match(html, />About us</);
     assert.match(html, />Our mahi</);
@@ -84,7 +84,8 @@ test("real-estate page embeds only cleared media", async () => {
   // force since v1.11.28: the 14 Aug portal republish dropped the `web.mp4`
   // renditions and only the delivery masters are published. When the web
   // renditions return, the page and these three assertions change together.
-  assert.match(html, /collections-media\/vision8-website\/vision8-real-estate-promo-v2-reduced\/download\.mp4/);
+  // v1.11.49: the hero is Promo V6 from the public assets prefix.
+  assert.match(html, /library\/public\/assets\/vision8-real-estate-promo-v6\/vision8-real-estate-promo-v6_1080p\.mp4/);
   assert.match(html, /collections-media\/vision8-website\/matterport-video-examples\/download\.mp4/);
   assert.match(html, /collections-media\/vision8-website\/testimonial-2026c-2\/download\.mp4/);
   // Nothing on this page may load from the signed prefix: it answers 403 to any

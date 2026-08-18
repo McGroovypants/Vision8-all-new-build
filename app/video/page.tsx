@@ -26,7 +26,7 @@ export default async function VideoPage({
         </div>
         <VideoServices openSlug={service} />
       </section>
-      <p className="portfolio-build">Build v1.11.48</p>
+      <p className="portfolio-build">Build v1.11.49</p>
     </main>
   );
 }

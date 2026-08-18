@@ -97,7 +97,7 @@ const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_
 const VIDEO_SITE = "/video";
 const PEOPLE = "/about";
 const VIDEO_IMAGE = `${CLOUD}/image/upload/f_auto,q_auto,w_1800/v1785665173/Adventuresmart_still_7_kbz7fl.png`;
-const BUILD = "v1.11.48";
+const BUILD = "v1.11.49";
 
 // Keyed by build on purpose. The persist effect writes every record, mediaUrl
 // included, on first visit whether or not the editor was opened, and the load
@@ -539,6 +539,9 @@ function Header({
       <button className="header-brand" type="button" onClick={onHome} aria-label="Vision8 home">
         <Image src={LOGO} alt="Vision8" width={1976} height={704} priority unoptimized />
       </button>
+      {/* v1.11.49: the same lockup the inner pages carry for their division
+          (`.portfolio-division`), naming the whole company on the homepage. */}
+      <span className="header-division">Creative media</span>
       <nav className="header-left" aria-label="Homepage navigation">
         <button className="editable-header-item" style={headerItemStyle(styles, "home")} type="button" onClick={onHome}>{copy.home}</button>
         <a className="editable-header-item" style={headerItemStyle(styles, "about")} href={PEOPLE}>{copy.about}</a>
@@ -1292,11 +1295,11 @@ export function HomepageV1103({
             <span className="fan-core-ring fan-core-ring-pulse" aria-hidden="true" />
             <span className="fan-core-ring fan-core-ring-static" aria-hidden="true" />
             <Image src={LOGO} alt="Vision8" width={1976} height={704} priority unoptimized />
-            {/* v1.11.48: the client's line under the logo. Absolutely placed
-                under the image so the core's box, the apex and the rings do
-                not move. */}
+            {/* v1.11.48: the client's line under the logo, absolutely placed so
+                the core's box, the apex and the rings do not move. v1.11.49:
+                the kicker moved to the header lockup and the line went small
+                and quiet, arriving after the fan has settled. */}
             <span className="fan-core-tag">
-              <span className="fan-core-tag-kicker">Creative media</span>
               <span className="fan-core-tag-line">Where the idea becomes real.</span>
             </span>
           </button>

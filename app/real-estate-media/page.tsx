@@ -39,7 +39,11 @@ const MEDIA = "https://media.vision8.co.nz/library/public/collections-media/visi
   web renditions are re-published to the portal, switch all three back to
   `web.mp4` and verify all three, not just the one that moved.
 */
-const PROPERTY_REEL = `${MEDIA}/vision8-real-estate-promo-v2-reduced/download.mp4`;
+// v1.11.49: the hero is Promo V6, published to the public assets prefix on
+// 19 Aug 2026 (`/library/public/assets/...`, not the collection). Verified from
+// outside before wiring in: bare fetch 200, `video/mp4`, 54.7MB, `Accept-Ranges:
+// bytes`. Promo V2 reduced stays in the collection but is no longer used here.
+const PROPERTY_REEL = "https://media.vision8.co.nz/library/public/assets/vision8-real-estate-promo-v6/vision8-real-estate-promo-v6_1080p.mp4";
 // The re-cut, `-2`. Replacing an asset retires the URL the old one had: the
 // original `testimonial-2026c` went to 403 the moment this was published, and
 // so did the Matterport example. Any swap here needs the whole collection
@@ -357,7 +361,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.48</p>
+      <p className="portfolio-build">Build v1.11.49</p>
     </main>
   );
 }
