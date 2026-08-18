@@ -135,10 +135,10 @@ const DRONE_VOICE_BY = "Simon Marshall, Bar Safety Project Lead, Coastguard Taut
 */
 const HISTORY = [
   { src: "/real-estate/history-directing-film.jpg", label: "TVC Director - Beef & Lamb", alt: "Andy McGrath directing on a studio set with a film crew" },
-  { src: "/real-estate/history-directing.jpg", label: "TV Series Director/Camera - Whanau Living", alt: "Andy McGrath on location with camera and sound crew" },
+  { src: "/real-estate/history-directing.jpg", label: "Director/Camera - TV Series Whanau Living", alt: "Andy McGrath on location with camera and sound crew" },
   { src: "/real-estate/history-myfoodbag.jpg", label: "Director/Camera - Myfoodbag Induction video", alt: "Andy McGrath filming three presenters in a commercial kitchen" },
   { src: "/real-estate/history-heli-queenstown.jpg", label: "Series Director - Jack of all Trades", alt: "Andy McGrath and crew beside a helicopter before an aerial shoot in Queenstown" },
-  { src: "/real-estate/history-world-cup.jpg", label: "Big Screen Director - World Cup Final", alt: "Andy McGrath accredited in a full stadium at a World Cup final" },
+  { src: "/real-estate/history-world-cup.jpg", label: "Big Screen Director - World Cup Final 2011", alt: "Andy McGrath accredited in a full stadium at a World Cup final" },
 ];
 
 export const metadata: Metadata = {
@@ -484,7 +484,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.56</p>
+      <p className="portfolio-build">Build v1.11.57</p>
     </main>
   );
 }
