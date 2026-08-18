@@ -22,14 +22,14 @@ async function render(pathname = "/") {
   );
 }
 
-test("server-renders the Vision8 v1.11.47 homepage", async () => {
+test("server-renders the Vision8 v1.11.48 homepage", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /Vision8 homepage/);
-  assert.match(html, /Build <!-- -->v1\.11\.47/);
+  assert.match(html, /Build <!-- -->v1\.11\.48/);
   assert.match(html, /aria-label="Vision8 home"/);
   assert.match(html, /Audio/);
   assert.match(html, /Tech Solutions/);
@@ -51,7 +51,7 @@ const routes = [
   // never one contiguous string in the markup.
   ["/audio", "What you hear changes what you feel"],
   ["/real-estate-media", "Vision8 Real Estate Media"],
-  ["/websites", "Useful digital experiences."],
+  ["/websites", "Ideas need somewhere to"],
   ["/ai-solutions", "Useful tools, built for the job."],
 ];
 
@@ -63,7 +63,7 @@ for (const [pathname, expected] of routes) {
 
     const html = await response.text();
     assert.match(html, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.match(html, /Build (?:<!-- -->)?v1\.11\.47/);
+    assert.match(html, /Build (?:<!-- -->)?v1\.11\.48/);
     assert.match(html, />Home</);
     assert.match(html, />About us</);
     assert.match(html, />Our mahi</);

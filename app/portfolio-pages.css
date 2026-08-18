@@ -2728,3 +2728,457 @@
 .editor-publish-bar > p {
   margin: 0;
 }
+
+/* ==========================================================================
+   Websites page. Ported from mock v3.4 (Web page build folder) on 19 Aug 2026.
+   Everything is scoped to `.websites-page`. Sizes are the mock's, in px where
+   the mock was in px, so the two can be compared side by side. The root is
+   its own scroll container (trap 8 in AGENTS.md).
+   ========================================================================== */
+
+.websites-page {
+  --ws-bg: #060808;
+  --ws-white: #f2f4f3;
+  --ws-body: rgba(242, 244, 243, 0.86);
+  --ws-dim: rgba(242, 244, 243, 0.7);
+  --ws-line: rgba(242, 244, 243, 0.12);
+  --ws-teal: #08b4a0;
+  --ws-card: 50vw;
+  --ws-gap: 22px;
+  height: 100svh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  touch-action: pan-y;
+  scroll-behavior: smooth;
+  color: var(--ws-body);
+  background: var(--ws-bg);
+  font-size: 18px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.websites-page .ws-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 48px;
+}
+
+.websites-page .ws-eyebrow {
+  margin: 0 0 7px;
+  color: var(--ws-teal);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.websites-page h1 {
+  margin: 0;
+  color: var(--ws-white);
+  font-size: clamp(34px, 4.2vw, 56px);
+  line-height: 1.02;
+  font-weight: 700;
+  letter-spacing: -1px;
+}
+
+.websites-page h2 {
+  margin: 0 0 22px;
+  color: var(--ws-white);
+  font-size: clamp(30px, 3.8vw, 48px);
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  max-width: 16em;
+}
+
+.websites-page p {
+  margin: 0 0 18px;
+  max-width: 38em;
+}
+
+.websites-page strong {
+  color: var(--ws-white);
+}
+
+/* Hero: compact, the strip is the picture. The header is sticky in flow here
+   rather than fixed as in the mock, so the top padding is the gap under it. */
+.websites-page .ws-hero {
+  padding: 34px 0 25px;
+}
+
+.websites-page .ws-hero .ws-lede {
+  margin: 10px 0 0;
+  max-width: none;
+  white-space: nowrap;
+  font-size: 18px;
+  color: var(--ws-body);
+}
+
+/* Filmstrip. Fades in on the move; cards sit on a rail moved by transform
+   until the visitor takes over, then native scroll with snap. */
+.websites-page .ws-strip {
+  position: relative;
+  padding: 0 0 22px;
+  opacity: 0;
+  transition: opacity 1.6s ease;
+}
+
+.websites-page .ws-strip.in {
+  opacity: 1;
+}
+
+.websites-page .ws-track {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0;
+  scrollbar-width: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-x pan-y;
+}
+
+.websites-page .ws-track::-webkit-scrollbar {
+  display: none;
+}
+
+.websites-page .ws-track.grabbing {
+  cursor: grabbing;
+}
+
+.websites-page .ws-track.snap {
+  scroll-snap-type: x mandatory;
+}
+
+.websites-page .ws-track.snap .ws-card {
+  scroll-snap-align: center;
+}
+
+.websites-page .ws-rail {
+  display: flex;
+  gap: var(--ws-gap);
+  width: max-content;
+  will-change: transform;
+}
+
+.websites-page .ws-lead {
+  flex: 0 0 calc(50vw - var(--ws-card) / 2 - var(--ws-gap));
+}
+
+.websites-page .ws-spacer {
+  flex: 0 0 1px;
+}
+
+.websites-page .ws-card {
+  position: relative;
+  flex: 0 0 var(--ws-card);
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 2px;
+  background: #0a0f0e;
+}
+
+.websites-page .ws-card video,
+.websites-page .ws-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+/* Seamless pair: the second video sits over the first and fades in. */
+.websites-page .ws-card video + video {
+  position: absolute;
+  inset: 0;
+}
+
+/* vision8's clip is wider than 16:9; show the whole frame. */
+.websites-page .ws-card.contain {
+  background: #000;
+}
+
+.websites-page .ws-card.contain video {
+  object-fit: contain;
+}
+
+/* Colour Character's recording has a black border baked in and a gamma
+   shift; crop the border, lift the tones. */
+.websites-page .ws-card.crop video {
+  transform: scale(1.1) translate(-0.5%, -1%);
+  filter: url(#ws-ccfix);
+}
+
+/* Blurb: a card-width block centred under the strip, text left aligned inside
+   it, crossfading as the centred card changes. */
+.websites-page .ws-blurb {
+  position: relative;
+  min-height: 130px;
+  width: var(--ws-card);
+  margin: 0 auto;
+  padding: 26px 0 0;
+  text-align: left;
+}
+
+.websites-page .ws-item {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 26px;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+.websites-page .ws-item.on {
+  opacity: 1;
+}
+
+.websites-page .ws-item h3 {
+  margin: 0 0 8px;
+  color: var(--ws-white);
+  font-size: clamp(22px, 2.2vw, 28px);
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.websites-page .ws-item p {
+  margin: 0;
+  max-width: 36em;
+  font-size: 19px;
+  color: var(--ws-body);
+}
+
+.websites-page .ws-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  color: var(--ws-teal);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  animation: ws-pulse 1.8s ease-in-out infinite;
+}
+
+.websites-page .ws-cue svg {
+  width: 15px;
+  height: 15px;
+  animation: ws-bob 1.8s ease-in-out infinite;
+}
+
+@keyframes ws-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes ws-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+
+/* Travelman editor. Fits one screen clear of the header from 760px viewport
+   height up; the frame is sized from its height. */
+.websites-page .ws-editor {
+  margin-top: 56px;
+  padding: 60px 0;
+  border-top: 1px solid var(--ws-line);
+  scroll-margin-top: 72px;
+}
+
+.websites-page .ws-editor .ws-eyebrow {
+  margin-bottom: 12px;
+}
+
+.websites-page .ws-editor h2 {
+  font-size: clamp(20px, 2.85vw, 42px);
+  white-space: nowrap;
+  max-width: none;
+  margin-bottom: 16px;
+}
+
+.websites-page .ws-editor .ws-lede {
+  font-size: 19px;
+  max-width: 50em;
+  margin-bottom: 0;
+  color: var(--ws-white);
+}
+
+.websites-page .ws-shot {
+  display: flex;
+  justify-content: center;
+  margin: 34px 0 30px;
+}
+
+.websites-page .ws-frame {
+  height: min(44vh, 520px);
+  width: auto;
+  max-width: 100%;
+  aspect-ratio: 1832 / 940;
+  overflow: hidden;
+  border-radius: 2px;
+  background: #0a0f0e;
+}
+
+.websites-page .ws-frame video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: scale(1.05);
+}
+
+.websites-page .ws-after {
+  max-width: 44em;
+  font-size: 16px;
+}
+
+.websites-page .ws-after p {
+  margin: 0;
+}
+
+.websites-page .ws-after p + p {
+  margin-top: 12px;
+}
+
+.websites-page .ws-quiet {
+  color: var(--ws-dim);
+  font-size: 16px;
+}
+
+/* Closing. Black, one line of process, the invitation. */
+.websites-page .ws-closing {
+  padding: 120px 0 110px;
+  text-align: center;
+  border-top: 1px solid var(--ws-line);
+}
+
+.websites-page .ws-steps {
+  margin: 0 0 34px;
+  max-width: none;
+  color: var(--ws-white);
+  font-size: clamp(22px, 2.6vw, 30px);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.websites-page .ws-steps span {
+  color: var(--ws-teal);
+  margin: 0 0.35em;
+}
+
+.websites-page .ws-closing h2 {
+  margin: 0 auto 30px;
+  max-width: 18em;
+}
+
+.websites-page .ws-btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 15px 32px;
+  border: 1px solid var(--ws-teal);
+  color: var(--ws-teal);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.websites-page .ws-btn:hover {
+  background: var(--ws-teal);
+  color: #041210;
+}
+
+.websites-page .ws-small {
+  margin: 30px auto 0;
+  color: var(--ws-dim);
+  font-size: 15px;
+}
+
+@media (max-height: 850px) {
+  .websites-page .ws-editor {
+    padding: 30px 0 34px;
+  }
+
+  .websites-page .ws-shot {
+    margin: 18px 0 16px;
+  }
+
+  .websites-page .ws-frame {
+    height: 33vh;
+  }
+
+  .websites-page .ws-after p + p {
+    margin-top: 8px;
+  }
+}
+
+@media (max-width: 900px) {
+  .websites-page {
+    --ws-card: 82vw;
+    --ws-gap: 14px;
+  }
+
+  .websites-page .ws-inner {
+    padding: 0 22px;
+  }
+
+  .websites-page .ws-hero {
+    padding: 24px 0 18px;
+  }
+
+  .websites-page .ws-hero .ws-eyebrow {
+    font-size: 18px;
+  }
+
+  .websites-page .ws-hero .ws-lede {
+    white-space: normal;
+  }
+
+  .websites-page .ws-blurb {
+    min-height: 170px;
+    padding: 24px 0 0;
+  }
+
+  .websites-page .ws-item {
+    top: 24px;
+  }
+
+  .websites-page .ws-item p {
+    font-size: 18px;
+  }
+
+  .websites-page .ws-editor {
+    margin-top: 40px;
+    padding: 70px 0 60px;
+  }
+
+  .websites-page .ws-editor h2 {
+    white-space: normal;
+    font-size: 26px;
+  }
+
+  .websites-page .ws-editor .ws-eyebrow {
+    font-size: 18px;
+  }
+
+  .websites-page .ws-frame {
+    height: auto;
+    width: 100%;
+  }
+
+  .websites-page .ws-closing {
+    padding: 90px 0 80px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .websites-page .ws-cue,
+  .websites-page .ws-cue svg {
+    animation: none;
+  }
+}

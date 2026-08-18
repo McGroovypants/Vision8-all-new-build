@@ -550,3 +550,47 @@
     max-width: 118px;
   }
 }
+
+/*
+  v1.11.48: tagline under the central logo, on the client's instruction. It
+  hangs from the bottom of the fan-core button so nothing measured by the fan
+  geometry test moves. Kicker matches the stage kicker; the line is quiet white.
+  Hidden on narrow phones, where it would collide with the stage copy.
+*/
+.fan-core-tag {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: max-content;
+  max-width: 80vw;
+  margin-top: 10px;
+  transform: translateX(-50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.fan-core-tag-kicker {
+  color: var(--teal-bright);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.fan-core-tag-line {
+  color: rgba(243, 244, 239, 0.9);
+  font-size: clamp(0.92rem, 1.15vw, 1.08rem);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+@media (max-width: 720px) {
+  .fan-core-tag {
+    display: none;
+  }
+}

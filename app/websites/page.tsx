@@ -1,25 +1,18 @@
 import type { Metadata } from "next";
-import { HoldingNotice, PortfolioShell } from "../portfolio-shell";
+import { WebsitesView } from "./websites-view";
 
-const HERO = "https://res.cloudinary.com/deyb4o5qz/image/upload/f_auto,q_auto,w_1800/v1785662591/Octacle_website_shot_bjyjec.png";
+/*
+  Ported from the approved mock v3.4 in "Web page build/vision8-web-mock-v3.4.html"
+  on 19 Aug 2026. Quiet hero, a slow filmstrip of six pieces of work with a
+  fixed blurb under it, the Travelman editor on its own, then a black closing.
+  Everything that moves lives in websites-view.tsx.
+*/
 
 export const metadata: Metadata = {
   title: "Websites | Vision8",
-  description: "Useful digital experiences designed and built by Vision8.",
+  description: "Websites and digital experiences built around what you're actually trying to achieve.",
 };
 
 export default function WebsitesPage() {
-  return (
-    <PortfolioShell eyebrow="Websites" title="Useful digital experiences." intro="Structure, design and practical website builds." heroImage={HERO}>
-      <div className="portfolio-intro-grid">
-        <h2>Case studies built around the problem, the work and the outcome.</h2>
-        <HoldingNotice>The portfolio structure is ready. Approved projects and result details can be added next.</HoldingNotice>
-      </div>
-      <div className="portfolio-card-grid">
-        {['Project challenge', 'Design direction', 'Working build', 'Measured outcome'].map((title) => (
-          <article className="portfolio-card" key={title}><span>Case-study structure</span><h3>{title}</h3></article>
-        ))}
-      </div>
-    </PortfolioShell>
-  );
+  return <WebsitesView />;
 }

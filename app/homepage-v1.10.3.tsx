@@ -97,7 +97,7 @@ const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_
 const VIDEO_SITE = "/video";
 const PEOPLE = "/about";
 const VIDEO_IMAGE = `${CLOUD}/image/upload/f_auto,q_auto,w_1800/v1785665173/Adventuresmart_still_7_kbz7fl.png`;
-const BUILD = "v1.11.47";
+const BUILD = "v1.11.48";
 
 // Keyed by build on purpose. The persist effect writes every record, mediaUrl
 // included, on first visit whether or not the editor was opened, and the load
@@ -1292,6 +1292,13 @@ export function HomepageV1103({
             <span className="fan-core-ring fan-core-ring-pulse" aria-hidden="true" />
             <span className="fan-core-ring fan-core-ring-static" aria-hidden="true" />
             <Image src={LOGO} alt="Vision8" width={1976} height={704} priority unoptimized />
+            {/* v1.11.48: the client's line under the logo. Absolutely placed
+                under the image so the core's box, the apex and the rings do
+                not move. */}
+            <span className="fan-core-tag">
+              <span className="fan-core-tag-kicker">Creative media</span>
+              <span className="fan-core-tag-line">Where the idea becomes real.</span>
+            </span>
           </button>
         </div>
 
