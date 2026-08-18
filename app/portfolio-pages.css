@@ -1736,7 +1736,9 @@
 */
 .re-experience {
   max-width: 1080px;
-  margin-top: clamp(48px, 6vw, 80px);
+  /* v1.11.53: its own section now, so the section padding sets the space
+     that this top margin used to. */
+  margin-top: 0;
 }
 
 .real-estate-page .re-experience p {
@@ -1754,6 +1756,16 @@
 
 .real-estate-page .re-plan {
   margin: 0;
+}
+
+/* v1.11.53: the workspace frame in the Delivery section, held like the video
+   frames: thin line, dark ground. */
+.real-estate-page .re-portal img {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: #080a0a;
 }
 
 .real-estate-page .re-plan img {

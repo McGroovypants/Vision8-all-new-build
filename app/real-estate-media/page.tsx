@@ -84,6 +84,12 @@ const services = ["Video", "Photography", "3D walkthroughs", "2D Plans", "Virtua
   described work involving a second party and so do not belong on a Vision8
   page, and the third belongs elsewhere on the wider site.
 */
+/*
+  v1.11.53: Harry is named beside each of his four excerpts, the way Simon is
+  under his, on the client's mark. The foot-of-page thanks stays.
+*/
+const VOICE_BY = "Harry Eggers, Lowe & Co.";
+
 const VOICE = {
   property:
     "Vision8 have a great understanding of real estate and know how to capture a property in a way that makes it look its absolute best while still feeling authentic.",
@@ -168,7 +174,45 @@ export default function RealEstateMediaPage() {
         <div className="re-inner">
           <blockquote className="re-voice re-voice-lead">
             <p>{VOICE.property}</p>
+            <footer className="re-voice-by">{VOICE_BY}</footer>
           </blockquote>
+        </div>
+      </section>
+
+      {/*
+        v1.11.53: the Experience block, heading, credited strip and three
+        paragraphs, is its own section above People on the client's mark. It
+        was the tail of the photography section from v1.11.44 to v1.11.52.
+        No label, like the floor plans: the heading is the label.
+      */}
+      <section className="re-section">
+        <div className="re-inner">
+          <div className="re-experience">
+            {/* v1.11.51: the strip sits under this heading, credit over each
+                still. v1.11.52: heading and strip share an inline grid so the
+                strip is exactly as wide as the heading's line, on the client's
+                mark ("no wider than the title above it"). The credit's span is
+                what the width and no-wrap rules bite on; the figcaption itself
+                is the wash across the frame. */}
+            <div className="re-experience-head">
+              <h2>Experience is useful when you know what to do with it.</h2>
+              <div className="re-history-strip" aria-label="Television and directing background">
+                {HISTORY.map((still) => (
+                  <figure key={still.src}>
+                    <img src={still.src} alt={still.alt} loading="lazy" />
+                    <figcaption><span>{still.label}</span></figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
+            <p>Vision8 comes from a much wider world than property marketing.</p>
+            <p>
+              Years behind cameras and in control rooms across television, commercials, concerts and major live events
+              have taught us how to make decisions quickly, work comfortably with people and recognise the moment worth
+              capturing.
+            </p>
+            <p>That experience now comes to a property shoot without bringing a television crew with it.</p>
+          </div>
         </div>
       </section>
 
@@ -212,6 +256,7 @@ export default function RealEstateMediaPage() {
           </ViewportPlay>
           <blockquote className="re-voice re-voice-lead">
             <p>{VOICE.camera}</p>
+            <footer className="re-voice-by">{VOICE_BY}</footer>
           </blockquote>
         </div>
       </section>
@@ -289,6 +334,7 @@ export default function RealEstateMediaPage() {
           </ViewportPlay>
           <blockquote className="re-voice">
             <p>{VOICE.breadth}</p>
+            <footer className="re-voice-by">{VOICE_BY}</footer>
           </blockquote>
         </div>
       </section>
@@ -339,12 +385,9 @@ export default function RealEstateMediaPage() {
             <img src="/real-estate/karaka-dusk.jpg" alt="Covered deck at dusk with lit timber walls and rural outlook" loading="lazy" />
           </div>
           {/*
-            v1.11.44: Experience and the two of us, above the plans, on the
-            client's mark. This copy and the quote below it were the 04
-            Experience band, which is now gone from the page: with the copy up
-            here it held nothing but its own quote. The band's approved sizes
-            came with the copy, so .re-experience carries them rather than
-            letting the paragraphs fall back to the page's body size.
+            v1.11.44 put the Experience copy here, above the pair; v1.11.53
+            moved it, with the strip, to its own section above People on the
+            client's mark. The pair and its note stay with the photography.
 
             Helen's portrait comes from the v8-photos collection, not
             vision8-website like everything else on this page, and the public
@@ -360,33 +403,6 @@ export default function RealEstateMediaPage() {
             their sources measure: Helen's is 1339x1600, the stabiliser frame
             1466x2500.
           */}
-          <div className="re-experience">
-            {/* v1.11.51: the strip sits under this heading, credit over each
-                still. v1.11.52: heading and strip share an inline grid so the
-                strip is exactly as wide as the heading's line, on the client's
-                mark ("no wider than the title above it"). The credit's span is
-                what the width and no-wrap rules bite on; the figcaption itself
-                is the wash across the frame. */}
-            <div className="re-experience-head">
-              <h2>Experience is useful when you know what to do with it.</h2>
-              <div className="re-history-strip" aria-label="Television and directing background">
-                {HISTORY.map((still) => (
-                  <figure key={still.src}>
-                    <img src={still.src} alt={still.alt} loading="lazy" />
-                    <figcaption><span>{still.label}</span></figcaption>
-                  </figure>
-                ))}
-              </div>
-            </div>
-            <p>Vision8 comes from a much wider world than property marketing.</p>
-            <p>
-              Years behind cameras and in control rooms across television, commercials, concerts and major live events
-              have taught us how to make decisions quickly, work comfortably with people and recognise the moment worth
-              capturing.
-            </p>
-            <p>That experience now comes to a property shoot without bringing a television crew with it.</p>
-          </div>
-
           <div className="re-collab">
             <figure>
               <img src={HELEN_PORTRAIT} alt="Helen Gwyther adjusting a flash-mounted camera on a tripod" loading="lazy" />
@@ -406,26 +422,40 @@ export default function RealEstateMediaPage() {
 
           <blockquote className="re-voice">
             <p>{VOICE.working}</p>
+            <footer className="re-voice-by">{VOICE_BY}</footer>
           </blockquote>
 
         </div>
       </section>
 
-      {/* Delivery folded in above the contact block: it is a service benefit of
-          two sentences, not a section, and it reads better as the last practical
-          point before the ask. */}
+      {/*
+        v1.11.53: Delivery is a section like the others, on the client's mark,
+        with a frame of the client workspace (a Lowe & Co view of the Vision8
+        portal, local copy at 1400 wide) beside the copy. It was two sentences
+        folded into the closing from v1.11.4x; the second sentence ("It works
+        alongside the systems your agency already uses.") is gone.
+      */}
+      <section className="re-section">
+        <div className="re-inner">
+          <div className="re-split">
+            <figure className="re-portal">
+              <img src="/real-estate/loweandco-portal.jpg" alt="A Lowe & Co Realty media workspace in the Vision8 portal showing videos, photos and a floor plan" loading="lazy" />
+              <figcaption>Client media workspace</figcaption>
+            </figure>
+            <div>
+              <p className="re-eyebrow">Delivery</p>
+              <h2>Your media, when your team needs it.</h2>
+              <p>
+                Vision8 clients have their own media workspace where photography, video, walkthroughs, floor plans and
+                other supplied material can be found again without searching old emails and download links.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="re-closing">
         <div className="re-closing-copy">
-          <p className="re-eyebrow">Delivery</p>
-          <h3>Your media, when your team needs it.</h3>
-          <p>
-            Vision8 clients have their own media workspace where photography, video, walkthroughs, floor plans and
-            other supplied material can be found again without searching old emails and download links.
-          </p>
-          <p>It works alongside the systems your agency already uses.</p>
-
-          <hr className="re-rule" />
-
           <h2>Let&rsquo;s make the next one good.</h2>
           <p>
             Whether it&rsquo;s one listing, an ongoing relationship or something a little different, we&rsquo;re happy
@@ -448,7 +478,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.52</p>
+      <p className="portfolio-build">Build v1.11.53</p>
     </main>
   );
 }
