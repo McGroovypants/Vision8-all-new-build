@@ -1667,7 +1667,9 @@
   display: grid;
   grid-template-columns: 230px minmax(0, 1fr) 230px;
   gap: clamp(20px, 2.2vw, 32px);
-  align-items: center;
+  /* v1.11.52: start, not center, so the note begins level with the top of
+     the two frames, on the client's mark. */
+  align-items: start;
   /*
     940px centred, not 1080 left: the copy between the frames was 534px wide and
     held the two of them nearly the full measure apart. At 940 with a tighter
@@ -1739,7 +1741,9 @@
 
 .real-estate-page .re-experience p {
   max-width: 900px;
-  font-size: 1.375rem;
+  /* v1.11.52: down from 1.375rem to match the collaborator note below it,
+     on the client's mark. */
+  font-size: 1.25rem;
 }
 
 .real-estate-page .re-experience h2 {
@@ -1871,11 +1875,27 @@
   a short wash so it reads on any picture. Sized to be looked at, not to stop
   the reader: about 255px wide each on the 1080 measure.
 */
+/*
+  v1.11.52: an inline grid holds the heading and the strip, so the strip's
+  width is the heading's rendered line and nothing else: shrink-to-fit takes
+  the h2's max-content when it fits and the block's width when it wraps, and
+  the strip's columns are minmax(0, 1fr) so they contribute no minimum of
+  their own. Nothing to measure or hard-code.
+*/
+.re-experience-head {
+  display: inline-grid;
+  max-width: 100%;
+}
+
 .re-history-strip {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
   margin: 0 0 clamp(28px, 3vw, 40px);
+  /* [CRITICAL] Without this the strip's max-content is four 1200px images and
+     the inline grid above opens to the full block width, not the heading's
+     line. Containment makes the strip contribute no intrinsic width. */
+  contain: inline-size;
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: 2px;
@@ -1903,13 +1923,25 @@
   position: absolute;
   inset: auto 1px 1px 1px;
   margin: 0;
-  padding: 22px 8px 7px;
+  padding: 18px 6px 6px;
   background: linear-gradient(to top, rgba(3, 4, 4, 0.82), rgba(3, 4, 4, 0));
   color: rgba(243, 244, 239, 0.86);
-  font-size: 0.66rem;
-  letter-spacing: 0.06em;
+  /* v1.11.52: smaller, the client's own casing rather than caps, one line
+     only, and never past 80% of the frame: on the client's mark. Ellipsis
+     is the fallback if a frame ever gets too narrow for the longest credit. */
+  font-size: 0.53rem;
+  letter-spacing: 0;
   line-height: 1.3;
-  text-transform: uppercase;
+  text-transform: none;
+}
+
+.real-estate-page .re-history-strip figcaption span {
+  display: inline-block;
+  max-width: 80%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
 }
 
 /*
@@ -2126,6 +2158,23 @@
   /* Two by two: four in a row on a phone would be 80px stamps. */
   .re-history-strip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* At 160px a frame three of the four credits cannot hold one line at any
+     readable size, so on phones the credit sits under the frame, no wash,
+     and may wrap. Desktop keeps the one-line slate on the picture. */
+  .real-estate-page .re-history-strip figcaption {
+    position: static;
+    padding: 6px 2px 0;
+    background: none;
+    color: rgba(243, 244, 239, 0.62);
+    font-size: 0.6rem;
+  }
+
+  .real-estate-page .re-history-strip figcaption span {
+    display: inline;
+    max-width: none;
+    white-space: normal;
   }
 }
 

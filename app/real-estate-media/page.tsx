@@ -361,17 +361,22 @@ export default function RealEstateMediaPage() {
             1466x2500.
           */}
           <div className="re-experience">
-            <h2>Experience is useful when you know what to do with it.</h2>
-            {/* v1.11.51: the strip sits under this heading now, credit over
-                each still. The bridge line it had under the drone section is
-                gone: the heading says it. */}
-            <div className="re-history-strip" aria-label="Television and directing background">
-              {HISTORY.map((still) => (
-                <figure key={still.src}>
-                  <img src={still.src} alt={still.alt} loading="lazy" />
-                  <figcaption>{still.label}</figcaption>
-                </figure>
-              ))}
+            {/* v1.11.51: the strip sits under this heading, credit over each
+                still. v1.11.52: heading and strip share an inline grid so the
+                strip is exactly as wide as the heading's line, on the client's
+                mark ("no wider than the title above it"). The credit's span is
+                what the width and no-wrap rules bite on; the figcaption itself
+                is the wash across the frame. */}
+            <div className="re-experience-head">
+              <h2>Experience is useful when you know what to do with it.</h2>
+              <div className="re-history-strip" aria-label="Television and directing background">
+                {HISTORY.map((still) => (
+                  <figure key={still.src}>
+                    <img src={still.src} alt={still.alt} loading="lazy" />
+                    <figcaption><span>{still.label}</span></figcaption>
+                  </figure>
+                ))}
+              </div>
             </div>
             <p>Vision8 comes from a much wider world than property marketing.</p>
             <p>
@@ -443,7 +448,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.51</p>
+      <p className="portfolio-build">Build v1.11.52</p>
     </main>
   );
 }
