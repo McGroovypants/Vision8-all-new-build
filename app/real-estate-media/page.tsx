@@ -302,10 +302,10 @@ export default function RealEstateMediaPage() {
               <figcaption>Helen Gwyther - <span>Photographer</span></figcaption>
             </figure>
             <p>
-              I often team up with Helen on real estate projects. With more than 10 years’ experience in real estate
-              photography, and more recently virtual staging, Helen is a consummate professional. She has been great to
-              work with and also a great mentor to me in recent years. With Helen behind the camera, a property is in
-              very safe hands.
+              I often team up with Helen on real estate projects. Helen is a consummate professional. She has over 10
+              years’ experience in real estate photography and a sharp eye for detail.
+              <br />
+              With Helen behind the camera, clients receive a high quality set of still images every time.
             </p>
             <figure>
               <img src="/real-estate/andy-stabiliser.jpg" alt="Andy McGrath filming inside a home with a gimbal-mounted camera" loading="lazy" />
