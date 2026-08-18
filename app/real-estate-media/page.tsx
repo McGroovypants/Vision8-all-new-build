@@ -51,7 +51,12 @@ const PROPERTY_REEL = "https://media.vision8.co.nz/library/public/assets/vision8
 // `testimonial-2026c-2/download.mp4`, is no longer referenced here.
 const PEOPLE_VIDEO =
   "https://media.vision8.co.nz/library/public/assets/testimonial-2026-web-2/testimonial-2026-web-2_1080p.mp4";
-const MATTERPORT_VIDEO = `${MEDIA}/matterport-video-examples/download.mp4`;
+// v1.11.56: "Matterport Examples 2" from the public assets prefix, verified
+// from outside before wiring in: range request 206, `video/mp4`, 16.8MB. With
+// this the page loads nothing from the `vision8-website` collection at all, so
+// the collection-publish caveat above no longer applies to any of the three.
+const MATTERPORT_VIDEO =
+  "https://media.vision8.co.nz/library/public/assets/matterport-examples-2/matterport-examples-2_1080p.mp4";
 /*
   Helen's portrait sits in the v8-photos collection rather than vision8-website,
   so it does not hang off MEDIA above. Same 300 second max-age and the same
@@ -307,21 +312,18 @@ export default function RealEstateMediaPage() {
         <div className="re-inner">
           <div className="re-experience">
             {/* v1.11.51: the strip sits under this heading, credit over each
-                still. v1.11.52: heading and strip share an inline grid so the
-                strip is exactly as wide as the heading's line, on the client's
-                mark ("no wider than the title above it"). The credit's span is
-                what the width and no-wrap rules bite on; the figcaption itself
-                is the wash across the frame. */}
-            <div className="re-experience-head">
-              <h2>Experience is useful when you know what to do with it.</h2>
-              <div className="re-history-strip" aria-label="Television and directing background">
-                {HISTORY.map((still) => (
-                  <figure key={still.src}>
-                    <img src={still.src} alt={still.alt} loading="lazy" />
-                    <figcaption><span>{still.label}</span></figcaption>
-                  </figure>
-                ))}
-              </div>
+                still. v1.11.52 tied its width to the heading's line; v1.11.56
+                unties it, on the client's mark, so five stills run the page's
+                full measure. The credit's span is what the width and no-wrap
+                rules bite on; the figcaption itself is the wash on the frame. */}
+            <h2>Experience is useful when you know what to do with it.</h2>
+            <div className="re-history-strip" aria-label="Television and directing background">
+              {HISTORY.map((still) => (
+                <figure key={still.src}>
+                  <img src={still.src} alt={still.alt} loading="lazy" />
+                  <figcaption><span>{still.label}</span></figcaption>
+                </figure>
+              ))}
             </div>
             <p>Vision8 comes from a much wider world than property marketing.</p>
             <p>
@@ -482,7 +484,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.55</p>
+      <p className="portfolio-build">Build v1.11.56</p>
     </main>
   );
 }

@@ -1735,7 +1735,9 @@
   half again what the rest of the page sets.
 */
 .re-experience {
-  max-width: 1080px;
+  /* v1.11.56: no clamp here, so the strip inside takes the section's full
+     1280 measure. The heading and the paragraphs keep their own below. */
+  max-width: none;
   /* v1.11.53: its own section now, so the section padding sets the space
      that this top margin used to. */
   margin-top: 0;
@@ -1749,6 +1751,7 @@
 }
 
 .real-estate-page .re-experience h2 {
+  max-width: 1080px;
   font-size: clamp(1.55rem, 2.7vw, 2.35rem);
   line-height: 1.25;
   letter-spacing: -0.01em;
@@ -1891,17 +1894,12 @@
   the reader: about 255px wide each on the 1080 measure.
 */
 /*
-  v1.11.52: an inline grid holds the heading and the strip, so the strip's
-  width is the heading's rendered line and nothing else: shrink-to-fit takes
-  the h2's max-content when it fits and the block's width when it wraps, and
-  the strip's columns are minmax(0, 1fr) so they contribute no minimum of
-  their own. Nothing to measure or hard-code.
+  v1.11.52 held the strip to the heading's rendered line with an inline grid
+  (`.re-experience-head`, now gone). v1.11.56: with five stills the client
+  asked for the full page measure, so the strip is a plain child of the
+  section's inner and takes all 1280 of it. The heading keeps its own 1080
+  measure below.
 */
-.re-experience-head {
-  display: inline-grid;
-  max-width: 100%;
-}
-
 .re-history-strip {
   display: grid;
   /* v1.11.55: five stills. The frames narrow with the count, so the credit
@@ -1911,10 +1909,6 @@
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 10px;
   margin: 0 0 clamp(28px, 3vw, 40px);
-  /* [CRITICAL] Without this the strip's max-content is four 1200px images and
-     the inline grid above opens to the full block width, not the heading's
-     line. Containment makes the strip contribute no intrinsic width. */
-  contain: inline-size;
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: 2px;
@@ -1924,6 +1918,8 @@
 .re-history-strip figure {
   position: relative;
   margin: 0;
+  /* The credit's type is set in cqw off this, so it scales with the frame
+     rather than being one size that fits at one column count. */
   container-type: inline-size;
 }
 
@@ -1956,17 +1952,14 @@
 }
 
 /*
-  [NOTE] The 80 percent cap the client set held at four stills and 225px
-  frames. At five the frames are 180px, and the longest credit, "TV Series
-  Director/Camera - Whanau Living", measures 163px at the size above: 80
-  percent is 142px, so the cap could only be kept by dropping the type to
-  about 7px or by clipping three of the five to an ellipsis. The credit takes
-  the frame's width instead, and the type scales with the frame so nothing
-  clips. Shorter labels or four stills a row would let the cap come back.
+  The client's 80 percent cap. It could not hold at v1.11.55, where five
+  stills inside the heading's width made 180px frames; at the full page
+  measure the frames are about 244px and the longest credit takes 72 percent,
+  so the cap is back and nothing clips.
 */
 .real-estate-page .re-history-strip figcaption span {
   display: inline-block;
-  max-width: 100%;
+  max-width: 80%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
