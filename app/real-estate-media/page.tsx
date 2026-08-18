@@ -44,11 +44,13 @@ const MEDIA = "https://media.vision8.co.nz/library/public/collections-media/visi
 // outside before wiring in: bare fetch 200, `video/mp4`, 54.7MB, `Accept-Ranges:
 // bytes`. Promo V2 reduced stays in the collection but is no longer used here.
 const PROPERTY_REEL = "https://media.vision8.co.nz/library/public/assets/vision8-real-estate-promo-v6/vision8-real-estate-promo-v6_1080p.mp4";
-// The re-cut, `-2`. Replacing an asset retires the URL the old one had: the
-// original `testimonial-2026c` went to 403 the moment this was published, and
-// so did the Matterport example. Any swap here needs the whole collection
-// re-checked, not just the file that changed.
-const PEOPLE_VIDEO = `${MEDIA}/testimonial-2026c-2/download.mp4`;
+// v1.11.54: the people reel is "Testimonial 2026 Web 2" from the public assets
+// prefix, not the vision8-website collection, so it no longer depends on that
+// collection staying published. Verified from outside before wiring in: range
+// request 206, `video/mp4`, 14.5MB. The collection cut it replaces,
+// `testimonial-2026c-2/download.mp4`, is no longer referenced here.
+const PEOPLE_VIDEO =
+  "https://media.vision8.co.nz/library/public/assets/testimonial-2026-web-2/testimonial-2026-web-2_1080p.mp4";
 const MATTERPORT_VIDEO = `${MEDIA}/matterport-video-examples/download.mp4`;
 /*
   Helen's portrait sits in the v8-photos collection rather than vision8-website,
@@ -95,8 +97,9 @@ const VOICE = {
     "Vision8 have a great understanding of real estate and know how to capture a property in a way that makes it look its absolute best while still feeling authentic.",
   camera:
     "Andy knows how to make you feel comfortable and confident on camera, which makes the whole process feel very natural.",
-  breadth:
-    "Whether it\u2019s shooting, editing, photography, 3D walkthroughs or helping bring an idea to life, Vision8 understands what is needed and delivers.",
+  /* v1.11.54: `breadth` ("Whether it's shooting, editing, photography, 3D
+     walkthroughs...") removed from the page on the client's mark. Three of
+     Harry's excerpts remain. */
   working:
     "What really sets Vision8 apart is how easy Vision8 are to deal with. Professional, reliable, creative and always willing to go the extra mile to get the right result.",
 };
@@ -261,9 +264,75 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
+      <section className="re-section">
+        <div className="re-inner">
+          <div className="re-section-head">
+            <p className="re-eyebrow">Photography</p>
+            <h2>The essentials still matter.</h2>
+          </div>
+          <div>
+            <h3>Photography</h3>
+            <p>Clean, considered property photography with an eye for the details that make a home feel right.</p>
+          </div>
+          {/* Six, as the brief asked. Every image here was opened at full size
+              before shipping; that check has now rejected three supplied files
+              across the site, including a watermarked one from this batch. */}
+          <div className="re-photo-grid" aria-label="Property photography">
+            <img src="/real-estate/crawford-exterior.jpg" alt="Modern hillside home with glass corner living room and deck" loading="lazy" />
+            <img src="/real-estate/crawford-living.jpg" alt="Open living and dining room with timber ceiling and harbour view" loading="lazy" />
+            <img src="/real-estate/drone-aerial.jpg" alt="Aerial view of a modernist home on a bush-clad hillside" loading="lazy" />
+            <img src="/real-estate/homewood-living.jpg" alt="Bright living room with skylights and garden doors" loading="lazy" />
+            <img src="/real-estate/villa-entrance.jpg" alt="Villa entrance with clipped hedges and stone driveway" loading="lazy" />
+            <img src="/real-estate/karaka-dusk.jpg" alt="Covered deck at dusk with lit timber walls and rural outlook" loading="lazy" />
+          </div>
+          {/*
+            v1.11.44 put the Experience copy here, above the pair; v1.11.53
+            moved it, with the strip, to its own section above People on the
+            client's mark. The pair and its note stay with the photography.
+
+            Helen's portrait comes from the v8-photos collection, not
+            vision8-website like everything else on this page, and the public
+            form of the URL is the only one the site can read: the address
+            copied out of the portal, /library/vision8/website/photography-page/
+            <slug>/optimised.jpg, answers 403 to anyone not logged in. The
+            manifest at /library/public/collections/v8-photos.json is what to
+            read if this slug ever moves. Verified from outside before wiring
+            in: 200, image/jpeg, 1339x1600.
+
+            One frame each side of the copy. Both take the same 4/5 crop at the
+            same fixed column width, so the two are identical in size whatever
+            their sources measure: Helen's is 1339x1600, the stabiliser frame
+            1466x2500.
+          */}
+          <div className="re-collab">
+            <figure>
+              <img src={HELEN_PORTRAIT} alt="Helen Gwyther adjusting a flash-mounted camera on a tripod" loading="lazy" />
+              <figcaption>Helen Gwyther - <span>Photographer</span></figcaption>
+            </figure>
+            <p>
+              I often team up with Helen on real estate projects. Helen is a consummate professional. She has over 10
+              years’ experience in real estate photography and a sharp eye for detail.
+              <br />
+              With Helen behind the camera, clients receive a high quality set of still images every time.
+            </p>
+            <figure>
+              <img src="/real-estate/andy-stabiliser.jpg" alt="Andy McGrath filming inside a home with a gimbal-mounted camera" loading="lazy" />
+              <figcaption>Andy McGrath - <span>Video Producer</span></figcaption>
+            </figure>
+          </div>
+
+          <blockquote className="re-voice">
+            <p>{VOICE.working}</p>
+            <footer className="re-voice-by">{VOICE_BY}</footer>
+          </blockquote>
+
+        </div>
+      </section>
+
+
       {/*
-        v1.11.50: 02 Drone, between People and the 360 tours on the client's
-        mark. Three parts: the claim beside a picture of the operation, a client
+        v1.11.50: Drone, on the client's mark. v1.11.54: it follows the
+        photography section, which moved above it. Three parts: the claim beside a picture of the operation, a client
         confirming it, and a slim strip of where the eye came from. The
         certificate itself is deliberately not shown: the photo was cropped out
         of a composite that carried it, and the licence point is made in one
@@ -332,10 +401,6 @@ export default function RealEstateMediaPage() {
               )}
             </div>
           </ViewportPlay>
-          <blockquote className="re-voice">
-            <p>{VOICE.breadth}</p>
-            <footer className="re-voice-by">{VOICE_BY}</footer>
-          </blockquote>
         </div>
       </section>
 
@@ -360,71 +425,6 @@ export default function RealEstateMediaPage() {
               </p>
             </div>
           </div>
-        </div>
-      </section>
-
-      <section className="re-section">
-        <div className="re-inner">
-          <div className="re-section-head">
-            <p className="re-eyebrow">Photography</p>
-            <h2>The essentials still matter.</h2>
-          </div>
-          <div>
-            <h3>Photography</h3>
-            <p>Clean, considered property photography with an eye for the details that make a home feel right.</p>
-          </div>
-          {/* Six, as the brief asked. Every image here was opened at full size
-              before shipping; that check has now rejected three supplied files
-              across the site, including a watermarked one from this batch. */}
-          <div className="re-photo-grid" aria-label="Property photography">
-            <img src="/real-estate/crawford-exterior.jpg" alt="Modern hillside home with glass corner living room and deck" loading="lazy" />
-            <img src="/real-estate/crawford-living.jpg" alt="Open living and dining room with timber ceiling and harbour view" loading="lazy" />
-            <img src="/real-estate/drone-aerial.jpg" alt="Aerial view of a modernist home on a bush-clad hillside" loading="lazy" />
-            <img src="/real-estate/homewood-living.jpg" alt="Bright living room with skylights and garden doors" loading="lazy" />
-            <img src="/real-estate/villa-entrance.jpg" alt="Villa entrance with clipped hedges and stone driveway" loading="lazy" />
-            <img src="/real-estate/karaka-dusk.jpg" alt="Covered deck at dusk with lit timber walls and rural outlook" loading="lazy" />
-          </div>
-          {/*
-            v1.11.44 put the Experience copy here, above the pair; v1.11.53
-            moved it, with the strip, to its own section above People on the
-            client's mark. The pair and its note stay with the photography.
-
-            Helen's portrait comes from the v8-photos collection, not
-            vision8-website like everything else on this page, and the public
-            form of the URL is the only one the site can read: the address
-            copied out of the portal, /library/vision8/website/photography-page/
-            <slug>/optimised.jpg, answers 403 to anyone not logged in. The
-            manifest at /library/public/collections/v8-photos.json is what to
-            read if this slug ever moves. Verified from outside before wiring
-            in: 200, image/jpeg, 1339x1600.
-
-            One frame each side of the copy. Both take the same 4/5 crop at the
-            same fixed column width, so the two are identical in size whatever
-            their sources measure: Helen's is 1339x1600, the stabiliser frame
-            1466x2500.
-          */}
-          <div className="re-collab">
-            <figure>
-              <img src={HELEN_PORTRAIT} alt="Helen Gwyther adjusting a flash-mounted camera on a tripod" loading="lazy" />
-              <figcaption>Helen Gwyther - <span>Photographer</span></figcaption>
-            </figure>
-            <p>
-              I often team up with Helen on real estate projects. Helen is a consummate professional. She has over 10
-              years’ experience in real estate photography and a sharp eye for detail.
-              <br />
-              With Helen behind the camera, clients receive a high quality set of still images every time.
-            </p>
-            <figure>
-              <img src="/real-estate/andy-stabiliser.jpg" alt="Andy McGrath filming inside a home with a gimbal-mounted camera" loading="lazy" />
-              <figcaption>Andy McGrath - <span>Video Producer</span></figcaption>
-            </figure>
-          </div>
-
-          <blockquote className="re-voice">
-            <p>{VOICE.working}</p>
-            <footer className="re-voice-by">{VOICE_BY}</footer>
-          </blockquote>
-
         </div>
       </section>
 
@@ -478,7 +478,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.53</p>
+      <p className="portfolio-build">Build v1.11.54</p>
     </main>
   );
 }

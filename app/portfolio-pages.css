@@ -1847,7 +1847,10 @@
   820px block names .re-drone with .re-flip so it stacks and leads.
 */
 .re-split.re-drone {
-  grid-template-columns: 7fr 5fr;
+  /* v1.11.54: the frame is a quarter smaller on the client's mark, so the
+     copy column takes what it gives up: 5fr of a 12fr split is a quarter
+     less than the 5fr of a 9fr one at the same total. */
+  grid-template-columns: 7fr 3.18fr;
 }
 
 .re-split.re-drone > figure {
