@@ -122,13 +122,16 @@ const DRONE_VOICE_BY = "Simon Marshall, Bar Safety Project Lead, Coastguard Taut
   under the Experience heading in the photography section on the client's
   mark, the heli shot and the World Cup swapped so the order is now as
   below, and each still carries a small credit over its foot, the client's
-  words. Every file was opened at full size before shipping. Local copies of
+  words. v1.11.55: a fifth still, the MyFoodBag induction shoot, placed third
+  so the three directing credits run together and the aerial and the live
+  event close. Every file was opened at full size before shipping. Local copies of
   the portal assets, resized to 1200 wide at most, so the strip does not hang
   off a collection publish the way the reels do.
 */
 const HISTORY = [
   { src: "/real-estate/history-directing-film.jpg", label: "TVC Director - Beef & Lamb", alt: "Andy McGrath directing on a studio set with a film crew" },
   { src: "/real-estate/history-directing.jpg", label: "TV Series Director/Camera - Whanau Living", alt: "Andy McGrath on location with camera and sound crew" },
+  { src: "/real-estate/history-myfoodbag.jpg", label: "Director/Camera - Myfoodbag Induction video", alt: "Andy McGrath filming three presenters in a commercial kitchen" },
   { src: "/real-estate/history-heli-queenstown.jpg", label: "Series Director - Jack of all Trades", alt: "Andy McGrath and crew beside a helicopter before an aerial shoot in Queenstown" },
   { src: "/real-estate/history-world-cup.jpg", label: "Big Screen Director - World Cup Final", alt: "Andy McGrath accredited in a full stadium at a World Cup final" },
 ];
@@ -179,43 +182,6 @@ export default function RealEstateMediaPage() {
             <p>{VOICE.property}</p>
             <footer className="re-voice-by">{VOICE_BY}</footer>
           </blockquote>
-        </div>
-      </section>
-
-      {/*
-        v1.11.53: the Experience block, heading, credited strip and three
-        paragraphs, is its own section above People on the client's mark. It
-        was the tail of the photography section from v1.11.44 to v1.11.52.
-        No label, like the floor plans: the heading is the label.
-      */}
-      <section className="re-section">
-        <div className="re-inner">
-          <div className="re-experience">
-            {/* v1.11.51: the strip sits under this heading, credit over each
-                still. v1.11.52: heading and strip share an inline grid so the
-                strip is exactly as wide as the heading's line, on the client's
-                mark ("no wider than the title above it"). The credit's span is
-                what the width and no-wrap rules bite on; the figcaption itself
-                is the wash across the frame. */}
-            <div className="re-experience-head">
-              <h2>Experience is useful when you know what to do with it.</h2>
-              <div className="re-history-strip" aria-label="Television and directing background">
-                {HISTORY.map((still) => (
-                  <figure key={still.src}>
-                    <img src={still.src} alt={still.alt} loading="lazy" />
-                    <figcaption><span>{still.label}</span></figcaption>
-                  </figure>
-                ))}
-              </div>
-            </div>
-            <p>Vision8 comes from a much wider world than property marketing.</p>
-            <p>
-              Years behind cameras and in control rooms across television, commercials, concerts and major live events
-              have taught us how to make decisions quickly, work comfortably with people and recognise the moment worth
-              capturing.
-            </p>
-            <p>That experience now comes to a property shoot without bringing a television crew with it.</p>
-          </div>
         </div>
       </section>
 
@@ -329,6 +295,44 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
+
+      {/*
+        v1.11.53: the Experience block, heading, credited strip and three
+        paragraphs, is its own section rather than the tail of the photography
+        section, which is where it sat from v1.11.44 to v1.11.52. v1.11.55: it
+        sits directly above Drone on the client's mark, after the photography.
+        No label, like the floor plans: the heading is the label.
+      */}
+      <section className="re-section">
+        <div className="re-inner">
+          <div className="re-experience">
+            {/* v1.11.51: the strip sits under this heading, credit over each
+                still. v1.11.52: heading and strip share an inline grid so the
+                strip is exactly as wide as the heading's line, on the client's
+                mark ("no wider than the title above it"). The credit's span is
+                what the width and no-wrap rules bite on; the figcaption itself
+                is the wash across the frame. */}
+            <div className="re-experience-head">
+              <h2>Experience is useful when you know what to do with it.</h2>
+              <div className="re-history-strip" aria-label="Television and directing background">
+                {HISTORY.map((still) => (
+                  <figure key={still.src}>
+                    <img src={still.src} alt={still.alt} loading="lazy" />
+                    <figcaption><span>{still.label}</span></figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
+            <p>Vision8 comes from a much wider world than property marketing.</p>
+            <p>
+              Years behind cameras and in control rooms across television, commercials, concerts and major live events
+              have taught us how to make decisions quickly, work comfortably with people and recognise the moment worth
+              capturing.
+            </p>
+            <p>That experience now comes to a property shoot without bringing a television crew with it.</p>
+          </div>
+        </div>
+      </section>
 
       {/*
         v1.11.50: Drone, on the client's mark. v1.11.54: it follows the
@@ -478,7 +482,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.54</p>
+      <p className="portfolio-build">Build v1.11.55</p>
     </main>
   );
 }
