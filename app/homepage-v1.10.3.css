@@ -552,18 +552,14 @@
 }
 
 /*
-  v1.11.49: header lockup and the line under the logo.
+  v1.11.49: header lockup. v1.11.50: the line under the logo that shipped
+  with it is gone on the client's mark, markup and rules both.
 
   The header carries "Creative media" beside the logo in the same lockup the
   inner pages use for their division (`.portfolio-division` in
   portfolio-pages.css): thin divider, spaced caps, quiet white. Not teal; teal
   is the active and navigation colour on this page and a teal label reads as
   a fan item.
-
-  The line under the logo is small and light and fades in only after the fan
-  has settled, at 7s, so it never competes with the intro. It hangs from the
-  fan-core button so nothing the fan geometry test measures moves. Hidden on
-  narrow phones, where it would collide with the stage copy.
 */
 .header-division {
   margin-left: 16px;
@@ -577,42 +573,8 @@
   white-space: nowrap;
 }
 
-.fan-core-tag {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  z-index: 2;
-  width: max-content;
-  max-width: 80vw;
-  margin-top: 8px;
-  transform: translateX(-50%);
-  text-align: center;
-  pointer-events: none;
-  opacity: 0;
-  animation: core-tag-arrive 1.6s ease-out 7s forwards;
-}
-
-.fan-core-tag-line {
-  color: rgba(243, 244, 239, 0.58);
-  font-size: clamp(0.72rem, 0.9vw, 0.84rem);
-  font-weight: 400;
-  letter-spacing: 0.04em;
-}
-
-@keyframes core-tag-arrive {
-  to { opacity: 1; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .fan-core-tag {
-    animation: none;
-    opacity: 1;
-  }
-}
-
 @media (max-width: 720px) {
-  .header-division,
-  .fan-core-tag {
+  .header-division {
     display: none;
   }
 }

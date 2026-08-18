@@ -1820,6 +1820,75 @@
 }
 
 /*
+  v1.11.50: the drone section. Picture in the 5fr column and the copy in the
+  7fr, the reverse of the default split, because the frame is portrait: at the
+  7fr width the video figures take it would run about 850px tall. Column
+  placement is the base rules' (figure 1, div 2), only the widths change, so
+  the 820px stack below needs nothing new for it.
+*/
+.re-split.re-drone {
+  grid-template-columns: 5fr 7fr;
+}
+
+/* 4/5, the same crop the collaborator frames take, from a 922x1120 source. */
+.re-split.re-drone img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+/*
+  Attribution under the one quote on the page that is not Harry's. Quieter
+  than the words, on the prose floor by its alpha not its size, and it takes
+  the place of the foot-of-page credit for this voice.
+*/
+.real-estate-page .re-voice-by {
+  margin-top: 14px;
+  color: rgba(243, 244, 239, 0.55);
+  font-size: 1.05rem;
+  font-style: normal;
+  letter-spacing: 0.02em;
+}
+
+/*
+  The filmstrip. Four stills at one height on a charcoal panel, held to
+  1000px and centred under the centred quote, so it reads as supporting
+  evidence for the section above it and not as a new section. Sized to be
+  looked at, not to stop the reader: about 235px wide each on a 1280 measure.
+*/
+.re-history {
+  max-width: 1000px;
+  margin: clamp(40px, 5vw, 64px) auto 0;
+}
+
+.real-estate-page .re-history-note {
+  margin: 0 0 18px;
+  color: rgba(243, 244, 239, 0.78);
+  text-align: center;
+}
+
+.re-history-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: #080a0a;
+}
+
+.re-history-strip img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  border-radius: 1px;
+}
+
+/*
   The hero's own transport, along the foot. Vimeo's chrome is off because the
   player is cropped, and the client asked for a scrub line that can pause with
   no play icon, so a paused hero never grows a triangle over the picture.
@@ -1982,7 +2051,8 @@
   /* One column below this, and the picture leads on every section regardless of
      which side it takes on desktop. */
   .re-split,
-  .re-split.re-flip {
+  .re-split.re-flip,
+  .re-split.re-drone {
     grid-template-columns: 1fr;
   }
 
@@ -2023,6 +2093,11 @@
   }
 
   .re-photo-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Two by two: four in a row on a phone would be 80px stamps. */
+  .re-history-strip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

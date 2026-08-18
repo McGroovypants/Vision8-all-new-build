@@ -95,6 +95,34 @@ const VOICE = {
     "What really sets Vision8 apart is how easy Vision8 are to deal with. Professional, reliable, creative and always willing to go the extra mile to get the right result.",
 };
 
+/*
+  v1.11.50: a second voice, Simon Marshall of Coastguard Tautiaki Moana, used
+  once under the drone section because it is the one client comment we hold
+  that speaks to drone operation. Unlike Harry's excerpts above it is credited
+  where it sits: the foot-of-page credit covers one voice returning four times,
+  and a second name in that paragraph would muddle which words were whose.
+  Excerpted from the full comment supplied by the client; wording verbatim.
+*/
+const DRONE_VOICE =
+  "We had Andy help us with several challenging projects including operating drones in a marine environment and filming on boats in rough weather. Andy has great customer service and has fitted in with our team of staff and volunteers seamlessly.";
+const DRONE_VOICE_BY = "Simon Marshall, Bar Safety Project Lead, Coastguard Tautiaki Moana";
+
+/*
+  v1.11.50: four stills from the client's television and directing years, in
+  the client's order, shown as one slim strip under the drone section rather
+  than as an "about" block. Directing, directing, a major live event, an
+  aerial shoot: the progression is the point, so the order is not to be
+  re-sorted. Every file was opened at full size before shipping. Local copies
+  of the portal assets, resized to 1200 wide at most, so the strip does not
+  hang off a collection publish the way the reels do.
+*/
+const HISTORY = [
+  { src: "/real-estate/history-directing-film.jpg", alt: "Andy McGrath directing on a studio set with a film crew" },
+  { src: "/real-estate/history-directing.jpg", alt: "Andy McGrath on location with camera and sound crew" },
+  { src: "/real-estate/history-world-cup.jpg", alt: "Andy McGrath accredited in a full stadium at a World Cup event" },
+  { src: "/real-estate/history-heli-queenstown.jpg", alt: "Andy McGrath and crew beside a helicopter before an aerial shoot in Queenstown" },
+];
+
 export const metadata: Metadata = {
   title: "Vision8 Real Estate Media",
   description:
@@ -155,8 +183,9 @@ export default function RealEstateMediaPage() {
               <figcaption>Direction on location</figcaption>
             </figure>
             <div>
-              {/* Chapter numbers run 01 to 04 across the sections. The closing
-                  stays unnumbered because it is the ask, not a chapter. */}
+              {/* Chapter numbers run 01 to 04 across the sections: People,
+                  Drone, 360, Photography. The closing stays unnumbered because
+                  it is the ask, not a chapter. */}
               <p className="re-eyebrow"><span className="re-index">01</span>People</p>
               <h2>Being comfortable on camera matters.</h2>
               <p className="re-lede">
@@ -186,6 +215,55 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
+      {/*
+        v1.11.50: 02 Drone, between People and the 360 tours on the client's
+        mark. Three parts: the claim beside a picture of the operation, a client
+        confirming it, and a slim strip of where the eye came from. The
+        certificate itself is deliberately not shown: the photo was cropped out
+        of a composite that carried it, and the licence point is made in one
+        line of text instead. The client's words: proof without shouting.
+
+        Picture left in the narrow column: the frame is portrait, and at the
+        7fr width the other figures take it would run 850px tall.
+      */}
+      <section className="re-section">
+        <div className="re-inner">
+          <div className="re-split re-drone">
+            <figure>
+              <img src="/real-estate/andy-drone.jpg" alt="Andy McGrath flying a drone from a timber deck" loading="lazy" />
+              <figcaption>Drone operation on location</figcaption>
+            </figure>
+            <div>
+              <p className="re-eyebrow"><span className="re-index">02</span>Drone</p>
+              <h2>Perspective matters.</h2>
+              <p>
+                Drone work adds more than a dramatic overhead. It shows a property&rsquo;s setting, access, scale and
+                its relationship to the surroundings, giving buyers useful context quickly.
+              </p>
+              <p>
+                Vision8 approaches aerial filming with the same care as every other part of the job: safe operation,
+                clear judgement and visuals that serve the property rather than distract from it.
+              </p>
+              <p>
+                <strong>Certified drone operation, used where it genuinely adds value.</strong>
+              </p>
+            </div>
+          </div>
+          <blockquote className="re-voice">
+            <p>{DRONE_VOICE}</p>
+            <footer className="re-voice-by">{DRONE_VOICE_BY}</footer>
+          </blockquote>
+          <div className="re-history">
+            <p className="re-history-note">Years of directing and camera work still shape the way properties are seen today.</p>
+            <div className="re-history-strip" aria-label="Television and directing background">
+              {HISTORY.map((still) => (
+                <img key={still.src} src={still.src} alt={still.alt} loading="lazy" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="re-section">
         <div className="re-inner">
           <ViewportPlay className="re-split">
@@ -196,7 +274,7 @@ export default function RealEstateMediaPage() {
               <figcaption>360° tour examples</figcaption>
             </figure>
             <div>
-              <p className="re-eyebrow"><span className="re-index">02</span>360° virtual tours</p>
+              <p className="re-eyebrow"><span className="re-index">03</span>360° virtual tours</p>
               <h2>Walk through before walking in.</h2>
               <p>
                 360° tours let buyers explore a home in their own time and understand how the spaces actually
@@ -225,7 +303,7 @@ export default function RealEstateMediaPage() {
         v1.11.46: floor plans out of the photography section and up here, right
         after the 360 tours, on the client's mark. Its own section rather than a
         block inside the tours: a floor plan is not a 360 tour, and it carries
-        its own h3. No eyebrow, so 01, 02, 03 still run in order with nothing
+        its own h3. No eyebrow, so 01 to 04 still run in order with nothing
         after it renumbered.
       */}
       <section className="re-section">
@@ -249,7 +327,7 @@ export default function RealEstateMediaPage() {
       <section className="re-section">
         <div className="re-inner">
           <div className="re-section-head">
-            <p className="re-eyebrow"><span className="re-index">03</span>Photography</p>
+            <p className="re-eyebrow"><span className="re-index">04</span>Photography</p>
             <h2>The essentials still matter.</h2>
           </div>
           <div>
@@ -361,7 +439,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.49</p>
+      <p className="portfolio-build">Build v1.11.50</p>
     </main>
   );
 }

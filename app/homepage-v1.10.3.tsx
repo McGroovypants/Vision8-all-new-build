@@ -97,7 +97,7 @@ const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_
 const VIDEO_SITE = "/video";
 const PEOPLE = "/about";
 const VIDEO_IMAGE = `${CLOUD}/image/upload/f_auto,q_auto,w_1800/v1785665173/Adventuresmart_still_7_kbz7fl.png`;
-const BUILD = "v1.11.49";
+const BUILD = "v1.11.50";
 
 // Keyed by build on purpose. The persist effect writes every record, mediaUrl
 // included, on first visit whether or not the editor was opened, and the load
@@ -1295,13 +1295,10 @@ export function HomepageV1103({
             <span className="fan-core-ring fan-core-ring-pulse" aria-hidden="true" />
             <span className="fan-core-ring fan-core-ring-static" aria-hidden="true" />
             <Image src={LOGO} alt="Vision8" width={1976} height={704} priority unoptimized />
-            {/* v1.11.48: the client's line under the logo, absolutely placed so
-                the core's box, the apex and the rings do not move. v1.11.49:
-                the kicker moved to the header lockup and the line went small
-                and quiet, arriving after the fan has settled. */}
-            <span className="fan-core-tag">
-              <span className="fan-core-tag-line">Where the idea becomes real.</span>
-            </span>
+            {/* v1.11.50: the line under the logo ("Where the idea becomes
+                real.", v1.11.48 to v1.11.49) is gone on the client's mark; the
+                client may use the words elsewhere later. The header lockup
+                keeps "Creative media". */}
           </button>
         </div>
 

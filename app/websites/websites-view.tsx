@@ -23,9 +23,14 @@ import { BUILD, PageHeader } from "../portfolio-shell";
 const M = "https://media.vision8.co.nz/library/public/assets/";
 const CONTACT = "mailto:info@vision8.co.nz";
 
-// Drift in px/s and the delay before the strip fades in, both from the mock.
+// Drift in px/s, from the mock. START is the delay before the strip fades in:
+// the mock's 2200 sat on black for too long, so v1.11.50 brings it in a second
+// earlier on the client's mark. MOVE is when the drift begins, ahead of the
+// fade, so the strip is already travelling as it fades up rather than starting
+// to move on the frame it appears.
 const SPEED = 91;
-const START = 2200;
+const START = 1200;
+const MOVE = 400;
 // The blurb lags the centred card by this much before it crossfades.
 const LAG = 1500;
 // Octacle crossfade length, seconds before the end of the clip.
@@ -306,7 +311,7 @@ export function WebsitesView() {
       if (last == null) last = now;
       const dt = Math.min(64, now - last);
       last = now;
-      if (auto && now - startTs < START) {
+      if (auto && now - startTs < MOVE) {
         raf = requestAnimationFrame(tick);
         return;
       }
