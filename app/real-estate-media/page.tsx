@@ -108,19 +108,20 @@ const DRONE_VOICE =
 const DRONE_VOICE_BY = "Simon Marshall, Bar Safety Project Lead, Coastguard Tautiaki Moana";
 
 /*
-  v1.11.50: four stills from the client's television and directing years, in
-  the client's order, shown as one slim strip under the drone section rather
-  than as an "about" block. Directing, directing, a major live event, an
-  aerial shoot: the progression is the point, so the order is not to be
-  re-sorted. Every file was opened at full size before shipping. Local copies
-  of the portal assets, resized to 1200 wide at most, so the strip does not
-  hang off a collection publish the way the reels do.
+  v1.11.50: four stills from the client's television and directing years,
+  shown as one slim strip rather than as an "about" block. v1.11.51: moved
+  under the Experience heading in the photography section on the client's
+  mark, the heli shot and the World Cup swapped so the order is now as
+  below, and each still carries a small credit over its foot, the client's
+  words. Every file was opened at full size before shipping. Local copies of
+  the portal assets, resized to 1200 wide at most, so the strip does not hang
+  off a collection publish the way the reels do.
 */
 const HISTORY = [
-  { src: "/real-estate/history-directing-film.jpg", alt: "Andy McGrath directing on a studio set with a film crew" },
-  { src: "/real-estate/history-directing.jpg", alt: "Andy McGrath on location with camera and sound crew" },
-  { src: "/real-estate/history-world-cup.jpg", alt: "Andy McGrath accredited in a full stadium at a World Cup event" },
-  { src: "/real-estate/history-heli-queenstown.jpg", alt: "Andy McGrath and crew beside a helicopter before an aerial shoot in Queenstown" },
+  { src: "/real-estate/history-directing-film.jpg", label: "TVC Director - Beef & Lamb", alt: "Andy McGrath directing on a studio set with a film crew" },
+  { src: "/real-estate/history-directing.jpg", label: "TV Series Director/Camera - Whanau Living", alt: "Andy McGrath on location with camera and sound crew" },
+  { src: "/real-estate/history-heli-queenstown.jpg", label: "Series Director - Jack of all Trades", alt: "Andy McGrath and crew beside a helicopter before an aerial shoot in Queenstown" },
+  { src: "/real-estate/history-world-cup.jpg", label: "Big Screen Director - World Cup Final", alt: "Andy McGrath accredited in a full stadium at a World Cup final" },
 ];
 
 export const metadata: Metadata = {
@@ -183,10 +184,10 @@ export default function RealEstateMediaPage() {
               <figcaption>Direction on location</figcaption>
             </figure>
             <div>
-              {/* Chapter numbers run 01 to 04 across the sections: People,
-                  Drone, 360, Photography. The closing stays unnumbered because
-                  it is the ask, not a chapter. */}
-              <p className="re-eyebrow"><span className="re-index">01</span>People</p>
+              {/* v1.11.51: the chapter numbers (01 to 04) are gone from the
+                  section labels on the client's mark; the labels went up 2px
+                  with them. `.re-index` has no markup left. */}
+              <p className="re-eyebrow">People</p>
               <h2>Being comfortable on camera matters.</h2>
               <p className="re-lede">
                 Being good at selling property doesn&rsquo;t automatically make being on camera easy.
@@ -223,8 +224,9 @@ export default function RealEstateMediaPage() {
         of a composite that carried it, and the licence point is made in one
         line of text instead. The client's words: proof without shouting.
 
-        Picture left in the narrow column: the frame is portrait, and at the
-        7fr width the other figures take it would run 850px tall.
+        Picture right of the copy (v1.11.51, client's mark), in the narrow
+        column: the frame is portrait, and at the 7fr width the other figures
+        take it would run 850px tall.
       */}
       <section className="re-section">
         <div className="re-inner">
@@ -234,7 +236,7 @@ export default function RealEstateMediaPage() {
               <figcaption>Drone operation on location</figcaption>
             </figure>
             <div>
-              <p className="re-eyebrow"><span className="re-index">02</span>Drone</p>
+              <p className="re-eyebrow">Drone</p>
               <h2>Perspective matters.</h2>
               <p>
                 Drone work adds more than a dramatic overhead. It shows a property&rsquo;s setting, access, scale and
@@ -253,14 +255,6 @@ export default function RealEstateMediaPage() {
             <p>{DRONE_VOICE}</p>
             <footer className="re-voice-by">{DRONE_VOICE_BY}</footer>
           </blockquote>
-          <div className="re-history">
-            <p className="re-history-note">Years of directing and camera work still shape the way properties are seen today.</p>
-            <div className="re-history-strip" aria-label="Television and directing background">
-              {HISTORY.map((still) => (
-                <img key={still.src} src={still.src} alt={still.alt} loading="lazy" />
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 
@@ -274,7 +268,7 @@ export default function RealEstateMediaPage() {
               <figcaption>360° tour examples</figcaption>
             </figure>
             <div>
-              <p className="re-eyebrow"><span className="re-index">03</span>360° virtual tours</p>
+              <p className="re-eyebrow">360° virtual tours</p>
               <h2>Walk through before walking in.</h2>
               <p>
                 360° tours let buyers explore a home in their own time and understand how the spaces actually
@@ -303,8 +297,7 @@ export default function RealEstateMediaPage() {
         v1.11.46: floor plans out of the photography section and up here, right
         after the 360 tours, on the client's mark. Its own section rather than a
         block inside the tours: a floor plan is not a 360 tour, and it carries
-        its own h3. No eyebrow, so 01 to 04 still run in order with nothing
-        after it renumbered.
+        its own h3 and no eyebrow.
       */}
       <section className="re-section">
         <div className="re-inner">
@@ -327,7 +320,7 @@ export default function RealEstateMediaPage() {
       <section className="re-section">
         <div className="re-inner">
           <div className="re-section-head">
-            <p className="re-eyebrow"><span className="re-index">04</span>Photography</p>
+            <p className="re-eyebrow">Photography</p>
             <h2>The essentials still matter.</h2>
           </div>
           <div>
@@ -369,6 +362,17 @@ export default function RealEstateMediaPage() {
           */}
           <div className="re-experience">
             <h2>Experience is useful when you know what to do with it.</h2>
+            {/* v1.11.51: the strip sits under this heading now, credit over
+                each still. The bridge line it had under the drone section is
+                gone: the heading says it. */}
+            <div className="re-history-strip" aria-label="Television and directing background">
+              {HISTORY.map((still) => (
+                <figure key={still.src}>
+                  <img src={still.src} alt={still.alt} loading="lazy" />
+                  <figcaption>{still.label}</figcaption>
+                </figure>
+              ))}
+            </div>
             <p>Vision8 comes from a much wider world than property marketing.</p>
             <p>
               Years behind cameras and in control rooms across television, commercials, concerts and major live events
@@ -439,7 +443,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.50</p>
+      <p className="portfolio-build">Build v1.11.51</p>
     </main>
   );
 }

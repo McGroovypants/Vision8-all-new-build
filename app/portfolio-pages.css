@@ -1445,7 +1445,9 @@
   gap: 12px;
   margin: 0 0 20px;
   color: var(--teal-bright);
-  font-size: 0.95rem;
+  /* v1.11.51: 2px up from 0.95rem, on the client's mark, as the chapter
+     numbers came off. */
+  font-size: 1.075rem;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -1462,7 +1464,9 @@
 */
 
 /* Dimmer than the label so the section's name, not its number, registers
-   first. 0.55 stays above the 50% floor the house style sets. */
+   first. 0.55 stays above the 50% floor the house style sets.
+   v1.11.51: no markup uses this now; the numbers came off the labels. Kept
+   for a build that wants them back. */
 .real-estate-page .re-index {
   color: rgba(243, 244, 239, 0.55);
   font-variant-numeric: tabular-nums;
@@ -1821,13 +1825,21 @@
 
 /*
   v1.11.50: the drone section. Picture in the 5fr column and the copy in the
-  7fr, the reverse of the default split, because the frame is portrait: at the
-  7fr width the video figures take it would run about 850px tall. Column
-  placement is the base rules' (figure 1, div 2), only the widths change, so
-  the 820px stack below needs nothing new for it.
+  7fr, because the frame is portrait: at the 7fr width the video figures take
+  it would run about 850px tall. v1.11.51: picture on the right, on the
+  client's mark, so this is the .re-flip placement at the narrow width. The
+  820px block names .re-drone with .re-flip so it stacks and leads.
 */
 .re-split.re-drone {
-  grid-template-columns: 5fr 7fr;
+  grid-template-columns: 7fr 5fr;
+}
+
+.re-split.re-drone > figure {
+  grid-column: 2;
+}
+
+.re-split.re-drone > div {
+  grid-column: 1;
 }
 
 /* 4/5, the same crop the collaborator frames take, from a 922x1120 source. */
@@ -1853,30 +1865,26 @@
 }
 
 /*
-  The filmstrip. Four stills at one height on a charcoal panel, held to
-  1000px and centred under the centred quote, so it reads as supporting
-  evidence for the section above it and not as a new section. Sized to be
-  looked at, not to stop the reader: about 235px wide each on a 1280 measure.
+  The filmstrip. Four stills at one height on a charcoal panel. v1.11.51:
+  under the Experience heading, spanning that block's 1080px, with the
+  paragraphs following it; a small credit sits over the foot of each still on
+  a short wash so it reads on any picture. Sized to be looked at, not to stop
+  the reader: about 255px wide each on the 1080 measure.
 */
-.re-history {
-  max-width: 1000px;
-  margin: clamp(40px, 5vw, 64px) auto 0;
-}
-
-.real-estate-page .re-history-note {
-  margin: 0 0 18px;
-  color: rgba(243, 244, 239, 0.78);
-  text-align: center;
-}
-
 .re-history-strip {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
+  margin: 0 0 clamp(28px, 3vw, 40px);
   padding: 10px;
   border: 1px solid var(--line);
   border-radius: 2px;
   background: #080a0a;
+}
+
+.re-history-strip figure {
+  position: relative;
+  margin: 0;
 }
 
 .re-history-strip img {
@@ -1886,6 +1894,22 @@
   object-fit: cover;
   border: 1px solid var(--line);
   border-radius: 1px;
+}
+
+/* Over the picture, not under it: the strip stays one height and the credit
+   reads as a slate on the frame. Prefixed so it beats the page's figcaption
+   rule on specificity, not source order. */
+.real-estate-page .re-history-strip figcaption {
+  position: absolute;
+  inset: auto 1px 1px 1px;
+  margin: 0;
+  padding: 22px 8px 7px;
+  background: linear-gradient(to top, rgba(3, 4, 4, 0.82), rgba(3, 4, 4, 0));
+  color: rgba(243, 244, 239, 0.86);
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  line-height: 1.3;
+  text-transform: uppercase;
 }
 
 /*
@@ -2065,12 +2089,15 @@
   .re-split > figure,
   .re-split > div,
   .re-split.re-flip > figure,
-  .re-split.re-flip > div {
+  .re-split.re-flip > div,
+  .re-split.re-drone > figure,
+  .re-split.re-drone > div {
     grid-column: 1;
     grid-row: auto;
   }
 
-  .re-split.re-flip > figure {
+  .re-split.re-flip > figure,
+  .re-split.re-drone > figure {
     order: -1;
   }
 
