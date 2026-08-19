@@ -1929,7 +1929,10 @@
 .re-history-strip img {
   display: block;
   width: 100%;
-  aspect-ratio: 3 / 2;
+  /* v1.11.60: 16/9, down from 3/2. The credit sits under the frame now, and
+     the shorter crop gives back roughly what the caption row adds, so the
+     strip's height barely moves. */
+  aspect-ratio: 16 / 9;
   object-fit: cover;
   border: 1px solid var(--line);
   border-radius: 1px;
@@ -1938,28 +1941,17 @@
 /* Over the picture, not under it: the strip stays one height and the credit
    reads as a slate on the frame. Prefixed so it beats the page's figcaption
    rule on specificity, not source order. */
+/*
+  v1.11.60: no wash at all, on the client's mark: two smoothing passes
+  (v1.11.57, v1.11.58) still read as a grey band on the client's screen, so
+  the credit sits under its frame on the panel's own ground instead, the way
+  the phone layout already had it. Same quiet grammar as the collaborator
+  captions.
+*/
 .real-estate-page .re-history-strip figcaption {
-  position: absolute;
-  inset: auto 1px 1px 1px;
   margin: 0;
-  /* v1.11.58: the v1.11.57 four-stop ramp still read as a band: the eye sees
-     an edge wherever a gradient's slope changes abruptly (Mach bands), and
-     four stops have three such corners. Nine stops on a cosine ease keep the
-     slope continuous, so the ground darkens under the words with no line. */
-  padding: 40px 8px 7px;
-  background: linear-gradient(
-    to top,
-    rgba(3, 4, 4, 0.86) 0%,
-    rgba(3, 4, 4, 0.845) 12%,
-    rgba(3, 4, 4, 0.8) 24%,
-    rgba(3, 4, 4, 0.7) 38%,
-    rgba(3, 4, 4, 0.55) 52%,
-    rgba(3, 4, 4, 0.38) 66%,
-    rgba(3, 4, 4, 0.2) 80%,
-    rgba(3, 4, 4, 0.07) 91%,
-    rgba(3, 4, 4, 0) 100%
-  );
-  color: rgba(243, 244, 239, 0.86);
+  padding: 7px 2px 1px;
+  color: rgba(243, 244, 239, 0.62);
   /* v1.11.52: smaller, the client's own casing rather than caps, one line
      only, and never past 80% of the frame: on the client's mark. Ellipsis
      is the fallback if a frame ever gets too narrow for the longest credit. */
@@ -1981,11 +1973,10 @@
 */
 .real-estate-page .re-history-strip figcaption span {
   display: inline-block;
-  /* [NOTE] cqw, not per cent: a percentage here resolves against the
-     figcaption's content box, which the wash's side padding has already
-     narrowed, so "80%" was really 75 per cent of the picture. 80cqw is 80 per
-     cent of the frame, which is what the client asked for. */
-  max-width: 80cqw;
+  /* One line, the frame's width, ellipsis as the fallback. The 80 per cent
+     cap was a rule for a credit sitting on the picture; under the frame the
+     full width is the natural measure. cqw resolves against the figure. */
+  max-width: 100cqw;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -2208,16 +2199,9 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  /* At 160px a frame three of the four credits cannot hold one line at any
-     readable size, so on phones the credit sits under the frame, no wash,
-     and may wrap. Desktop keeps the one-line slate on the picture. */
+  /* At 160px a frame three of the five credits cannot hold one line at any
+     readable size, so on phones the credit may wrap. Bigger too: v1.11.57. */
   .real-estate-page .re-history-strip figcaption {
-    position: static;
-    padding: 6px 2px 0;
-    background: none;
-    color: rgba(243, 244, 239, 0.62);
-    /* v1.11.57: a fifth larger here too. No cap applies: the credit sits
-       under the frame at this width and may wrap. */
     font-size: 0.72rem;
   }
 
