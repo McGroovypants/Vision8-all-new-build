@@ -58,7 +58,7 @@ export default function AboutPage() {
           ))}
         </div>
       </section>
-      <p className="portfolio-build">Build v1.11.57</p>
+      <p className="portfolio-build">Build v1.11.58</p>
     </main>
   );
 }

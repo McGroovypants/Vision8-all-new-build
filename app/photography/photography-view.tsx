@@ -64,10 +64,18 @@ function readSaved(): PhotoState | null {
   inline transform, which would silently defeat the hover transforms the
   treatments already own).
 */
+/*
+  v1.11.58: zoom floors at 1, frame-fill, on the client's mark. The page
+  renders every image object-fit: cover with the zoom as a scale on top, so a
+  scale below 1 cannot reveal any more of the original: it shows the same
+  cover crop smaller, with gaps round it, which is what the 20 to 100 range
+  gave since v1.11.37. Cover at 100% already shows the most of the original a
+  filled frame can; the floor makes the slider say so.
+*/
 const focus = (image: PhotoImage) =>
   ({
     objectPosition: `${image.focusX}% ${image.focusY}%`,
-    "--zoom": image.zoom ?? 1,
+    "--zoom": Math.max(1, image.zoom ?? 1),
     "--origin": `${image.focusX}% ${image.focusY}%`,
   }) as React.CSSProperties;
 
@@ -285,16 +293,12 @@ export function PhotographyView({
     const boxW = el.offsetWidth;
     const boxH = el.offsetHeight;
     const cover = el.naturalWidth && el.naturalHeight ? Math.max(boxW / el.naturalWidth, boxH / el.naturalHeight) : 1;
-    const zoom = image.zoom ?? 1;
-    /*
-      Above 100% the drag pans the crop overflow. Below 100% (v1.11.37: the
-      zoom range reaches down to 20%) the shrunken image slides inside its
-      frame instead, and the focal origin moves it the opposite way, so the
-      range is stored negative to flip the drag direction and keep the image
-      following the pointer.
-    */
-    const rangeX = zoom >= 1 ? Math.max(el.naturalWidth * cover * zoom - boxW, 0) : -(boxW * (1 - zoom));
-    const rangeY = zoom >= 1 ? Math.max(el.naturalHeight * cover * zoom - boxH, 0) : -(boxH * (1 - zoom));
+    // v1.11.58: zoom floors at 1 (see focus() above), so the drag always
+    // pans cover overflow; the v1.11.37 slide-a-shrunken-image branch went
+    // with the below-100 range.
+    const zoom = Math.max(1, image.zoom ?? 1);
+    const rangeX = Math.max(el.naturalWidth * cover * zoom - boxW, 0);
+    const rangeY = Math.max(el.naturalHeight * cover * zoom - boxH, 0);
     drag.current = {
       target,
       pointerId: event.pointerId,
@@ -320,8 +324,7 @@ export function PhotographyView({
     const image = getImage(d.target);
     const next = { ...image };
     // The image follows the pointer: dragging right reveals the left of the
-    // frame, which is a lower focus percentage. A negative range (zoomed
-    // below 100%) flips that, sliding the shrunken image with the pointer.
+    // frame, which is a lower focus percentage.
     if (Math.abs(d.rangeX) > 1) next.focusX = Math.round(Math.min(100, Math.max(0, d.focusX - (dx / d.rangeX) * 100)));
     if (Math.abs(d.rangeY) > 1) next.focusY = Math.round(Math.min(100, Math.max(0, d.focusY - (dy / d.rangeY) * 100)));
     if (next.focusX !== image.focusX || next.focusY !== image.focusY) setImage(d.target, next);
@@ -666,7 +669,7 @@ function FocusControls({ image, onChange }: { image: PhotoImage; onChange: (next
         <div className="range-row">
           <input
             type="range"
-            min={20}
+            min={100}
             max={200}
             step={5}
             value={Math.round((image.zoom ?? 1) * 100)}
@@ -883,7 +886,7 @@ function CollectionControls({
             image={selectedImage}
             onChange={(next) => setImages(c.images.map((entry, i) => (i === selected ? next : entry)))}
           />
-          <p className="editor-note">Drag the photo on the page to reframe it. An image that fills its frame exactly, like the square contact crops, only moves once zoom is away from 100%: above it the drag pans the crop, below it the whole image slides in its frame.</p>
+          <p className="editor-note">Drag the photo on the page to reframe it. An image that fills its frame exactly, like the square contact crops, only moves once zoom is above 100% and there is crop overflow to pan.</p>
           <div className="editor-two-column">
             <button type="button" disabled={selected === 0} onClick={() => reorder(selected, selected - 1)}>Move earlier</button>
             <button type="button" disabled={selected === c.images.length - 1} onClick={() => reorder(selected, selected + 1)}>Move later</button>

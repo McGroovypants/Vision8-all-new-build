@@ -153,7 +153,9 @@ export function mergeSaved(saved: unknown): PhotoState {
       src: c.src,
       focusX: typeof c.focusX === "number" ? c.focusX : 50,
       focusY: typeof c.focusY === "number" ? c.focusY : 50,
-      zoom: typeof c.zoom === "number" ? c.zoom : 1,
+      // Floored at 1: below frame-fill was retired in v1.11.58, and a saved
+      // draft carrying one would render gaps.
+      zoom: typeof c.zoom === "number" ? Math.max(1, c.zoom) : 1,
     };
   };
   const collection = (id: SectionId): Collection => {

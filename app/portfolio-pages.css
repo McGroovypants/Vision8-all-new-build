@@ -686,12 +686,15 @@
 */
 .portfolio-build {
   position: fixed;
-  right: 20px;
+  /* v1.11.58: in from 20px and a fifth bigger, on the client's mark: at 20px
+     the macOS overlay scrollbar of the pages that scroll themselves sat on
+     top of it. */
+  right: 38px;
   bottom: 10px;
   z-index: 60;
   margin: 0;
   color: rgba(255, 255, 255, 0.5);
-  font-size: 0.55rem;
+  font-size: 0.66rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -704,7 +707,7 @@
   is half of 17.6px rather than half of the shared rule.
 */
 .real-estate-page .portfolio-build {
-  font-size: 0.55rem;
+  font-size: 0.66rem;
 }
 /*
   Audio page. Its own scroll container, like `.video-page` and `.about-page`:
@@ -1939,16 +1942,21 @@
   position: absolute;
   inset: auto 1px 1px 1px;
   margin: 0;
-  /* v1.11.57: a taller, softer wash. The two-stop version ramped over about
-     30px and read as a band with a visible top edge on the lighter frames;
-     this one holds its density under the words and fades out over most of its
-     height, so there is nothing to see but the words getting darker ground. */
-  padding: 34px 8px 7px;
+  /* v1.11.58: the v1.11.57 four-stop ramp still read as a band: the eye sees
+     an edge wherever a gradient's slope changes abruptly (Mach bands), and
+     four stops have three such corners. Nine stops on a cosine ease keep the
+     slope continuous, so the ground darkens under the words with no line. */
+  padding: 40px 8px 7px;
   background: linear-gradient(
     to top,
-    rgba(3, 4, 4, 0.88) 0%,
-    rgba(3, 4, 4, 0.8) 26%,
-    rgba(3, 4, 4, 0.46) 58%,
+    rgba(3, 4, 4, 0.86) 0%,
+    rgba(3, 4, 4, 0.845) 12%,
+    rgba(3, 4, 4, 0.8) 24%,
+    rgba(3, 4, 4, 0.7) 38%,
+    rgba(3, 4, 4, 0.55) 52%,
+    rgba(3, 4, 4, 0.38) 66%,
+    rgba(3, 4, 4, 0.2) 80%,
+    rgba(3, 4, 4, 0.07) 91%,
     rgba(3, 4, 4, 0) 100%
   );
   color: rgba(243, 244, 239, 0.86);
