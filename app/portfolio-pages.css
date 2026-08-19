@@ -2824,6 +2824,174 @@
 
 /* Phone preview: a real 390px viewport in an iframe, so the page's own media
    queries produce the phone layout. */
+/*
+  v1.11.59: the portal picker. An in-app modal in the editor's own grammar:
+  dark panel, thin --line borders, teal only on state. The grid scrolls
+  inside the panel; ticked photos carry their order number so the section's
+  sequence is visible before Apply.
+*/
+.portal-picker-overlay {
+  position: fixed;
+  inset: 0;
+  /* Above the editor panel (500), under the phone preview (600). */
+  z-index: 560;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(3, 4, 4, 0.78);
+}
+
+.portal-picker {
+  display: flex;
+  flex-direction: column;
+  width: min(880px, 100%);
+  max-height: min(84vh, 900px);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #0a0c0c;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+}
+
+.portal-picker-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px 0;
+}
+
+.portal-picker-head h3 {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+  color: var(--white);
+}
+
+.portal-picker-head p {
+  margin: 0;
+  color: rgba(243, 244, 239, 0.62);
+  font-size: 0.82rem;
+}
+
+.portal-picker-head button,
+.portal-picker-slug button,
+.portal-picker-foot button {
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: none;
+  color: rgba(243, 244, 239, 0.85);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.portal-picker-slug {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 12px 20px 14px;
+}
+
+.portal-picker-slug label {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  color: rgba(243, 244, 239, 0.62);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.portal-picker-slug input {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--white);
+  font-size: 0.9rem;
+}
+
+.portal-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+  gap: 6px;
+  padding: 4px 20px 16px;
+  overflow-y: auto;
+}
+
+.portal-picker-grid button {
+  position: relative;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 3px;
+  background: none;
+  cursor: pointer;
+}
+
+.portal-picker-grid button.ticked {
+  border-color: var(--teal-bright);
+}
+
+.portal-picker-grid img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 1px;
+}
+
+.portal-picker-grid button.ticked img {
+  opacity: 0.72;
+}
+
+.portal-picker-grid span {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  min-width: 20px;
+  padding: 2px 5px;
+  border-radius: 2px;
+  background: var(--teal-bright);
+  color: #04211d;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.portal-picker-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 20px 16px;
+  border-top: 1px solid var(--line);
+}
+
+.portal-picker-foot p {
+  margin: 0;
+  color: rgba(243, 244, 239, 0.62);
+  font-size: 0.78rem;
+}
+
+.portal-picker-foot button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* The two launch buttons in the panel, full width like the panel's fields. */
+.photo-editor-portal {
+  width: 100%;
+  margin: 0 0 10px;
+  padding: 9px 12px;
+  border: 1px solid rgba(11, 183, 163, 0.45);
+  border-radius: 3px;
+  background: rgba(11, 183, 163, 0.08);
+  color: var(--teal-bright);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
 .photo-preview-overlay {
   position: fixed;
   inset: 0;

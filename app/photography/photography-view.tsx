@@ -37,6 +37,7 @@ import {
   sectionOrder,
 } from "./data";
 import { EditorialGrid } from "./editorial-grid";
+import { PortalPicker, collectionSlugOf, rememberedSlug } from "./portal-picker";
 
 // Same discipline as the homepage editor: saved tuning is keyed to the build,
 // so a stale draft cannot pin old media over a later deploy. Bump the shared
@@ -117,6 +118,9 @@ export function PhotographyView({
   const [panelOpen, setPanelOpen] = useState(editable);
   const [active, setActive] = useState<Active>(null);
   const [phonePreview, setPhonePreview] = useState(false);
+  // v1.11.59: the portal picker. Section mode replaces a section's images;
+  // single mode swaps the one image the panel has selected.
+  const [picker, setPicker] = useState<{ section: SectionId } | { target: ImageTarget } | null>(null);
   const [copied, setCopied] = useState(false);
   const [publishKey, setPublishKey] = useState("");
   const [liveStatus, setLiveStatus] = useState<"unknown" | "published" | "defaults">("unknown");
@@ -219,6 +223,31 @@ export function PhotographyView({
         },
       };
     });
+
+  /*
+    Applying a portal selection keeps the crop of any photo that was already
+    in the section, matched by URL, so re-ordering or trimming through the
+    picker never resets framing that has been set by hand.
+  */
+  const applyPortalToSection = (section: SectionId, srcs: string[]) =>
+    update((current) => {
+      const existing = new Map(current.collections[section].images.map((entry) => [entry.src, entry]));
+      return {
+        ...current,
+        collections: {
+          ...current.collections,
+          [section]: { ...current.collections[section], images: srcs.map((src) => existing.get(src) ?? img(src)) },
+        },
+      };
+    });
+
+  const pickPortalSingle = (target: ImageTarget, src: string) => {
+    if (getImage(target).src !== src) setImage(target, img(src));
+  };
+
+  // The folder an image came from, recoverable from its portal URL; images
+  // that are local files fall back to the last collection the picker used.
+  const pickerSlugFor = (srcs: string[]) => srcs.map(collectionSlugOf).find(Boolean) ?? rememberedSlug();
 
   const select = (target: ImageTarget) => {
     setActive(target);
@@ -560,12 +589,13 @@ export function PhotographyView({
 
           <HeroControls state={state} update={update} active={active} select={select} />
 
-          <CollectionControls id="contact" state={state} active={active} setActive={setActive} update={update} updateCollection={updateCollection} />
-          <CollectionControls id="fan" state={state} active={active} setActive={setActive} update={update} updateCollection={updateCollection} />
+          {sectionOrder.slice(0, 2).map((id) => (
+            <CollectionControls key={id} id={id} state={state} active={active} setActive={setActive} update={update} updateCollection={updateCollection} openPicker={setPicker} />
+          ))}
           <BreatherControls index={0} state={state} update={update} active={active} select={select} />
-          <CollectionControls id="strips" state={state} active={active} setActive={setActive} update={update} updateCollection={updateCollection} />
+          <CollectionControls id="strips" state={state} active={active} setActive={setActive} update={update} updateCollection={updateCollection} openPicker={setPicker} />
           <BreatherControls index={1} state={state} update={update} active={active} select={select} />
-          <CollectionControls id="editorial" state={state} active={active} setActive={setActive} update={update} updateCollection={updateCollection} />
+          <CollectionControls id="editorial" state={state} active={active} setActive={setActive} update={update} updateCollection={updateCollection} openPicker={setPicker} />
 
           <section className="editor-section">
             <h3>Closing line</h3>
@@ -615,6 +645,26 @@ export function PhotographyView({
           </div>
           <p className="editor-note">Reset to source discards this browser&rsquo;s draft and shows the built-in layout; it does not change the live page. Uploaded files are previewed for this session only; images added by URL persist and publish.</p>
         </aside>
+      )}
+
+      {editable && picker && (
+        <PortalPicker
+          heading={
+            "section" in picker
+              ? `${sectionNames[picker.section]}: choose photos`
+              : "Swap this photo"
+          }
+          multi={"section" in picker}
+          initialSlug={
+            "section" in picker
+              ? pickerSlugFor(state.collections[picker.section].images.map((entry) => entry.src))
+              : pickerSlugFor([getImage(picker.target).src])
+          }
+          currentSrcs={"section" in picker ? state.collections[picker.section].images.map((entry) => entry.src) : []}
+          onApply={"section" in picker ? (srcs) => applyPortalToSection(picker.section, srcs) : undefined}
+          onPick={"section" in picker ? undefined : (src) => pickPortalSingle(picker.target, src)}
+          onClose={() => setPicker(null)}
+        />
       )}
 
       {editable && phonePreview && (
@@ -807,6 +857,7 @@ function CollectionControls({
   setActive,
   update,
   updateCollection,
+  openPicker,
 }: {
   id: SectionId;
   state: PhotoState;
@@ -814,6 +865,7 @@ function CollectionControls({
   setActive: (target: Active) => void;
   update: (patch: (current: PhotoState) => PhotoState) => void;
   updateCollection: (id: SectionId, patch: Partial<Collection>) => void;
+  openPicker: (request: { section: SectionId } | { target: ImageTarget }) => void;
 }) {
   const c = state.collections[id];
   const [addUrl, setAddUrl] = useState("");
@@ -855,6 +907,9 @@ function CollectionControls({
       </label>
 
       <h3 className="photo-editor-subhead">Images ({c.images.length})</h3>
+      <button type="button" className="photo-editor-portal" onClick={() => openPicker({ section: id })}>
+        Choose photos from portal
+      </button>
       <div className="photo-editor-thumbs">
         {c.images.map((image, index) => (
           <button
@@ -891,6 +946,13 @@ function CollectionControls({
             <button type="button" disabled={selected === 0} onClick={() => reorder(selected, selected - 1)}>Move earlier</button>
             <button type="button" disabled={selected === c.images.length - 1} onClick={() => reorder(selected, selected + 1)}>Move later</button>
           </div>
+          <button
+            type="button"
+            className="photo-editor-portal"
+            onClick={() => openPicker({ target: { kind: "image", section: id, index: selected } })}
+          >
+            Swap this photo from portal
+          </button>
           <label>
             Move to
             <select
