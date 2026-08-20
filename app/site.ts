@@ -72,7 +72,21 @@ export const CONTACT = {
     someone asks a model for a video company in Wellington. Say the word and it
     moves to the contact page's schema alone.
   */
+  /*
+    Two forms on purpose.
+
+    `phone` is E.164 and is what the LocalBusiness schema and the tel: href
+    use. Google and the language models need the international form to resolve
+    a number unambiguously, and it is what makes the record citable.
+
+    `phoneDisplay` is the local form and is the only one a visitor reads.
+    Andy's call on 21 August 2026: he would rather local people rang and
+    overseas enquiries came by email, and a number written 021 says that
+    without the site having to. Machine readability is unaffected, because the
+    schema never uses this string.
+  */
   phone: "+64 21 579 205",
+  phoneDisplay: "021 579 205",
   suburb: "Island Bay",
   locality: "Wellington",
   region: "Wellington",

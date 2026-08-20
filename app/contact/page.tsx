@@ -64,8 +64,13 @@ export default function ContactPage() {
         </article>
         <article className="portfolio-card">
           <span>Phone</span>
+          {/*
+            Local form on screen, international in the href, so the link still
+            dials correctly from any handset while the number reads as a New
+            Zealand mobile. See the note in site.ts.
+          */}
           <h3>
-            <a href={TEL_HREF}>{CONTACT.phone}</a>
+            <a href={TEL_HREF}>{CONTACT.phoneDisplay}</a>
           </h3>
         </article>
         <article className="portfolio-card">

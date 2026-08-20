@@ -3844,10 +3844,14 @@
   phone number here: that lives on /contact only.
 
   All text at or above 50% opacity, per the conventions.
+
+  v1.11.70: sizes raised across the block. At 0.86rem the location line was the
+  smallest thing on the page and read as fine print, when it is the line doing
+  the work: it is the only place several pages name the city or the country.
 */
 .site-footer {
   margin: 96px 0 0;
-  padding: 30px 38px 34px;
+  padding: 38px 38px 42px;
   border-top: 1px solid var(--line);
   display: flex;
   flex-direction: column;
@@ -3860,17 +3864,17 @@
 }
 
 .site-footer-place {
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 0.86rem;
-  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.03rem;
+  letter-spacing: 0.01em;
 }
 
 .site-footer-links {
   display: flex;
   justify-content: center;
   align-items: baseline;
-  gap: 12px;
-  font-size: 0.84rem;
+  gap: 16px;
+  font-size: 1.01rem;
 }
 
 .site-footer-links a {
@@ -3891,8 +3895,8 @@
 }
 
 .site-footer-build {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.66rem;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.79rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
