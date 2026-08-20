@@ -578,3 +578,16 @@
     display: none;
   }
 }
+
+/*
+  v1.11.67: [NOT DONE] the homepage header is deliberately NOT shortened on a
+  landscape phone, though the inner pages' header is (portfolio-pages.css).
+
+  It was, and the geometry gate caught what it cost: the homepage is a single
+  screen with the fan's logo core sitting directly above the division copy, so
+  the 18 points the header gave back moved the logo down into the copy at both
+  844x390 and 736x414. An inner page scrolls and has no such pairing, which is
+  why the same change is safe there. Shortening this header needs the landscape
+  layout question in tests/fan-geometry.test.mjs settled first.
+*/
+

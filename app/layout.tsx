@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./homepage-v1.10.3.css";
 import "./portfolio-pages.css";
 
@@ -15,6 +15,22 @@ export const metadata: Metadata = {
     icon: favicon,
     shortcut: favicon,
   },
+};
+
+/*
+  v1.11.67: `viewport-fit=cover` lets the page reach under a phone's rounded
+  corners and notch, which is what makes a landscape hero fill the screen
+  rather than sit in a letterbox between two black bars. It only works paired
+  with the safe-area padding in the stylesheet: without that the notch would
+  crop the header's own content in landscape.
+
+  Next writes width=device-width and initial-scale=1 by default; both are
+  restated here because declaring the export replaces the default outright.
+*/
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

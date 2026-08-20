@@ -11,6 +11,18 @@
   --gutter: clamp(18px, 3.5vw, 58px);
 }
 
+/*
+  v1.11.67: with `viewport-fit=cover` set in layout.tsx the page runs under a
+  phone's notch and rounded corners. In landscape the notch is at one side, so
+  the gutter has to grow on whichever side it lands or the header's own words
+  are cut by it. Portrait insets are zero, so this changes nothing there.
+*/
+@media (orientation: landscape) {
+  :root {
+    --gutter: max(clamp(18px, 3.5vw, 58px), env(safe-area-inset-left), env(safe-area-inset-right));
+  }
+}
+
 * {
   box-sizing: border-box;
 }

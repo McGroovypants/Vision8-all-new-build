@@ -14,6 +14,17 @@
   in it. Fix a baselined finding and the test says so and asks you to prune the
   file; it does not fail for that.
 
+  [OPEN] The twelve landscape-phone entries added to the baseline in v1.11.67
+  are known bad, not accepted design. They are in the file so the gate guards
+  against them getting worse while the layout question behind them is decided.
+  Measured: seven labels of about 120px each need the full 844px of a landscape
+  phone, so they have to tier vertically, and four tiers of 54px do not fit in
+  390px once the header, the logo core and the copy block have taken theirs.
+  Shortening the arms does not help, it bunches the labels into each other,
+  because the arm angles are fixed at 0, 23, 46 and 69 degrees off vertical.
+  It needs either flatter angles in landscape, a different arrangement, or the
+  homepage allowed to scroll there. All three are design decisions.
+
   UPDATE_BASELINE=1 npm test    rewrites the baseline from what renders now.
   Read the diff before committing it. Silently rebaselining a real collision is
   the one way this file can lie to you.
@@ -53,6 +64,11 @@ const VIEWPORTS = [
   { name: "iPad portrait 820x1180", width: 820, height: 1180 },
   { name: "iPad landscape 1180x820", width: 1180, height: 820 },
   { name: "iPhone 390x844", width: 390, height: 844 },
+  /* v1.11.67: the landscape phone, where the client reported the browser's
+     own chrome holding most of the screen. These two are what is left of a
+     modern and an older iPhone once it does. */
+  { name: "iPhone landscape 844x390", width: 844, height: 390 },
+  { name: "phone landscape 736x414", width: 736, height: 414 },
   { name: "small phone 360x800", width: 360, height: 800 },
   { name: "iPhone SE 320x568", width: 320, height: 568 },
 ];

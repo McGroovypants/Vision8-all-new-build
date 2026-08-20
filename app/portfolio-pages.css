@@ -376,6 +376,20 @@
   margin-top: auto;
   padding-top: 12px;
   white-space: nowrap;
+  position: relative;
+}
+
+/*
+  v1.11.67: the finger's target, not the ink's. Measured at 126x12 on a phone,
+  which is a twelve pixel tall thing to hit. The caption band's height is a
+  term in the video grid's fold budget, so the button cannot simply grow;
+  an overlay that reaches past its own box gives the tap somewhere to land
+  without moving anything on the page.
+*/
+.video-service-caption button::after {
+  content: "";
+  position: absolute;
+  inset: -20px -14px -18px;
 }
 
 /*
@@ -1240,6 +1254,81 @@
   }
 }
 
+
+/*
+  v1.11.67: the landscape phone.
+
+  The client's report is that turning the phone sideways leaves the browser's
+  own chrome holding most of the screen. A page cannot take the screen off the
+  browser: fullscreen needs a user gesture aimed at it, and rotating the device
+  is not one, so there is no rotate-to-fullscreen to be had. What a page can do
+  is stop spending what is left. In landscape a phone has around 320 to 390
+  points of height and this site's own header was taking 62 of them before a
+  word of content, with section padding sized for a desktop underneath it.
+
+  Everything here is height only. Nothing changes in portrait, and the
+  520px ceiling keeps every laptop out of it on its own: the shortest window
+  the fan geometry gate tests is 1280x660. It is deliberately not gated on
+  `pointer: coarse`, so a browser window this short gets the same treatment
+  whatever is driving it, and so the gate can test it.
+*/
+@media (orientation: landscape) and (max-height: 520px) {
+  .portfolio-header {
+    min-height: 48px;
+    font-size: 1rem;
+  }
+
+  .portfolio-header a {
+    min-height: 40px;
+  }
+
+  /* The heroes hold a share of the screen rather than a fixed one, so a
+     landscape hero is a band with the page visibly continuing under it,
+     not a full screen the visitor has to scroll past to reach anything. */
+  .portfolio-hero {
+    min-height: 78svh;
+  }
+
+  .audio-hero {
+    min-height: 78svh;
+  }
+
+  .photo-hero {
+    height: min(calc(var(--frame-h, 100) * 1svh), calc(100svh - 48px));
+    min-height: 0;
+  }
+
+  .re-hero {
+    min-height: 80svh;
+  }
+
+  /* Desktop-scale vertical rhythm inside a 390pt screen reads as one long
+     scroll of nothing. Halved, near enough, top and bottom only. */
+  .audio-section,
+  .re-section,
+  .video-section,
+  .photo-section {
+    padding-top: clamp(34px, 6svh, 56px);
+    padding-bottom: clamp(34px, 6svh, 56px);
+  }
+
+  .photo-closing {
+    padding-top: 7svh;
+    padding-bottom: 7svh;
+  }
+
+  .photo-cta {
+    margin-top: 0;
+    padding-top: clamp(40px, 7svh, 70px);
+    padding-bottom: clamp(40px, 7svh, 70px);
+  }
+
+  .audio-closing {
+    padding-top: clamp(44px, 8svh, 80px);
+    padding-bottom: clamp(44px, 8svh, 80px);
+  }
+}
+
 /*
   Real Estate page. Built on the Audio design system: same type scale, same
   7fr/5fr alternating split, same buttons. It carries its own class prefix
@@ -2072,6 +2161,7 @@
 }
 
 .real-estate-page .re-playtoggle {
+  position: relative;
   flex: none;
   padding: 0;
   border: 0;
@@ -2088,6 +2178,13 @@
 
 .real-estate-page .re-playtoggle:hover {
   color: var(--teal-bright);
+}
+
+/* As the card button above: 43x16 of ink, a finger's worth of target. */
+.real-estate-page .re-playtoggle::after {
+  content: "";
+  position: absolute;
+  inset: -17px -12px;
 }
 
 /* Padded well past its 2px rule so the hit target is a finger, not a hairline. */
