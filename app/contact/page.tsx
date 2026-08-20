@@ -16,13 +16,18 @@ import { SITE_URL, CONTACT } from "../site";
 */
 
 /*
-  v1.11.73: a hero background, Andy's pick from four. A live event lit from the
-  stage: the studio's own work, and dark through the left two thirds where the
-  headline and intro sit. `.portfolio-hero-image` positions at 70% across, so
-  the performers stay in frame beside the copy rather than behind it.
-  Served from the S3 bucket, not Cloudinary.
+  v1.11.74: a hero background, from Andy's shortlist of four. High-country sheep
+  under a wide sky, which backs the intro line about working anywhere in
+  Aotearoa. Served from the S3 bucket, not Cloudinary.
+
+  [NOTE] v1.11.73 tried the live-event stage frame (`img-4112`) here and it did
+  not work. `.portfolio-hero-image` holds the picture at 0.56 opacity under
+  `.portfolio-hero-wash`, which is tuned for full-daylight frames; an image that
+  is already mostly black comes through as an empty hero. A dark frame can be
+  used here, but it needs its own opacity override, not the shared default.
 */
-const HERO = "https://media.vision8.co.nz/library/public/assets/img-4112-1785781272/optimised.jpg";
+const HERO =
+  "https://media.vision8.co.nz/library/public/assets/imgc1439-1600x1200-1786736431-78392ba8/optimised.jpg";
 
 export const metadata: Metadata = {
   title: "Contact | Vision8",
