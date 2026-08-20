@@ -26,7 +26,19 @@ const P = "/photography";
   client's mark: a tall or panoramic photo in a square cell showed an arm or
   a texture and "has no use unless showing the full size".
 */
-export type PhotoImage = { src: string; focusX: number; focusY: number; zoom: number; whole?: boolean };
+export type PhotoImage = {
+  src: string;
+  focusX: number;
+  focusY: number;
+  zoom: number;
+  whole?: boolean;
+  /* v1.11.62: relative brightness, 0.75 to 1.25 of the treatment's own level. */
+  bright?: number;
+  /* v1.11.62: the band of the picture the big frames show, top and bottom as
+     percentages of the original. 0 and 100 mean the frame decides (cover). */
+  cropTop?: number;
+  cropBottom?: number;
+};
 
 export type SectionId = "contact" | "fan" | "strips" | "editorial";
 
@@ -46,9 +58,15 @@ export type PhotoState = {
   breathers: PhotoImage[];
   closing: string;
   showClosing: boolean;
+  sectionLayout: SectionId[];
 };
 
 export const img = (src: string): PhotoImage => ({ src, focusX: 50, focusY: 50, zoom: 1, whole: false });
+
+// v1.11.62: the order the four sections render on the page, client-movable.
+// The breathers are not in the list: they keep their slots, after the second
+// and third sections in this order.
+export const defaultSectionLayout: SectionId[] = ["contact", "fan", "strips", "editorial"];
 
 // Coastguard, 28 face-aware square crops, client order.
 const contactSheet = [
@@ -135,6 +153,7 @@ export const defaultState: PhotoState = {
   breathers: [img(`${P}/z6-1786678073-6c134bec.jpg`), { ...img(`${P}/img-8268a-1785783280.jpg`), focusY: 92 }],
   closing: "Sometimes all you need is a still image.",
   showClosing: true,
+  sectionLayout: [...defaultSectionLayout],
 };
 
 export const sectionOrder: SectionId[] = ["contact", "fan", "strips", "editorial"];
@@ -163,6 +182,9 @@ export function mergeSaved(saved: unknown): PhotoState {
       // draft carrying one would render gaps.
       zoom: typeof c.zoom === "number" ? Math.max(1, c.zoom) : 1,
       whole: c.whole === true,
+      bright: typeof c.bright === "number" ? Math.min(1.25, Math.max(0.75, c.bright)) : 1,
+      cropTop: typeof c.cropTop === "number" ? Math.min(95, Math.max(0, c.cropTop)) : 0,
+      cropBottom: typeof c.cropBottom === "number" ? Math.min(100, Math.max(5, c.cropBottom)) : 100,
     };
   };
   const collection = (id: SectionId): Collection => {
@@ -192,6 +214,14 @@ export function mergeSaved(saved: unknown): PhotoState {
       : defaultState.breathers,
     closing: typeof s.closing === "string" ? s.closing : defaultState.closing,
     showClosing: typeof s.showClosing === "boolean" ? s.showClosing : defaultState.showClosing,
+    // Accepted only as a full permutation of the four ids; anything else,
+    // including older saves with no layout at all, falls back to the default.
+    sectionLayout:
+      Array.isArray(s.sectionLayout) &&
+      s.sectionLayout.length === sectionOrder.length &&
+      [...sectionOrder].every((id) => (s.sectionLayout as SectionId[]).includes(id))
+        ? ([...(s.sectionLayout as SectionId[])])
+        : [...defaultSectionLayout],
   };
 }
 

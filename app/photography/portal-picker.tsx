@@ -74,10 +74,30 @@ export function PortalPicker({
           const images = (data.items ?? []).filter((item) => item.type === "image" && item.image);
           setName(data.name ?? wanted);
           setItems(images);
-          // Photos already in the section pre-tick, in the section's order, so
-          // Apply with no other change is a no-op rather than a wipe.
-          const present = new Set(images.map((item) => item.image));
-          setTicked(currentSrcs.filter((src) => present.has(src)));
+          /*
+            Photos already in the section pre-tick, in the section's order, so
+            Apply with no other change is a no-op rather than a wipe. v1.11.62:
+            matching is by URL or by portal asset id inside the filename, so a
+            section still carrying local copies of portal photos (the published
+            layout does; the filenames embed the id) pre-ticks too.
+          */
+          const exact = new Set(images.map((item) => item.image));
+          const matchOf = (src: string): string | null => {
+            if (exact.has(src)) return src;
+            const base = src.split("/").pop() ?? "";
+            const hit = images.find((item) => base.startsWith(item.id));
+            return hit ? hit.image : null;
+          };
+          const seen = new Set<string>();
+          const preticked: string[] = [];
+          for (const src of currentSrcs) {
+            const match = matchOf(src);
+            if (match && !seen.has(match)) {
+              seen.add(match);
+              preticked.push(match);
+            }
+          }
+          setTicked(preticked);
           setStatus("ready");
           try {
             window.localStorage.setItem(SLUG_STORAGE, wanted);

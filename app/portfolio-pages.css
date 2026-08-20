@@ -2295,7 +2295,9 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: brightness(0.7);
+  /* v1.11.62: every treatment's brightness multiplies the editor's --bright
+     (0.75 to 1.25, default 1), so the wash is adjustable per picture. */
+  filter: brightness(calc(0.7 * var(--bright, 1)));
   transform: scale(var(--zoom, 1));
   transform-origin: var(--origin, 50% 50%);
 }
@@ -2355,14 +2357,14 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: brightness(0.85);
+  filter: brightness(calc(0.85 * var(--bright, 1)));
   transition: filter 0.3s;
   transform: scale(var(--zoom, 1));
   transform-origin: var(--origin, 50% 50%);
 }
 
 .contact-cell:hover img {
-  filter: brightness(1);
+  filter: brightness(var(--bright, 1));
 }
 
 /* Fanned stack: Primary ITO */
@@ -2419,6 +2421,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: brightness(var(--bright, 1));
   transform: scale(var(--zoom, 1));
   transform-origin: var(--origin, 50% 50%);
 }
@@ -2436,7 +2439,7 @@
   width: 100%;
   height: 50vh;
   object-fit: cover;
-  filter: brightness(0.65);
+  filter: brightness(calc(0.65 * var(--bright, 1)));
   transform: scale(var(--zoom, 1));
   transform-origin: var(--origin, 50% 50%);
 }
@@ -2508,8 +2511,12 @@
   transform: translateY(0) scale(var(--zoom, 1));
 }
 
+.ed-img {
+  filter: brightness(var(--bright, 1));
+}
+
 .ed-img:hover {
-  filter: brightness(1.12);
+  filter: brightness(calc(1.12 * var(--bright, 1)));
 }
 
 /* Varied but aligned spans, no rotation. */
@@ -2763,6 +2770,43 @@
   inset: 0;
   opacity: 0;
   cursor: pointer;
+}
+
+/* v1.11.62: the image control cluster at half the panel's label spacing,
+   on the client's mark. */
+.photo-editor-tight label {
+  margin-bottom: 6px;
+}
+
+.photo-editor-order-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(243, 244, 239, 0.85);
+  font-size: 0.82rem;
+}
+
+.photo-editor-order-row div {
+  display: flex;
+  gap: 6px;
+}
+
+.photo-editor-order-row button {
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: none;
+  color: rgba(243, 244, 239, 0.85);
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+
+.photo-editor-order-row button:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
 .photo-editor-check {

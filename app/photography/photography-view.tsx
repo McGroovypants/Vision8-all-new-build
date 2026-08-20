@@ -22,13 +22,14 @@
   open the page docks beside it rather than running underneath.
 */
 
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BUILD, PageHeader } from "../portfolio-shell";
 import {
   type Collection,
   type PhotoImage,
   type PhotoState,
   type SectionId,
+  defaultSectionLayout,
   defaultState,
   img,
   mergeSaved,
@@ -82,7 +83,97 @@ const focus = (image: PhotoImage) =>
     objectFit: image.whole ? ("contain" as const) : undefined,
     "--zoom": Math.max(1, image.zoom ?? 1),
     "--origin": `${image.focusX}% ${image.focusY}%`,
+    // v1.11.62: relative brightness. The CSS multiplies it into each
+    // treatment's own level, so 1 changes nothing anywhere.
+    "--bright": Math.min(1.25, Math.max(0.75, image.bright ?? 1)),
   }) as React.CSSProperties;
+
+/*
+  v1.11.62: the big frames (hero, breathers) can show a chosen band of the
+  picture, cropTop to cropBottom as percentages of the original. The band is
+  expressed through the page's existing model, a zoom and an object-position
+  computed from the rendered frame and the natural size, so nothing new
+  happens in CSS; it has to be computed per frame size, which is why it lives
+  in a component with a ResizeObserver rather than in focus(). Cover is the
+  floor: a band too shallow for the frame's width is shown as deep as cover
+  allows, anchored at the band's top.
+*/
+function bandStyle(image: PhotoImage, el: HTMLImageElement): React.CSSProperties | null {
+  const t = image.cropTop ?? 0;
+  const b = image.cropBottom ?? 100;
+  if ((t <= 0 && b >= 100) || image.whole) return null;
+  if (!el.naturalWidth || !el.naturalHeight || !el.clientHeight) return null;
+  const W = el.clientWidth;
+  const H = el.clientHeight;
+  const cover = Math.max(W / el.naturalWidth, H / el.naturalHeight);
+  const fraction = Math.max(0.05, (b - t) / 100);
+  const zoom = Math.max(1, H / (el.naturalHeight * cover * fraction));
+  const shown = el.naturalHeight * cover * zoom;
+  const yOff = Math.min(Math.max((t / 100) * shown, 0), Math.max(shown - H, 0));
+  const p = shown > H ? (yOff / (shown - H)) * 100 : 50;
+  return {
+    objectPosition: `${image.focusX}% ${p}%`,
+    "--zoom": zoom,
+    "--origin": `${image.focusX}% ${p}%`,
+  } as React.CSSProperties;
+}
+
+function BandImg({
+  image,
+  alt = "",
+  attrs,
+  loading,
+  onPointerDown,
+  onPointerMove,
+  onPointerUp,
+  onPointerCancel,
+}: {
+  image: PhotoImage;
+  alt?: string;
+  attrs: { draggable?: boolean; "data-edit-target"?: string };
+  loading: "eager" | "lazy";
+  onPointerDown?: (event: React.PointerEvent<HTMLImageElement>) => void;
+  onPointerMove?: (event: React.PointerEvent<HTMLImageElement>) => void;
+  onPointerUp?: (event: React.PointerEvent<HTMLImageElement>) => void;
+  onPointerCancel?: (event: React.PointerEvent<HTMLImageElement>) => void;
+}) {
+  const ref = useRef<HTMLImageElement>(null);
+  const [band, setBand] = useState<React.CSSProperties | null>(null);
+  const t = image.cropTop ?? 0;
+  const bOut = image.cropBottom ?? 100;
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const apply = () => setBand(bandStyle(image, el));
+    // Deferred a frame: setState synchronously inside an effect is the lint
+    // error this file already documents twice.
+    const timer = window.setTimeout(apply, 0);
+    const observer = new ResizeObserver(apply);
+    observer.observe(el);
+    el.addEventListener("load", apply);
+    return () => {
+      window.clearTimeout(timer);
+      observer.disconnect();
+      el.removeEventListener("load", apply);
+    };
+    // Recompute on the values the band reads, not the object identity.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [t, bOut, image.focusX, image.whole, image.src]);
+  return (
+    <img
+      ref={ref}
+      src={image.src}
+      alt={alt}
+      loading={loading}
+      style={{ ...focus(image), ...(band ?? {}) }}
+      {...attrs}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerCancel}
+    />
+  );
+}
 
 type ImageTarget =
   | { kind: "hero" }
@@ -381,6 +472,108 @@ export function PhotographyView({
   const editAttrs = (target: ImageTarget): { draggable?: boolean; "data-edit-target"?: string } =>
     editable ? { draggable: false, "data-edit-target": targetKey(target) } : {};
 
+  /*
+    v1.11.62: the four photo sections render in the order the client sets in
+    the panel (state.sectionLayout). The two breathers are not movable: they
+    keep their slots after the second and third sections, which preserves the
+    page's rhythm whatever the order.
+  */
+  const sectionJsx = (id: SectionId) => {
+    if (id === "contact") {
+      return (
+        <section className="photo-section">
+          {collectionBlock("contact")}
+          <div className="contact-grid">
+            {state.collections.contact.images.map((image, index) => (
+              <div className="contact-cell" key={`${image.src}-${index}`}>
+                <img
+                  src={image.src}
+                  alt=""
+                  loading="lazy"
+                  style={focus(image)}
+                  {...editAttrs({ kind: "image", section: "contact", index })}
+                  onPointerDown={editable ? onImagePointerDown : undefined}
+                  onPointerMove={editable ? onImagePointerMove : undefined}
+                  onPointerUp={editable ? onImagePointerUp : undefined}
+                  onPointerCancel={editable ? onImagePointerCancel : undefined}
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+    }
+    if (id === "fan") {
+      return (
+        <section className="photo-section">
+          {collectionBlock("fan")}
+          <div
+            className="fan-stack"
+            style={{ "--n": state.collections.fan.images.length } as React.CSSProperties}
+          >
+            {state.collections.fan.images.map((image, index) => (
+              <div className="fan-card" key={`${image.src}-${index}`} style={{ "--i": index } as React.CSSProperties}>
+                <img
+                  src={image.src}
+                  alt=""
+                  loading="lazy"
+                  style={focus(image)}
+                  {...editAttrs({ kind: "image", section: "fan", index })}
+                  onPointerDown={editable ? onImagePointerDown : undefined}
+                  onPointerMove={editable ? onImagePointerMove : undefined}
+                  onPointerUp={editable ? onImagePointerUp : undefined}
+                  onPointerCancel={editable ? onImagePointerCancel : undefined}
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+    }
+    if (id === "strips") {
+      return (
+        <section className="photo-section">
+          {collectionBlock("strips")}
+          <div className="strips-container">
+            {state.collections.strips.images.map((image, index) => (
+              <div className="strip" key={`${image.src}-${index}`}>
+                <img
+                  src={image.src}
+                  alt=""
+                  loading="lazy"
+                  style={focus(image)}
+                  {...editAttrs({ kind: "image", section: "strips", index })}
+                  onPointerDown={editable ? onImagePointerDown : undefined}
+                  onPointerMove={editable ? onImagePointerMove : undefined}
+                  onPointerUp={editable ? onImagePointerUp : undefined}
+                  onPointerCancel={editable ? onImagePointerCancel : undefined}
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      );
+    }
+    return (
+      <section className="photo-section">
+        {collectionBlock("editorial")}
+        <EditorialGrid
+          images={state.collections.editorial.images.map((image, index) => ({
+            src: image.src,
+            style: focus(image),
+            attrs: editAttrs({ kind: "image", section: "editorial", index }),
+          }))}
+          onImagePointerDown={editable ? onImagePointerDown : undefined}
+          onImagePointerMove={editable ? onImagePointerMove : undefined}
+          onImagePointerUp={editable ? onImagePointerUp : undefined}
+          onImagePointerCancel={editable ? onImagePointerCancel : undefined}
+        />
+      </section>
+    );
+  };
+
+  const layout = state.sectionLayout?.length === 4 ? state.sectionLayout : defaultSectionLayout;
+
   const textProps = (fieldId: string) =>
     editable ? { "data-edit-text": true, onClick: () => focusField(fieldId) } : {};
 
@@ -399,11 +592,11 @@ export function PhotographyView({
       <PageHeader division="Photography" />
 
       <section className="photo-hero">
-        <img
-          src={state.hero.src}
+        <BandImg
+          image={state.hero}
           alt="Vision8 Photography"
-          style={focus(state.hero)}
-          {...editAttrs({ kind: "hero" })}
+          loading="eager"
+          attrs={editAttrs({ kind: "hero" })}
           onPointerDown={editable ? onImagePointerDown : undefined}
           onPointerMove={editable ? onImagePointerMove : undefined}
           onPointerUp={editable ? onImagePointerUp : undefined}
@@ -415,58 +608,14 @@ export function PhotographyView({
         </div>
       </section>
 
-      <section className="photo-section">
-        {collectionBlock("contact")}
-        <div className="contact-grid">
-          {state.collections.contact.images.map((image, index) => (
-            <div className="contact-cell" key={`${image.src}-${index}`}>
-              <img
-                src={image.src}
-                alt=""
-                loading="lazy"
-                style={focus(image)}
-                {...editAttrs({ kind: "image", section: "contact", index })}
-                onPointerDown={editable ? onImagePointerDown : undefined}
-                onPointerMove={editable ? onImagePointerMove : undefined}
-                onPointerUp={editable ? onImagePointerUp : undefined}
-                onPointerCancel={editable ? onImagePointerCancel : undefined}
-              />
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="photo-section">
-        {collectionBlock("fan")}
-        <div
-          className="fan-stack"
-          style={{ "--n": state.collections.fan.images.length } as React.CSSProperties}
-        >
-          {state.collections.fan.images.map((image, index) => (
-            <div className="fan-card" key={`${image.src}-${index}`} style={{ "--i": index } as React.CSSProperties}>
-              <img
-                src={image.src}
-                alt=""
-                loading="lazy"
-                style={focus(image)}
-                {...editAttrs({ kind: "image", section: "fan", index })}
-                onPointerDown={editable ? onImagePointerDown : undefined}
-                onPointerMove={editable ? onImagePointerMove : undefined}
-                onPointerUp={editable ? onImagePointerUp : undefined}
-                onPointerCancel={editable ? onImagePointerCancel : undefined}
-              />
-            </div>
-          ))}
-        </div>
-      </section>
+      <React.Fragment key={layout[0]}>{sectionJsx(layout[0])}</React.Fragment>
+      <React.Fragment key={layout[1]}>{sectionJsx(layout[1])}</React.Fragment>
 
       <section className="photo-breather">
-        <img
-          src={state.breathers[0].src}
-          alt=""
+        <BandImg
+          image={state.breathers[0]}
           loading="lazy"
-          style={focus(state.breathers[0])}
-          {...editAttrs({ kind: "breather", index: 0 })}
+          attrs={editAttrs({ kind: "breather", index: 0 })}
           onPointerDown={editable ? onImagePointerDown : undefined}
           onPointerMove={editable ? onImagePointerMove : undefined}
           onPointerUp={editable ? onImagePointerUp : undefined}
@@ -474,34 +623,13 @@ export function PhotographyView({
         />
       </section>
 
-      <section className="photo-section">
-        {collectionBlock("strips")}
-        <div className="strips-container">
-          {state.collections.strips.images.map((image, index) => (
-            <div className="strip" key={`${image.src}-${index}`}>
-              <img
-                src={image.src}
-                alt=""
-                loading="lazy"
-                style={focus(image)}
-                {...editAttrs({ kind: "image", section: "strips", index })}
-                onPointerDown={editable ? onImagePointerDown : undefined}
-                onPointerMove={editable ? onImagePointerMove : undefined}
-                onPointerUp={editable ? onImagePointerUp : undefined}
-                onPointerCancel={editable ? onImagePointerCancel : undefined}
-              />
-            </div>
-          ))}
-        </div>
-      </section>
+      <React.Fragment key={layout[2]}>{sectionJsx(layout[2])}</React.Fragment>
 
       <section className="photo-breather">
-        <img
-          src={state.breathers[1].src}
-          alt=""
+        <BandImg
+          image={state.breathers[1]}
           loading="lazy"
-          style={focus(state.breathers[1])}
-          {...editAttrs({ kind: "breather", index: 1 })}
+          attrs={editAttrs({ kind: "breather", index: 1 })}
           onPointerDown={editable ? onImagePointerDown : undefined}
           onPointerMove={editable ? onImagePointerMove : undefined}
           onPointerUp={editable ? onImagePointerUp : undefined}
@@ -509,20 +637,7 @@ export function PhotographyView({
         />
       </section>
 
-      <section className="photo-section">
-        {collectionBlock("editorial")}
-        <EditorialGrid
-          images={state.collections.editorial.images.map((image, index) => ({
-            src: image.src,
-            style: focus(image),
-            attrs: editAttrs({ kind: "image", section: "editorial", index }),
-          }))}
-          onImagePointerDown={editable ? onImagePointerDown : undefined}
-          onImagePointerMove={editable ? onImagePointerMove : undefined}
-          onImagePointerUp={editable ? onImagePointerUp : undefined}
-          onImagePointerCancel={editable ? onImagePointerCancel : undefined}
-        />
-      </section>
+      <React.Fragment key={layout[3]}>{sectionJsx(layout[3])}</React.Fragment>
 
       {state.showClosing && state.closing && (
         <section className="photo-closing">
@@ -592,6 +707,44 @@ export function PhotographyView({
           <p className="editor-note">Sections below follow the page order. Click any photo or line of text on the page to jump straight to it here, and drag a photo on the page to reframe it.</p>
 
           <HeroControls state={state} update={update} active={active} select={select} openPicker={setPicker} />
+
+          <section className="editor-section">
+            <h3>Page order</h3>
+            {layout.map((id, position) => (
+              <div className="photo-editor-order-row" key={id}>
+                <span>{sectionNames[id]}</span>
+                <div>
+                  <button
+                    type="button"
+                    disabled={position === 0}
+                    onClick={() =>
+                      update((current) => {
+                        const next = [...(current.sectionLayout ?? defaultSectionLayout)];
+                        [next[position - 1], next[position]] = [next[position], next[position - 1]];
+                        return { ...current, sectionLayout: next };
+                      })
+                    }
+                  >
+                    Up
+                  </button>
+                  <button
+                    type="button"
+                    disabled={position === layout.length - 1}
+                    onClick={() =>
+                      update((current) => {
+                        const next = [...(current.sectionLayout ?? defaultSectionLayout)];
+                        [next[position], next[position + 1]] = [next[position + 1], next[position]];
+                        return { ...current, sectionLayout: next };
+                      })
+                    }
+                  >
+                    Down
+                  </button>
+                </div>
+              </div>
+            ))}
+            <p className="editor-note">The two full-width breather photos keep their slots, after the second and third sections. The hero does not move.</p>
+          </section>
 
           {sectionOrder.slice(0, 2).map((id) => (
             <CollectionControls key={id} id={id} state={state} active={active} setActive={setActive} update={update} updateCollection={updateCollection} openPicker={setPicker} />
@@ -687,37 +840,15 @@ export function PhotographyView({
   );
 }
 
+/*
+  v1.11.62: the crop focus X and Y sliders are gone on the client's mark;
+  dragging the photo on the page is the way to reframe. Brightness takes
+  their place, a quarter either side of the treatment's own level. The
+  remaining three controls sit tight, half the panel's usual label spacing.
+*/
 function FocusControls({ image, onChange }: { image: PhotoImage; onChange: (next: PhotoImage) => void }) {
   return (
-    <>
-      <div className="editor-two-column">
-        <label>
-          Crop focus X
-          <div className="range-row">
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={image.focusX}
-              onChange={(event) => onChange({ ...image, focusX: Number(event.target.value) })}
-            />
-            <output>{image.focusX}%</output>
-          </div>
-        </label>
-        <label>
-          Crop focus Y
-          <div className="range-row">
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={image.focusY}
-              onChange={(event) => onChange({ ...image, focusY: Number(event.target.value) })}
-            />
-            <output>{image.focusY}%</output>
-          </div>
-        </label>
-      </div>
+    <div className="photo-editor-tight">
       <label>
         Zoom
         <div className="range-row">
@@ -732,6 +863,20 @@ function FocusControls({ image, onChange }: { image: PhotoImage; onChange: (next
           <output>{Math.round((image.zoom ?? 1) * 100)}%</output>
         </div>
       </label>
+      <label>
+        Brightness
+        <div className="range-row">
+          <input
+            type="range"
+            min={75}
+            max={125}
+            step={5}
+            value={Math.round((image.bright ?? 1) * 100)}
+            onChange={(event) => onChange({ ...image, bright: Number(event.target.value) / 100 })}
+          />
+          <output>{Math.round((image.bright ?? 1) * 100)}%</output>
+        </div>
+      </label>
       <label className="photo-editor-check">
         <input
           type="checkbox"
@@ -740,7 +885,7 @@ function FocusControls({ image, onChange }: { image: PhotoImage; onChange: (next
         />
         Show the whole photo, letterboxed in its frame
       </label>
-    </>
+    </div>
   );
 }
 
@@ -775,6 +920,43 @@ function ImagePicker({
         />
       </label>
       <FocusControls image={image} onChange={onChange} />
+      {/* v1.11.62: the big frames can show a chosen band of the picture.
+          0 and 100 leave the crop to the frame; anything else shows that
+          band, top to bottom, as deep as the frame's width allows. */}
+      <div className="photo-editor-tight">
+        <label>
+          Crop top
+          <div className="range-row">
+            <input
+              type="range"
+              min={0}
+              max={90}
+              step={1}
+              value={image.cropTop ?? 0}
+              onChange={(event) =>
+                onChange({ ...image, cropTop: Math.min(Number(event.target.value), (image.cropBottom ?? 100) - 10) })
+              }
+            />
+            <output>{image.cropTop ?? 0}%</output>
+          </div>
+        </label>
+        <label>
+          Crop bottom
+          <div className="range-row">
+            <input
+              type="range"
+              min={10}
+              max={100}
+              step={1}
+              value={image.cropBottom ?? 100}
+              onChange={(event) =>
+                onChange({ ...image, cropBottom: Math.max(Number(event.target.value), (image.cropTop ?? 0) + 10) })
+              }
+            />
+            <output>{image.cropBottom ?? 100}%</output>
+          </div>
+        </label>
+      </div>
     </>
   );
 }
