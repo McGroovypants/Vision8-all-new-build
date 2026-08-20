@@ -97,7 +97,10 @@ const services: Service[] = [
     slug: "rural-videos",
     card: "Honest stories from rural Aotearoa, told with a feel for the people, the land and the work behind them.",
     description: "Honest stories from rural Aotearoa, filmed with practical know-how and a feel for the people, land and work behind them.",
-    poster: `${CLOUD}/image/upload/w_960,q_auto,f_auto/Screen_Shot_2019-02-15_at_9.19.24_PM_gdnovh.jpg`,
+    // v1.11.72: off Cloudinary and onto the S3 bucket, on the client's mark.
+    // Absolute rather than built from CLOUD because this is the first card on
+    // the new origin; the other eight are still Cloudinary.
+    poster: "https://media.vision8.co.nz/library/public/assets/imgc8130-1600x1067-1786739327-2756a95e/optimised.jpg",
   },
 ];
 

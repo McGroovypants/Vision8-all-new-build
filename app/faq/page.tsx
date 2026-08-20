@@ -52,7 +52,7 @@ const faqs: Faq[] = [
   },
   {
     q: "Can you help people who are uncomfortable on camera?",
-    a: "Yes. Being good at your job does not automatically make being filmed easy. We have spent years directing people in front of cameras, from television and live events through to presenters and people who would simply rather not be filmed at all. Vision8 makes filming seem easy and a great experience " 
+    a: "Yes. Being good at your job does not automatically make being filmed easy. We have spent years directing people in front of cameras, from television and live events through to presenters and people who would simply rather not be filmed at all. Vision8 makes filming seem easy and a great experience." 
   },
   {
     q: "What do you offer for real estate?",

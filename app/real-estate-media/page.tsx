@@ -103,10 +103,10 @@ const VOICE = {
   camera:
     "Andy knows how to make you feel comfortable and confident on camera, which makes the whole process feel very natural.",
   /* v1.11.54: `breadth` ("Whether it's shooting, editing, photography, 3D
-     walkthroughs...") removed from the page on the client's mark. Three of
-     Harry's excerpts remain. */
-  working:
-    "What really sets Vision8 apart is how easy Vision8 are to deal with. Professional, reliable, creative and always willing to go the extra mile to get the right result.",
+     walkthroughs...") removed from the page on the client's mark. v1.11.72:
+     `working` ("What really sets Vision8 apart...") went the same way, so the
+     photography section now closes on the Helen paragraph. Two of Harry's
+     excerpts remain, under Property and Camera. */
 };
 
 /*
@@ -280,21 +280,17 @@ export default function RealEstateMediaPage() {
               <figcaption>Helen Gwyther - <span>Photographer</span></figcaption>
             </figure>
             <p>
-              I often team up with Helen on real estate projects. Helen is a consummate professional. She has over 10
-              years’ experience in real estate photography and a sharp eye for detail.
+              Vision8 likes to team up with photographer Helen Gwyther on real estate projects. Helen is a consummate
+              professional with over 10 years’ experience in Real Estate photography. She has a sharp eye for detail
+              and is fun to work with.
               <br />
-              With Helen behind the camera, clients receive a high quality set of still images every time.
+              With Helen behind the camera, clients receive an excellent set of still images every time.
             </p>
             <figure>
               <img src="/real-estate/andy-stabiliser.jpg" alt="Andy McGrath filming inside a home with a gimbal-mounted camera" loading="lazy" />
               <figcaption>Andy McGrath - <span>Video Producer</span></figcaption>
             </figure>
           </div>
-
-          <blockquote className="re-voice">
-            <p>{VOICE.working}</p>
-            <footer className="re-voice-by">{VOICE_BY}</footer>
-          </blockquote>
 
         </div>
       </section>
