@@ -37,6 +37,9 @@ npm run lint
 | `app/portfolio-pages.css` | Styles for the Video, People and holding routes |
 | `app/audio/page.tsx` | The Audio page: project stories, people, stills from `public/audio/` |
 | `app/<division>/page.tsx` | Holding routes: `photography`, `real-estate-media`, `websites`, `ai-solutions` |
+| `app/site.ts` | **Single source for the public identity**: origin, contact details, share image, route list. `SITE_URL` is the one line to change at domain cutover |
+| `app/sitemap.ts`, `app/robots.txt/route.ts`, `app/llms.txt/route.ts` | Crawler files, all generated from `site.ts`. robots and llms are route handlers, not the metadata convention, because `Content-Signal` cannot be expressed through `MetadataRoute.Robots` |
+| `app/contact/page.tsx`, `app/faq/page.tsx` | Contact and FAQ. The FAQ schema is generated from the same array the page renders |
 | `worker/index.ts` | Cloudflare Worker entry point |
 | `build/sites-vite-plugin.ts`, `.openai/hosting.json` | Imported by `vite.config.ts` |
 | `legacy/video-showcase/` | Imported source of the old GitHub Pages showcase, not wired in |
@@ -60,6 +63,8 @@ These have each cost a session. Read before styling or debugging anything visual
 **7. Caches mask deploys.** Hard refresh with Cmd+Shift+R. VSCode's embedded browser keeps its own cache and its own localStorage and has lagged a full session behind; treat Chrome as the reference.
 
 **8. Every new route must be its own scroll container.** `homepage-v1.8.1.css` locks the document with `html, body { overflow: hidden }` for the single-screen homepage, and Next.js page CSS is global, so every other route inherits the lock. A new page without `height: 100svh; overflow-y: auto; touch-action: pan-y` on its root is stuck on its hero with everything below unreachable. This has shipped broken three times (holding routes, real estate on mobile, photography v1.11.28). **scrollIntoView and scrollTo still work on a clipped page, so a scripted scroll check passes on a broken page.** Verify scrolling with a real wheel or swipe, or assert the root's computed `overflow-y` is `auto` and `scrollHeight > clientHeight`.
+
+**9. A filename in `app/` can silently become a metadata image route.** vinext's `matchMetadataFileBaseName` slices a basename at `metaType.length` and tests the remainder with `/^\d$/`, without ever checking the name *starts with* that type. `"opengraph-image"` is 15 characters, so **any 16-character basename in `app/` ending in a digit registers as an opengraph-image route**. `homepage-v1.10.3.tsx` did exactly that: it was served at `/homepage-v1.10.3`, returned 404 because the module is a React component rather than an image, and that phantom route **overrode the explicit `openGraph.images` in the layout**, so every share rendered the grey default box. It cost a session to find, because the symptom looks like a missing asset. The file is now `homepage-view-v1.10.3.tsx` (21 characters). The same trap waits for `icon` at 5 characters, `apple-icon` at 11 and `twitter-image` at 14. **Before naming a new file in `app/`, check its basename length against those four.** The build output does not list the phantom route; `grep 'servedUrl: "/' dist/server/index.js` does.
 
 ## Verify, do not assume
 

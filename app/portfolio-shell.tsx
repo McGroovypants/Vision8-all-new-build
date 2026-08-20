@@ -6,7 +6,7 @@ const CLOUD = "https://res.cloudinary.com/deyb4o5qz";
 const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_whfcvy.png`;
 // Exported for the photography editor: its localStorage key is derived from
 // the build, the same guard the homepage editor uses (trap 4 in AGENTS.md).
-export const BUILD = "v1.11.68";
+export const BUILD = "v1.11.69";
 
 // Returning to the homepage from an internal page should not replay the 3.2s
 // logo intro; it is an opening, not a transition. The homepage reads this and
@@ -25,7 +25,13 @@ export function PageHeader({ division }: { division?: string }) {
       <nav aria-label="Primary navigation">
         <a href={HOME}>Home</a>
         <a href="/about">About us</a>
+        {/*
+          Third child on purpose: `.portfolio-header nav a:nth-child(3)` hides
+          this one below 520px, and that selector is positional. FAQ goes after
+          it so the rule keeps targeting "Our mahi" rather than the new link.
+        */}
         <a href="/video">Our mahi</a>
+        <a href="/faq">FAQ</a>
       </nav>
       <a className="portfolio-contact" href="/contact">Contact</a>
     </header>
