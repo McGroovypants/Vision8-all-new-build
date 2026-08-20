@@ -20,7 +20,13 @@
 
 const P = "/photography";
 
-export type PhotoImage = { src: string; focusX: number; focusY: number; zoom: number };
+/*
+  v1.11.61: `whole` letterboxes the image inside its frame (object-fit:
+  contain) for pictures whose subject cannot survive the frame's crop, on the
+  client's mark: a tall or panoramic photo in a square cell showed an arm or
+  a texture and "has no use unless showing the full size".
+*/
+export type PhotoImage = { src: string; focusX: number; focusY: number; zoom: number; whole?: boolean };
 
 export type SectionId = "contact" | "fan" | "strips" | "editorial";
 
@@ -42,7 +48,7 @@ export type PhotoState = {
   showClosing: boolean;
 };
 
-export const img = (src: string): PhotoImage => ({ src, focusX: 50, focusY: 50, zoom: 1 });
+export const img = (src: string): PhotoImage => ({ src, focusX: 50, focusY: 50, zoom: 1, whole: false });
 
 // Coastguard, 28 face-aware square crops, client order.
 const contactSheet = [
@@ -156,6 +162,7 @@ export function mergeSaved(saved: unknown): PhotoState {
       // Floored at 1: below frame-fill was retired in v1.11.58, and a saved
       // draft carrying one would render gaps.
       zoom: typeof c.zoom === "number" ? Math.max(1, c.zoom) : 1,
+      whole: c.whole === true,
     };
   };
   const collection = (id: SectionId): Collection => {

@@ -76,6 +76,10 @@ function readSaved(): PhotoState | null {
 const focus = (image: PhotoImage) =>
   ({
     objectPosition: `${image.focusX}% ${image.focusY}%`,
+    // v1.11.61: `whole` letterboxes rather than crops, for pictures whose
+    // subject cannot survive the frame's shape. The dark ground behind every
+    // frame is the letterbox.
+    objectFit: image.whole ? ("contain" as const) : undefined,
     "--zoom": Math.max(1, image.zoom ?? 1),
     "--origin": `${image.focusX}% ${image.focusY}%`,
   }) as React.CSSProperties;
@@ -587,14 +591,14 @@ export function PhotographyView({
 
           <p className="editor-note">Sections below follow the page order. Click any photo or line of text on the page to jump straight to it here, and drag a photo on the page to reframe it.</p>
 
-          <HeroControls state={state} update={update} active={active} select={select} />
+          <HeroControls state={state} update={update} active={active} select={select} openPicker={setPicker} />
 
           {sectionOrder.slice(0, 2).map((id) => (
             <CollectionControls key={id} id={id} state={state} active={active} setActive={setActive} update={update} updateCollection={updateCollection} openPicker={setPicker} />
           ))}
-          <BreatherControls index={0} state={state} update={update} active={active} select={select} />
+          <BreatherControls index={0} state={state} update={update} active={active} select={select} openPicker={setPicker} />
           <CollectionControls id="strips" state={state} active={active} setActive={setActive} update={update} updateCollection={updateCollection} openPicker={setPicker} />
-          <BreatherControls index={1} state={state} update={update} active={active} select={select} />
+          <BreatherControls index={1} state={state} update={update} active={active} select={select} openPicker={setPicker} />
           <CollectionControls id="editorial" state={state} active={active} setActive={setActive} update={update} updateCollection={updateCollection} openPicker={setPicker} />
 
           <section className="editor-section">
@@ -728,6 +732,14 @@ function FocusControls({ image, onChange }: { image: PhotoImage; onChange: (next
           <output>{Math.round((image.zoom ?? 1) * 100)}%</output>
         </div>
       </label>
+      <label className="photo-editor-check">
+        <input
+          type="checkbox"
+          checked={image.whole === true}
+          onChange={(event) => onChange({ ...image, whole: event.target.checked })}
+        />
+        Show the whole photo, letterboxed in its frame
+      </label>
     </>
   );
 }
@@ -772,11 +784,13 @@ function HeroControls({
   update,
   active,
   select,
+  openPicker,
 }: {
   state: PhotoState;
   update: (patch: (current: PhotoState) => PhotoState) => void;
   active: Active;
   select: (target: ImageTarget) => void;
+  openPicker: (request: { target: ImageTarget }) => void;
 }) {
   return (
     <section className="editor-section" id="pe-thumb-hero">
@@ -808,6 +822,9 @@ function HeroControls({
           image={state.hero}
           onChange={(next) => update((current) => ({ ...current, hero: next }))}
         />
+        <button type="button" className="photo-editor-portal" onClick={() => openPicker({ target: { kind: "hero" } })}>
+          Choose from portal
+        </button>
       </div>
     </section>
   );
@@ -819,12 +836,14 @@ function BreatherControls({
   update,
   active,
   select,
+  openPicker,
 }: {
   index: number;
   state: PhotoState;
   update: (patch: (current: PhotoState) => PhotoState) => void;
   active: Active;
   select: (target: ImageTarget) => void;
+  openPicker: (request: { target: ImageTarget }) => void;
 }) {
   const breather = state.breathers[index];
   const isActive = active?.kind === "breather" && active.index === index;
@@ -845,6 +864,13 @@ function BreatherControls({
             }))
           }
         />
+        <button
+          type="button"
+          className="photo-editor-portal"
+          onClick={() => openPicker({ target: { kind: "breather", index } })}
+        >
+          Choose from portal
+        </button>
       </div>
     </section>
   );
