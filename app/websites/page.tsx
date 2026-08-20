@@ -11,6 +11,7 @@ import { WebsitesView } from "./websites-view";
 export const metadata: Metadata = {
   title: "Websites | Vision8",
   description: "Websites and digital experiences built around what you're actually trying to achieve.",
+  alternates: { canonical: "/websites" },
 };
 
 export default function WebsitesPage() {

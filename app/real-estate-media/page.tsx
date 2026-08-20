@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PageHeader } from "../portfolio-shell";
+import { PageHeader, SiteFooter } from "../portfolio-shell";
 import { ReelHero } from "./reel-hero";
 import { ViewportPlay } from "./viewport-play";
 
@@ -145,6 +145,7 @@ export const metadata: Metadata = {
   title: "Vision8 Real Estate Media",
   description:
     "Property photography, video, 3D walkthroughs and floor plans, with experienced direction for the people in front of camera.",
+  alternates: { canonical: "/real-estate-media" },
 };
 
 export default function RealEstateMediaPage() {
@@ -482,7 +483,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.67</p>
+      <SiteFooter />
     </main>
   );
 }

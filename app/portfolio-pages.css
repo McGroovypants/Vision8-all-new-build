@@ -3829,3 +3829,96 @@
     animation: none;
   }
 }
+
+/*
+  v1.11.68: site footer.
+
+  Replaces the fixed-position build stamp on every page except the homepage.
+  The stamp used to float bottom-right on its own; it now sits in the footer,
+  so the build number still shows on every page as the conventions require,
+  but it no longer overlaps content on a short viewport.
+
+  The point of the footer is the location line. Five of eight pages named no
+  city, region or country anywhere, which for a Wellington studio selling to a
+  domestic market was the biggest missing signal on the site. Deliberately no
+  phone number here: that lives on /contact only.
+
+  All text at or above 50% opacity, per the conventions.
+*/
+.site-footer {
+  margin: 96px 0 0;
+  padding: 30px 38px 34px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+.site-footer-place {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.86rem;
+  letter-spacing: 0.02em;
+}
+
+.site-footer-links {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 0.84rem;
+}
+
+.site-footer-links a {
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  padding-bottom: 1px;
+}
+
+.site-footer-links a:hover,
+.site-footer-links a:focus-visible {
+  color: #fff;
+  border-bottom-color: rgba(255, 255, 255, 0.6);
+}
+
+.site-footer-links span {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.site-footer-build {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/*
+  v1.11.68: FAQ list. Plain stacked question and answer blocks, measure held
+  near 70 characters so the answers stay readable, since this is the one page
+  on the site that is genuinely text first.
+*/
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+  max-width: 44rem;
+}
+
+.faq-item h2 {
+  margin: 0 0 8px;
+  font-size: 1.18rem;
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: -0.01em;
+}
+
+.faq-item p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.62;
+}

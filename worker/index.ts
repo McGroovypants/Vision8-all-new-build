@@ -34,9 +34,54 @@ interface ExecutionContext {
 // dangerouslyAllowSVG: true in next.config.js and uncomment below:
 // const imageConfig: ImageConfig = { dangerouslyAllowSVG: true };
 
+/*
+  Redirects from the Duda site this build replaces (v1.11.68).
+
+  The old sitemap lists sixteen URLs and this build has eight routes, none of
+  them sharing a path except /photography. Without these, every old URL 404s the
+  moment the nameservers move and the ranking those pages have accumulated goes
+  with them. 301 rather than 302: the move is permanent, and only a 301 passes
+  the ranking on.
+
+  Seven old service URLs land on `/video?service=<slug>` rather than the top of
+  the page. That query already opens the matching card's detail dialog on
+  arrival (see `openSlug` in video-services.tsx, used by the homepage), so a
+  visitor searching for underwater filming arrives at underwater filming rather
+  than a grid of nine cards. Slugs are the hand-written ones on each service
+  record, not derived, so they stay stable if a title changes.
+
+  /copy-of-home is a Duda artefact rather than a real page and is deliberately
+  absent, so it 404s and drops out of the index instead of being given a
+  redirect that implies it mattered.
+*/
+const LEGACY_REDIRECTS: Record<string, string> = {
+  "/services": "/",
+  "/all-services": "/",
+  "/work": "/video",
+  "/team": "/about",
+  "/video-animation": "/video",
+  "/air-sea": "/video?service=air-underwater-filming",
+  "/marketing-engagement": "/video?service=marketing-engagement",
+  "/te-ao-maori-pasifika": "/video?service=te-ao-maori-pasifika",
+  "/corporate-comms": "/video?service=corporate-comms",
+  "/food-showreel": "/video?service=food-filming-styling",
+  "/explainer-videos": "/video?service=explainer-videos",
+  "/testimonials": "/video?service=testimonial-videos",
+};
+
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+
+    /*
+      Ahead of everything else so a legacy path never reaches the app router and
+      renders a 404 page. Trailing slashes are normalised first because the old
+      site linked both ways and Google has indexed both.
+    */
+    const legacy = LEGACY_REDIRECTS[url.pathname.replace(/\/+$/, "") || "/"];
+    if (legacy && url.pathname !== "/") {
+      return Response.redirect(new URL(legacy, url.origin).toString(), 301);
+    }
 
     if (url.pathname === "/_vinext/image") {
       const allowedWidths = [...DEFAULT_DEVICE_SIZES, ...DEFAULT_IMAGE_SIZES];

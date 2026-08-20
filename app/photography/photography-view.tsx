@@ -23,7 +23,7 @@
 */
 
 import React, { useEffect, useRef, useState } from "react";
-import { BUILD, PageHeader } from "../portfolio-shell";
+import { BUILD, PageHeader, SiteFooter } from "../portfolio-shell";
 import {
   type Collection,
   type PhotoImage,
@@ -704,7 +704,7 @@ export function PhotographyView({
         </section>
       )}
 
-      <p className="portfolio-build">Build {BUILD}</p>
+      <SiteFooter />
 
       {editable && !panelOpen && (
         <button type="button" className="editor-toggle" onClick={() => setPanelOpen(true)}>

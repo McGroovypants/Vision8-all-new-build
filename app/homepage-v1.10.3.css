@@ -400,7 +400,7 @@
 
   [CRITICAL] The vh terms inside the min() lists are deliberately NOT scaled,
   and the label type carries a matching vh cap (--editor-fan-vh, set in
-  homepage-v1.10.3.tsx). They are the height guard. The fan lives in the band
+  homepage-view-v1.10.3.tsx). They are the height guard. The fan lives in the band
   between the header and the division copy, and that band does not grow with
   the arms: measured at v1.11.39 it is 795px tall at 1920x1080, 628px at
   1440x900 and 505px at 1366x768. Scaling the vh terms too put the logo through

@@ -7,7 +7,7 @@ This file is how to work in the repo. It does not hold current state. **State li
 ## Start here
 
 1. Read the newest `../vision8-handover-v1.10.*.md` and `../manifest.md`. Not every build has a handover; v1.10.18 to v1.10.22 were commits only.
-2. Establish the current build from `BUILD` in `app/homepage-v1.10.3.tsx`.
+2. Establish the current build from `BUILD` in `app/homepage-view-v1.10.3.tsx`.
 3. Read the actual file before editing it. Never edit from memory, a summary, or this document.
 
 The parent folder is not in git. This repo is the git root: `vision8-concepts-v1.3/`. Running git one level up does nothing.
@@ -27,7 +27,7 @@ npm run lint
 
 | Path | Role |
 | --- | --- |
-| `app/homepage-v1.10.3.tsx` | The homepage. One large client component, ~1,200 lines, holds every division record and the editor |
+| `app/homepage-view-v1.10.3.tsx` | The homepage. One large client component, ~1,200 lines, holds every division record and the editor |
 | `app/homepage-v1.10.3.css` | Top of a ten-deep import chain. **Put all new homepage CSS here** |
 | `app/portfolio-shell.tsx` | Shared shell for every holding route |
 | `app/portfolio-pages.css` | Styles for holding routes only |
@@ -51,9 +51,9 @@ These have each cost a session. Read before styling or debugging anything visual
 
 **3. The CSS is a ten-deep import chain.** `homepage-v1.10.3.css` imports v1.10.2, down through v1.8.1 to Tailwind. Any element's real style is up to ten override layers. **Never delete a stylesheet in the chain, and never edit the base to change behaviour. Override at the top.** Flattening it is proposed and not done.
 
-**4. `BUILD` drives the localStorage key.** `STORAGE_KEY` is `vision8-homepage-editor-${BUILD}`. The editor merges saved records over source defaults, so a stale key can pin old media and mask a correct deploy. **Bump `BUILD` in `app/homepage-v1.10.3.tsx` whenever defaults change.** It is the only place; the page titles no longer carry a version, deliberately, because they went stale and misled diagnosis. Persistence is guarded by a `dirty` ref, so loads and reloads no longer write unprompted, but bump anyway.
+**4. `BUILD` drives the localStorage key.** `STORAGE_KEY` is `vision8-homepage-editor-${BUILD}`. The editor merges saved records over source defaults, so a stale key can pin old media and mask a correct deploy. **Bump `BUILD` in `app/homepage-view-v1.10.3.tsx` whenever defaults change.** It is the only place; the page titles no longer carry a version, deliberately, because they went stale and misled diagnosis. Persistence is guarded by a `dirty` ref, so loads and reloads no longer write unprompted, but bump anyway.
 
-**5. Query state on the homepage must be resolved on the server.** `/?skipintro=1` skips the logo intro. Reading `window.location.search` inside `homepage-v1.10.3.tsx` to do this **fails silently**: the server renders the intro, React keeps its markup on hydration, and the only sign is a console warning about mismatched attributes. `app/page.tsx` reads `searchParams` and passes the flag down. Any future URL-driven homepage state must go the same way.
+**5. Query state on the homepage must be resolved on the server.** `/?skipintro=1` skips the logo intro. Reading `window.location.search` inside `homepage-view-v1.10.3.tsx` to do this **fails silently**: the server renders the intro, React keeps its markup on hydration, and the only sign is a console warning about mismatched attributes. `app/page.tsx` reads `searchParams` and passes the flag down. Any future URL-driven homepage state must go the same way.
 
 **6. Files that look like debris are load-bearing.** `build/sites-vite-plugin.ts`, `.openai/hosting.json`, `worker/index.ts`. All three look like starter leftovers. Verify the import graph before calling anything unused.
 
@@ -124,7 +124,7 @@ After deploying, report the build and the link in one line and stop. Do not run 
 This project moves fast: five builds landed in a single afternoon. Any build number written here is wrong by the time you read it. Establish position from disk, in this order, before doing anything:
 
 ```
-grep -n 'const BUILD' app/homepage-v1.10.3.tsx      # what the source is
+grep -n 'const BUILD' app/homepage-view-v1.10.3.tsx      # what the source is
 git status -sb                                      # local vs origin
 git log --oneline origin/main..HEAD                 # what is unpushed
 curl -s https://vision8-all-new-build.andy-96d.workers.dev/ | grep -o "Build <!-- -->v1\.[0-9]*\.[0-9]*"

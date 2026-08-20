@@ -18,6 +18,7 @@ import { readPublishedLayout } from "./published";
 export const metadata: Metadata = {
   title: "Photography | Vision8",
   description: "Vision8 photography for people, organisations and events.",
+  alternates: { canonical: "/photography" },
 };
 
 export default async function PhotographyPage() {

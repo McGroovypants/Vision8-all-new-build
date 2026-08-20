@@ -6,6 +6,7 @@ const HERO = "https://res.cloudinary.com/deyb4o5qz/image/upload/f_auto,q_auto,w_
 export const metadata: Metadata = {
   title: "AI Solutions | Vision8",
   description: "Focused AI tools, custom apps and practical automation.",
+  alternates: { canonical: "/ai-solutions" },
 };
 
 export default function AiSolutionsPage() {

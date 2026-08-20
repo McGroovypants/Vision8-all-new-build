@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { BUILD, PageHeader } from "../portfolio-shell";
+import { PageHeader, SiteFooter } from "../portfolio-shell";
 
 /*
   The Websites page. Ported from mock v3.4 (Web page build folder) on
@@ -551,7 +551,7 @@ export function WebsitesView() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build {BUILD}</p>
+      <SiteFooter />
     </main>
   );
 }

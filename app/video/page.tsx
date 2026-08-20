@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { PageHeader } from "../portfolio-shell";
+import { PageHeader, SiteFooter } from "../portfolio-shell";
 import { VideoServices } from "./video-services";
 
 export const metadata: Metadata = {
   title: "Video | Vision8",
   description: "Vision8 video services, from filming through to animation and finishing.",
+  alternates: { canonical: "/video" },
 };
 
 // Resolved on the server and passed down, the same way the homepage handles
@@ -26,7 +27,7 @@ export default async function VideoPage({
         </div>
         <VideoServices openSlug={service} />
       </section>
-      <p className="portfolio-build">Build v1.11.67</p>
+      <SiteFooter />
     </main>
   );
 }

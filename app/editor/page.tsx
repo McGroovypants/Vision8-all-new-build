@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { HomepageV1103 } from "../homepage-v1.10.3";
+import { HomepageV1103 } from "../homepage-view-v1.10.3";
 
 export const metadata: Metadata = {
   title: "Vision8 homepage editor",

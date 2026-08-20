@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { PageHeader } from "../portfolio-shell";
+import { PageHeader, SiteFooter } from "../portfolio-shell";
 
 export const metadata: Metadata = {
   title: "Audio | Vision8",
   description: "Audio engineering, music production and original composition for television, advertising, film and music releases.",
+  alternates: { canonical: "/audio" },
 };
 
 // Andy's music sits on his own site, which is the preferred destination for
@@ -298,7 +299,7 @@ export default function AudioPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.67</p>
+      <SiteFooter />
     </main>
   );
 }

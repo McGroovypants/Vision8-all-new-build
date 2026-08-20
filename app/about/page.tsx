@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PageHeader } from "../portfolio-shell";
+import { PageHeader, SiteFooter } from "../portfolio-shell";
 
 const CLOUD = "https://res.cloudinary.com/deyb4o5qz";
 
@@ -33,6 +33,7 @@ const people = [
 export const metadata: Metadata = {
   title: "About | Vision8",
   description: "Meet the Vision8 people behind the work.",
+  alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {
@@ -58,7 +59,7 @@ export default function AboutPage() {
           ))}
         </div>
       </section>
-      <p className="portfolio-build">Build v1.11.67</p>
+      <SiteFooter />
     </main>
   );
 }

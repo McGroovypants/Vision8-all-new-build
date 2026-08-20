@@ -1,6 +1,6 @@
 # Vision8 website
 
-A single-screen fanned homepage plus internal division pages. The current build is the `BUILD` constant in `app/homepage-v1.10.3.tsx`, shown as a stamp on every page.
+A single-screen fanned homepage plus internal division pages. The current build is the `BUILD` constant in `app/homepage-view-v1.10.3.tsx`, shown as a stamp on every page.
 
 - The complete homepage fits within one browser viewport.
 - Seven fanned branches represent Motion & Animation, Photography, Audio, Video, Real Estate Media, Websites and Tech Solutions.
