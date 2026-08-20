@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
+import { attachTapControls } from "../tap-controls";
 
 /*
   Plays the video inside it while the section is in view and pauses it on the
@@ -38,7 +39,16 @@ export function ViewportPlay({ className, children }: { className?: string; chil
     );
 
     observer.observe(root);
-    return () => observer.disconnect();
+    // v1.11.64: the control bar is hidden until the picture is touched. The
+    // markup no longer carries `controls`, so this is the only thing that
+    // brings it back; without JavaScript these are muted looping pictures with
+    // nothing to operate, which is what they already were.
+    const detachControls = attachTapControls(video);
+
+    return () => {
+      observer.disconnect();
+      detachControls();
+    };
   }, []);
 
   return (

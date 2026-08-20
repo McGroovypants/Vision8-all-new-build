@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { attachTapControls } from "../tap-controls";
 
 type Service = {
   title: string;
@@ -101,8 +102,19 @@ const services: Service[] = [
 ];
 
 function ServiceVisual({ service, detail = false }: { service: Service; detail?: boolean }) {
+  const ref = useRef<HTMLVideoElement>(null);
+
+  // v1.11.64: the detail player's control bar is hidden until the picture is
+  // touched. Only the detail video ever had controls; the cards are silent
+  // loops with nothing to operate.
+  useEffect(() => {
+    const video = ref.current;
+    if (!detail || !video) return;
+    return attachTapControls(video);
+  }, [detail]);
+
   if (!service.video) return <img src={service.poster} alt="" />;
-  return <video autoPlay controls={detail} loop muted={!detail} playsInline preload="metadata" poster={service.poster} src={service.video} />;
+  return <video ref={ref} autoPlay loop muted={!detail} playsInline preload="metadata" poster={service.poster} src={service.video} />;
 }
 
 /*

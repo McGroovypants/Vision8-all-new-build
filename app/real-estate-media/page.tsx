@@ -162,17 +162,15 @@ export default function RealEstateMediaPage() {
           </ul>
         }
       >
-        {/* The route test's "Vision8 Real Estate Media" is carried by the page
-            title now that the hero eyebrow is gone; the header lockup has the
-            visible words. */}
-        <h1>
-          Property stories,
-          <br />
-          ready to move.
-        </h1>
-        <span className="re-hero-lede">
-          Experienced direction that helps properties, and the people selling them, come alive.
-        </span>
+        {/*
+          v1.11.64: the headline and lede came off the reel at the client's
+          instruction. Over moving picture at phone width they took the whole
+          frame and the reel, which is the point of the hero, played behind a
+          wall of words. The heading stays in the document for structure and
+          search, out of the picture; the services row below is what the hero
+          now says out loud.
+        */}
+        <h1 className="sr-only">Property stories, ready to move.</h1>
       </ReelHero>
 
       {/*
@@ -197,7 +195,7 @@ export default function RealEstateMediaPage() {
               <div className="re-video">
                 {/* `preload="none"`: nothing is fetched until the section is
                     actually reached. */}
-                <video src={PEOPLE_VIDEO} muted loop playsInline preload="none" controls />
+                <video src={PEOPLE_VIDEO} muted loop playsInline preload="none" />
               </div>
               <figcaption>Direction on location</figcaption>
             </figure>
@@ -383,7 +381,7 @@ export default function RealEstateMediaPage() {
           <ViewportPlay className="re-split">
             <figure>
               <div className="re-video">
-                <video src={MATTERPORT_VIDEO} muted loop playsInline preload="none" controls />
+                <video src={MATTERPORT_VIDEO} muted loop playsInline preload="none" />
               </div>
               <figcaption>360° tour examples</figcaption>
             </figure>
@@ -484,7 +482,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.63</p>
+      <p className="portfolio-build">Build v1.11.64</p>
     </main>
   );
 }

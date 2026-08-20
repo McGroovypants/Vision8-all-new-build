@@ -6,6 +6,22 @@
   left every holding route stuck on its hero with the rest unreachable, and
   scrollIntoView still worked, so it passed a scripted check.
 */
+/*
+  Text kept for structure and search but taken out of the picture. Not
+  `display: none`, which would take it out of the accessibility tree too.
+*/
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
 .portfolio-shell {
   height: 100svh;
   overflow-y: auto;
@@ -1128,9 +1144,24 @@
     grid-template-columns: 1fr;
   }
 
+  /*
+    [CRITICAL] v1.11.64: `min-height: auto` collapsed this hero to nothing on a
+    phone. Every child is `position: absolute`, so with no min-height the
+    section had no in-flow content to give it height: the mixer photograph and
+    the headline both vanished and the page opened on the first body section.
+    The inner block goes back into flow here and the hero keeps a real height.
+  */
   .audio-hero {
-    min-height: auto;
+    min-height: 66svh;
     background-position: 62% center;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .audio-hero .audio-inner {
+    position: static;
+    width: 100%;
+    padding: 96px var(--gutter) 40px;
   }
 
   /*
@@ -1266,18 +1297,17 @@
 }
 
 /*
-  Teal separators only while the four names hold one line. The separator is
-  drawn on the item that follows, so a wrap opens the new line with a dangling
-  bullet. Below this width the names simply space out.
+  v1.11.64: a centred teal dot at every width, on the client's mark. It was a
+  hyphen gated to 1024px and up, because a separator drawn on the *following*
+  item opens a wrapped line with a dangling mark. Drawn on the item it follows
+  instead, the mark can only ever end a line, which reads as ordinary
+  punctuation, so the row keeps its separators on a phone where it wraps.
 */
-/* Teal hyphens, the client's separator, only while the row holds one line. */
-@media (min-width: 1024px) {
-  .real-estate-page .re-services li + li::before {
-    content: "-";
-    margin-right: 0.55em;
-    color: var(--teal-bright);
-    font-weight: 700;
-  }
+.real-estate-page .re-services li:not(:last-child)::after {
+  content: "\00b7";
+  margin-left: 0.55em;
+  color: var(--teal-bright);
+  font-weight: 700;
 }
 
 /*
@@ -2381,6 +2411,23 @@
      hard-coded 3.5. With the default eight cards every value below is
      identical to the original. */
   --mid: calc((var(--n, 8) - 1) / 2);
+
+  /*
+    v1.11.64: the fan is sized to the room it actually has.
+
+    The mockup's 90px tight and 140px open spacings are fixed, so eight cards
+    opened to 1260px whatever they were opened inside. On the editor route,
+    where the page docks beside the panel, that ran the outer cards under the
+    panel and out of reach: measured, the open fan spanned x -89 to 1171 with
+    the panel over the right of it, and a card there could not be clicked at
+    all. `cqw` is the stack's own width, so `--fit` is the widest spacing that
+    still leaves the outermost card fully on the stack; the two spacings take
+    it only when it is tighter than the mockup's.
+  */
+  container-type: inline-size;
+  --fit: calc((100cqw - 280px) / max(calc(var(--n, 8) - 1), 1));
+  --tight: min(90px, var(--fit));
+  --open: min(140px, var(--fit));
 }
 
 .fan-card {
@@ -2395,8 +2442,8 @@
   overflow: hidden;
   background: #111;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
-  transform: rotate(calc(var(--angle) * 0.3)) translateX(calc((var(--i) - var(--mid)) * 90px));
-  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  transform: rotate(calc(var(--angle) * 0.3)) translateX(calc((var(--i) - var(--mid)) * var(--tight, 90px)));
+  transition: all 0.32s cubic-bezier(0.23, 1, 0.32, 1);
   cursor: pointer;
   /*
     v1.11.63: stacked centre-out, the middle pair on top and each side
@@ -2409,13 +2456,28 @@
   z-index: calc(20 - max(var(--i) - var(--mid), var(--mid) - var(--i)) * 2);
 }
 
-.fan-stack:hover .fan-card {
-  transform: rotate(0deg) translateX(calc((var(--i) - var(--mid)) * 140px));
+/*
+  v1.11.64: the fan is opened by the whole section, not by the stack itself.
+
+  Measured cause of the client's "clicking either side of the middle image does
+  not work": the pointer entering the stack was what opened it, and opening it
+  slid the outer cards up to 187px sideways under the cursor (card 7 ran from
+  x 919 to x 1106 at 1512 wide). The card aimed at was no longer there when the
+  click landed. The middle pair moved 14 and 21px, which is exactly why the
+  middle was the part that worked.
+
+  Armed from the section, the fan finishes opening while the pointer is still
+  crossing the 64 to 110px of section padding above it, and nothing moves once
+  the pointer is over a card. `.fan-card` exists only inside a fan section, so
+  the bare `.photo-section` selector cannot reach any other section's pictures.
+*/
+.photo-section:hover .fan-card {
+  transform: rotate(0deg) translateX(calc((var(--i) - var(--mid)) * var(--open, 140px)));
 }
 
 .fan-card:hover {
   z-index: 20;
-  transform: rotate(0deg) translateX(calc((var(--i) - var(--mid)) * 140px)) scale(1.08) !important;
+  transform: rotate(0deg) translateX(calc((var(--i) - var(--mid)) * var(--open, 140px))) scale(1.08) !important;
   box-shadow: 0 16px 50px rgba(0, 0, 0, 0.8);
 }
 
@@ -2576,16 +2638,24 @@
     height: 300px;
   }
 
+  /* The phone fan is frozen: there is no pointer to open it with. The spacing
+     is the fit rule against the smaller card, so eight cards cannot run off
+     the side of a 360px screen the way 34px each did. */
+  .fan-stack {
+    --fit: calc((100cqw - 150px) / max(calc(var(--n, 8) - 1), 1));
+    --tight: min(34px, var(--fit));
+  }
+
   .fan-card {
     width: 150px;
     height: 205px;
     border-width: 2px;
-    transform: rotate(calc(var(--angle) * 0.3)) translateX(calc((var(--i) - var(--mid)) * 34px));
   }
 
+  .photo-section:hover .fan-card,
   .fan-stack:hover .fan-card,
   .fan-card:hover {
-    transform: rotate(calc(var(--angle) * 0.3)) translateX(calc((var(--i) - var(--mid)) * 34px));
+    transform: rotate(calc(var(--angle) * 0.3)) translateX(calc((var(--i) - var(--mid)) * var(--tight, 34px)));
   }
 
   .strips-container {
