@@ -31,7 +31,12 @@ type Faq = { q: string; a: string };
 const faqs: Faq[] = [
   {
     q: "Where is Vision8 based?",
-    a: `Vision8 is a solution based media company based in Wellington, ${CONTACT.placeLong}. We work with clients throughout New Zealand, and travel for projects that need it.`,
+    /*
+      No "in Wellington," before the interpolation: CONTACT.placeLong already
+      ends "Wellington, New Zealand", so the two together rendered the city
+      twice on the live page.
+    */
+    a: `Vision8 is a solution based media company based in ${CONTACT.placeLong}. We work with clients throughout New Zealand, and travel for projects that need it.`,
   },
   {
     q: "What does Vision8 actually do?",
