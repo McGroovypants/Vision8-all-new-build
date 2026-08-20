@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { attachTapControls } from "../tap-controls";
 
 type Service = {
@@ -122,17 +122,45 @@ function ServiceVisual({ service, detail = false }: { service: Service; detail?:
   Animation button lands on the same panel its own "Find out more" opens rather
   than dropping the visitor at the top of the grid to find it again.
 */
+/*
+  v1.11.64: whether this device has a pointer that can hover at all.
+
+  The grid's whole playback rule was hover: row zero played and the other rows
+  waited for a pointer to enter them. On a phone there is no pointer, so six of
+  the nine frames were stills that nothing could ever start, which is the
+  client's report. Read through useSyncExternalStore rather than an effect,
+  because setting state from inside an effect is the cascading-render error
+  this project's lint already carries once. The server snapshot is `true`, so
+  the server renders the desktop arrangement and a phone corrects it on
+  hydration.
+*/
+function useHoverCapable() {
+  return useSyncExternalStore(
+    (onChange) => {
+      const query = window.matchMedia("(hover: hover)");
+      query.addEventListener("change", onChange);
+      return () => query.removeEventListener("change", onChange);
+    },
+    () => window.matchMedia("(hover: hover)").matches,
+    () => true,
+  );
+}
+
 export function VideoServices({ openSlug }: { openSlug?: string } = {}) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [selected, setSelected] = useState<Service | null>(null);
+  const [immersive, setImmersive] = useState(false);
   const [activeRow, setActiveRow] = useState<number | null>(null);
   const cardVideos = useRef<(HTMLVideoElement | null)[]>([]);
+  const cardEls = useRef<(HTMLElement | null)[]>([]);
+  const hoverCapable = useHoverCapable();
 
   // Exactly one row moves at a time. Row zero is the resting state, so a
   // pointer in row two or three takes playback away from the top row rather
   // than adding to it. Pausing holds the current frame, which is the static
   // state we want.
   useEffect(() => {
+    if (!hoverCapable) return;
     const playingRow = activeRow ?? 0;
     cardVideos.current.forEach((video, index) => {
       if (!video) return;
@@ -142,7 +170,36 @@ export function VideoServices({ openSlug }: { openSlug?: string } = {}) {
         video.pause();
       }
     });
-  }, [activeRow]);
+  }, [activeRow, hoverCapable]);
+
+  /*
+    Touch: the viewport does what the pointer does on a desktop. A card plays
+    while it is on screen and pauses on the way off, so every one of the nine
+    reels moves as it is reached and none of them is fetched before then, which
+    is also the staged loading the client asked for. Nothing is downloaded
+    until a play call, so this is what keeps eight idle reels off a phone's
+    data.
+
+    The page is its own scroll container, not the document, so the observer has
+    to be told that or it watches a viewport nothing ever scrolls in.
+  */
+  useEffect(() => {
+    if (hoverCapable) return;
+    const scroller = cardEls.current.find(Boolean)?.closest(".video-page");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const video = entry.target.querySelector("video");
+          if (!video) continue;
+          if (entry.isIntersecting) void video.play().catch(() => {});
+          else video.pause();
+        }
+      },
+      { root: scroller ?? null, threshold: 0.35 },
+    );
+    cardEls.current.forEach((el) => el && observer.observe(el));
+    return () => observer.disconnect();
+  }, [hoverCapable]);
 
   // Once only. `open` plays the detail video, and re-running it on any later
   // render would restart whatever the visitor was already watching.
@@ -152,11 +209,20 @@ export function VideoServices({ openSlug }: { openSlug?: string } = {}) {
     const match = services.find((service) => service.slug === openSlug);
     if (!match) return;
     deepLinked.current = true;
-    open(match);
+    /*
+      v1.11.64: arriving from the homepage's Motion & Animation button opens
+      the reel across the whole screen rather than in the 1200px panel, on the
+      client's mark. Browser-level fullscreen cannot be taken here: it needs a
+      user gesture and the click that asked for it happened on the page before
+      this one, so a request on arrival is refused. A dialog the size of the
+      viewport is the reliable version of the same thing.
+    */
+    open(match, true);
   });
 
-  function open(service: Service) {
+  function open(service: Service, whole = false) {
     setSelected(service);
+    setImmersive(whole);
     requestAnimationFrame(() => {
       dialog.current?.showModal();
       // The click is a user gesture, so sound is normally allowed. If the
@@ -178,6 +244,7 @@ export function VideoServices({ openSlug }: { openSlug?: string } = {}) {
           <article
             className="video-service-card"
             key={service.title}
+            ref={(element) => { cardEls.current[index] = element; }}
             onMouseEnter={() => setActiveRow(row)}
             onMouseLeave={() => setActiveRow((current) => (current === row ? null : current))}
             onFocusCapture={() => setActiveRow(row)}
@@ -208,7 +275,14 @@ export function VideoServices({ openSlug }: { openSlug?: string } = {}) {
         })}
       </div>
 
-      <dialog className="video-detail" ref={dialog} onClose={() => setSelected(null)}>
+      <dialog
+        className={`video-detail${immersive ? " video-detail-whole" : ""}`}
+        ref={dialog}
+        onClose={() => {
+          setSelected(null);
+          setImmersive(false);
+        }}
+      >
         {selected && <>
           <button className="video-detail-close" type="button" onClick={() => dialog.current?.close()} aria-label="Close details">×</button>
           <ServiceVisual service={selected} detail />

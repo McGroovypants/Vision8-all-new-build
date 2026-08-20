@@ -486,6 +486,45 @@
   padding: clamp(22px, 4vw, 40px);
 }
 
+/*
+  v1.11.64: the whole-screen presentation, used when the homepage's Motion &
+  Animation button lands here. The reel takes the screen and the copy sits over
+  its foot on a wash rather than below it in a panel, because a panel that
+  reserves room for three lines of type is exactly what stops the picture being
+  full screen. `contain`, not `cover`: this is the one place the whole frame as
+  shot is the point.
+*/
+.video-detail-whole {
+  width: 100vw;
+  max-width: 100vw;
+  height: 100svh;
+  max-height: 100svh;
+  border: 0;
+  border-radius: 0;
+  background: #000;
+  justify-content: center;
+}
+
+.video-detail-whole video,
+.video-detail-whole img {
+  flex: 1 1 auto;
+  height: 100%;
+  max-height: none;
+  aspect-ratio: auto;
+  object-fit: contain;
+}
+
+.video-detail-whole .video-detail-copy {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  /* Clear of the control bar, which appears at the foot on a tap. */
+  padding-bottom: clamp(56px, 8vw, 84px);
+  background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.72) 42%);
+  pointer-events: none;
+}
+
 .video-detail-copy h2 {
   margin: 0 0 12px;
   font-size: clamp(1.8rem, 4vw, 3.2rem);
