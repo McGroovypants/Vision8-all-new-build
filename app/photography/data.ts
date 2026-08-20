@@ -38,6 +38,15 @@ export type PhotoImage = {
      percentages of the original. 0 and 100 mean the frame decides (cover). */
   cropTop?: number;
   cropBottom?: number;
+  /*
+    v1.11.64: how tall the big frames stand, as a percentage of the screen.
+    The client's mark: the choice was between the whole photo letterboxed
+    small and a full-width frame that cropped whatever it liked, with no way
+    to say how much. The frame's own height is what decides that, so it is the
+    control. Undefined leaves each frame its designed height, a full screen
+    for the hero and half a screen for a big picture.
+  */
+  frameH?: number;
 };
 
 export type SectionId = "contact" | "fan" | "strips" | "editorial";
@@ -54,6 +63,11 @@ export type PhotoState = {
   hero: PhotoImage;
   heroTitle: string;
   heroLede: string;
+  /* v1.11.64: the closing invitation, the Audio page's closing block as the
+     client's reference. */
+  ctaTitle: string;
+  ctaButton: string;
+  showCta: boolean;
   collections: Record<SectionId, Collection>;
   breathers: PhotoImage[];
   closing: string;
@@ -156,6 +170,9 @@ export const defaultState: PhotoState = {
   breathers: [img(`${P}/z6-1786678073-6c134bec.jpg`), { ...img(`${P}/img-8268a-1785783280.jpg`), focusY: 92 }],
   closing: "Sometimes all you need is a still image.",
   showClosing: true,
+  ctaTitle: "Have something worth photographing?",
+  ctaButton: "Book a photoshoot",
+  showCta: true,
   pageLayout: [...defaultPageLayout],
 };
 
@@ -188,6 +205,9 @@ export function mergeSaved(saved: unknown): PhotoState {
       bright: typeof c.bright === "number" ? Math.min(1.25, Math.max(0.75, c.bright)) : 1,
       cropTop: typeof c.cropTop === "number" ? Math.min(95, Math.max(0, c.cropTop)) : 0,
       cropBottom: typeof c.cropBottom === "number" ? Math.min(100, Math.max(5, c.cropBottom)) : 100,
+      // Undefined, not a number, when unset: the CSS default differs between
+      // the hero and a big picture and only the absent value can pick it up.
+      frameH: typeof c.frameH === "number" ? Math.min(100, Math.max(20, c.frameH)) : undefined,
     };
   };
   const collection = (id: SectionId): Collection => {
@@ -217,6 +237,9 @@ export function mergeSaved(saved: unknown): PhotoState {
       : defaultState.breathers,
     closing: typeof s.closing === "string" ? s.closing : defaultState.closing,
     showClosing: typeof s.showClosing === "boolean" ? s.showClosing : defaultState.showClosing,
+    ctaTitle: typeof s.ctaTitle === "string" ? s.ctaTitle : defaultState.ctaTitle,
+    ctaButton: typeof s.ctaButton === "string" ? s.ctaButton : defaultState.ctaButton,
+    showCta: typeof s.showCta === "boolean" ? s.showCta : defaultState.showCta,
     pageLayout: readPageLayout(s),
   };
 }

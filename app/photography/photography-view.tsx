@@ -50,6 +50,9 @@ const STORAGE_KEY = `vision8-photography-editor-${BUILD}`;
 // builds until the Worker secret is rotated.
 const PUBLISH_KEY_STORAGE = "vision8-photo-publish-key";
 
+// The same address the Audio and Real Estate pages send people to.
+const CONTACT = "mailto:info@vision8.co.nz";
+
 function readSaved(): PhotoState | null {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
@@ -99,6 +102,16 @@ const focus = (image: PhotoImage) =>
   floor: a band too shallow for the frame's width is shown as deep as cover
   allows, anchored at the band's top.
 */
+/*
+  v1.11.64: the frame's own height, as a percentage of the screen, is what
+  decides how much of a picture is lost top and bottom at full width. Written
+  on the section rather than the image, because the hero's overlay and the
+  breather's padding both measure against it. Absent, each frame keeps its
+  designed height and the CSS fallback answers.
+*/
+const frameStyle = (image: PhotoImage): React.CSSProperties | undefined =>
+  typeof image.frameH === "number" ? ({ "--frame-h": image.frameH } as React.CSSProperties) : undefined;
+
 function bandStyle(image: PhotoImage, el: HTMLImageElement): React.CSSProperties | null {
   const t = image.cropTop ?? 0;
   const b = image.cropBottom ?? 100;
@@ -596,7 +609,7 @@ export function PhotographyView({
   const layout = state.pageLayout?.length === defaultPageLayout.length ? state.pageLayout : defaultPageLayout;
 
   const breatherJsx = (index: number) => (
-    <section className="photo-breather">
+    <section className="photo-breather" style={frameStyle(state.breathers[index])}>
       <BandImg
         image={state.breathers[index]}
         loading="lazy"
@@ -635,7 +648,7 @@ export function PhotographyView({
     <main className={`photo-page${editable ? " photo-editing" : ""}${editable && panelOpen ? " panel-open" : ""}`}>
       <PageHeader division="Photography" />
 
-      <section className="photo-hero">
+      <section className="photo-hero" style={frameStyle(state.hero)}>
         <BandImg
           image={state.hero}
           alt="Vision8 Photography"
@@ -659,6 +672,35 @@ export function PhotographyView({
       {state.showClosing && state.closing && (
         <section className="photo-closing">
           <h2 {...textProps("pe-in-closing")}>{state.closing}</h2>
+        </section>
+      )}
+
+      {/* v1.11.64: the page ends on an invitation, the Audio page's closing
+          block as the client's reference. */}
+      {state.showCta && (
+        <section className="photo-cta">
+          <div className="photo-cta-copy">
+            <h2 {...textProps("pe-in-cta-title")}>{state.ctaTitle}</h2>
+            <p className="audio-actions">
+              {/* The generic textProps would leave the mailto to fire as well as
+                  jumping the panel, so the editor's click is its own. */}
+              <a
+                className="audio-btn audio-btn-solid"
+                href={CONTACT}
+                {...(editable
+                  ? {
+                      "data-edit-text": true,
+                      onClick: (event: React.MouseEvent) => {
+                        event.preventDefault();
+                        focusField("pe-in-cta-button");
+                      },
+                    }
+                  : {})}
+              >
+                {state.ctaButton}
+              </a>
+            </p>
+          </div>
         </section>
       )}
 
@@ -792,6 +834,37 @@ export function PhotographyView({
             </label>
           </section>
 
+          <section className="editor-section">
+            <h3>Closing invitation</h3>
+            <label>
+              Heading
+              <input
+                id="pe-in-cta-title"
+                type="text"
+                value={state.ctaTitle}
+                onChange={(event) => update((current) => ({ ...current, ctaTitle: event.target.value }))}
+              />
+            </label>
+            <label>
+              Button
+              <input
+                id="pe-in-cta-button"
+                type="text"
+                value={state.ctaButton}
+                onChange={(event) => update((current) => ({ ...current, ctaButton: event.target.value }))}
+              />
+            </label>
+            <label className="photo-editor-check">
+              <input
+                type="checkbox"
+                checked={state.showCta}
+                onChange={(event) => update((current) => ({ ...current, showCta: event.target.checked }))}
+              />
+              Show closing invitation
+            </label>
+            <p className="editor-note">The button opens a message to info@vision8.co.nz.</p>
+          </section>
+
           <div className="editor-actions">
             <button type="button" onClick={() => setPhonePreview(true)}>Phone preview</button>
             <button
@@ -911,11 +984,15 @@ function ImagePicker({
   onChange,
   legend,
   targetKey: target,
+  // The designed height of this frame, which the slider shows until it is
+  // moved: a full screen for the hero, half a screen for a big picture.
+  defaultFrameH,
 }: {
   image: PhotoImage;
   onChange: (next: PhotoImage) => void;
   legend: string;
   targetKey: string;
+  defaultFrameH: number;
 }) {
   /*
     v1.11.63: until the crop points are touched, the sliders show the crop the
@@ -944,7 +1021,7 @@ function ImagePicker({
     timer = window.setTimeout(attempt, 80);
     return () => window.clearTimeout(timer);
     // Re-measure when anything that moves the picture changes.
-  }, [target, image.src, image.zoom, image.focusY, image.whole, image.cropTop, image.cropBottom]);
+  }, [target, image.src, image.zoom, image.focusY, image.whole, image.cropTop, image.cropBottom, image.frameH]);
   const topShown = bandSet ? (image.cropTop ?? 0) : (shown?.top ?? 0);
   const bottomShown = bandSet ? (image.cropBottom ?? 100) : (shown?.bottom ?? 100);
   return (
@@ -969,6 +1046,29 @@ function ImagePicker({
         />
       </label>
       <FocusControls image={image} onChange={onChange} />
+      {/*
+        v1.11.64: how tall the frame stands. At full width the frame's shape is
+        what decides how much of a picture is lost top and bottom, so this is
+        the control that answers the client's "be full screen and choose how
+        much crops". 100 is the whole screen. The crop band below then chooses
+        which part of the picture that frame holds.
+      */}
+      <div className="photo-editor-tight">
+        <label>
+          Frame height
+          <div className="range-row">
+            <input
+              type="range"
+              min={20}
+              max={100}
+              step={5}
+              value={image.frameH ?? defaultFrameH}
+              onChange={(event) => onChange({ ...image, frameH: Number(event.target.value) })}
+            />
+            <output>{image.frameH ?? defaultFrameH}% of screen</output>
+          </div>
+        </label>
+      </div>
       {/* v1.11.62: the big frames can show a chosen band of the picture.
           0 and 100 leave the crop to the frame; anything else shows that
           band, top to bottom, as deep as the frame's width allows. */}
@@ -1014,7 +1114,7 @@ function ImagePicker({
           </div>
         </label>
       </div>
-      <p className="editor-note">The sliders start at the crop the frame is already making. Drop Crop top to bring more of the picture in; the frame&rsquo;s own shape sets how much it can hold.</p>
+      <p className="editor-note">Frame height sets how much of the picture the full-width frame can hold: at 100% it fills the screen and loses least. The crop sliders start at the crop the frame is already making, and choose which band of the picture it holds.</p>
     </>
   );
 }
@@ -1060,6 +1160,7 @@ function HeroControls({
         <ImagePicker
           legend="Hero"
           targetKey="hero"
+          defaultFrameH={100}
           image={state.hero}
           onChange={(next) => update((current) => ({ ...current, hero: next }))}
         />
@@ -1098,6 +1199,7 @@ function BreatherControls({
         <ImagePicker
           legend={`Breather ${index + 1}`}
           targetKey={`breather-${index}`}
+          defaultFrameH={50}
           image={breather}
           onChange={(next) =>
             update((current) => ({
