@@ -19,6 +19,15 @@ import { SITE_URL, CONTACT } from "../site";
   sizes. Andy to review the wording and add those where he wants them.
 */
 
+/*
+  v1.11.73: a hero background, Andy's pick from four. Long-exposure water, no
+  competing subject and dark enough to carry the headline, which matters more
+  here than on a short page: this is the longest column of text on the site.
+  Served from the S3 bucket, not Cloudinary.
+*/
+const HERO =
+  "https://media.vision8.co.nz/library/public/assets/plitvic-lake-shot-2-1787197726-00bc8a50/optimised.jpg";
+
 export const metadata: Metadata = {
   title: "FAQ | Vision8",
   description:
@@ -92,6 +101,7 @@ export default function FaqPage() {
       eyebrow="FAQ"
       title="Questions worth asking."
       intro="What Vision8 covers, where we are, and how a project usually begins."
+      heroImage={HERO}
     >
       <div className="faq-list">
         {faqs.map(({ q, a }) => (

@@ -15,6 +15,15 @@ import { SITE_URL, CONTACT } from "../site";
   and should be confirmed before launch.
 */
 
+/*
+  v1.11.73: a hero background, Andy's pick from four. A live event lit from the
+  stage: the studio's own work, and dark through the left two thirds where the
+  headline and intro sit. `.portfolio-hero-image` positions at 70% across, so
+  the performers stay in frame beside the copy rather than behind it.
+  Served from the S3 bucket, not Cloudinary.
+*/
+const HERO = "https://media.vision8.co.nz/library/public/assets/img-4112-1785781272/optimised.jpg";
+
 export const metadata: Metadata = {
   title: "Contact | Vision8",
   description:
@@ -46,6 +55,7 @@ export default function ContactPage() {
       eyebrow="Contact"
       title="Tell us what you're thinking."
       intro="Wellington based, working anywhere in Aotearoa New Zealand."
+      heroImage={HERO}
     >
       <div className="portfolio-intro-grid">
         <h2>Start with a conversation.</h2>
