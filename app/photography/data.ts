@@ -58,15 +58,18 @@ export type PhotoState = {
   breathers: PhotoImage[];
   closing: string;
   showClosing: boolean;
-  sectionLayout: SectionId[];
+  pageLayout: PageSlot[];
 };
 
 export const img = (src: string): PhotoImage => ({ src, focusX: 50, focusY: 50, zoom: 1, whole: false });
 
-// v1.11.62: the order the four sections render on the page, client-movable.
-// The breathers are not in the list: they keep their slots, after the second
-// and third sections in this order.
-export const defaultSectionLayout: SectionId[] = ["contact", "fan", "strips", "editorial"];
+/*
+  v1.11.62 let the four sections reorder around fixed breathers; v1.11.63 puts
+  the two breathers (the big pictures) in the list as movable slots of their
+  own, on the client's mark. The hero stays first and is not in the list.
+*/
+export type PageSlot = SectionId | "breather-0" | "breather-1";
+export const defaultPageLayout: PageSlot[] = ["contact", "fan", "breather-0", "strips", "breather-1", "editorial"];
 
 // Coastguard, 28 face-aware square crops, client order.
 const contactSheet = [
@@ -153,7 +156,7 @@ export const defaultState: PhotoState = {
   breathers: [img(`${P}/z6-1786678073-6c134bec.jpg`), { ...img(`${P}/img-8268a-1785783280.jpg`), focusY: 92 }],
   closing: "Sometimes all you need is a still image.",
   showClosing: true,
-  sectionLayout: [...defaultSectionLayout],
+  pageLayout: [...defaultPageLayout],
 };
 
 export const sectionOrder: SectionId[] = ["contact", "fan", "strips", "editorial"];
@@ -214,15 +217,30 @@ export function mergeSaved(saved: unknown): PhotoState {
       : defaultState.breathers,
     closing: typeof s.closing === "string" ? s.closing : defaultState.closing,
     showClosing: typeof s.showClosing === "boolean" ? s.showClosing : defaultState.showClosing,
-    // Accepted only as a full permutation of the four ids; anything else,
-    // including older saves with no layout at all, falls back to the default.
-    sectionLayout:
-      Array.isArray(s.sectionLayout) &&
-      s.sectionLayout.length === sectionOrder.length &&
-      [...sectionOrder].every((id) => (s.sectionLayout as SectionId[]).includes(id))
-        ? ([...(s.sectionLayout as SectionId[])])
-        : [...defaultSectionLayout],
+    pageLayout: readPageLayout(s),
   };
+}
+
+/*
+  Accepted only as a full permutation of the six slots. A v1.11.62 draft
+  carries the four-section `sectionLayout` instead; it is migrated with the
+  breathers put back in their fixed v1.11.62 places, after the second and
+  third sections. Anything else falls back to the default order.
+*/
+function readPageLayout(s: Partial<PhotoState> & { sectionLayout?: SectionId[] }): PageSlot[] {
+  const candidate = s.pageLayout;
+  if (
+    Array.isArray(candidate) &&
+    candidate.length === defaultPageLayout.length &&
+    defaultPageLayout.every((slot) => candidate.includes(slot))
+  ) {
+    return [...candidate];
+  }
+  const old = s.sectionLayout;
+  if (Array.isArray(old) && old.length === sectionOrder.length && sectionOrder.every((id) => old.includes(id))) {
+    return [old[0], old[1], "breather-0", old[2], "breather-1", old[3]];
+  }
+  return [...defaultPageLayout];
 }
 
 // blob: URLs die with the browser session that minted them, so they must

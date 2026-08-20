@@ -29,7 +29,8 @@ import {
   type PhotoImage,
   type PhotoState,
   type SectionId,
-  defaultSectionLayout,
+  type PageSlot,
+  defaultPageLayout,
   defaultState,
   img,
   mergeSaved,
@@ -116,6 +117,27 @@ function bandStyle(image: PhotoImage, el: HTMLImageElement): React.CSSProperties
     "--zoom": zoom,
     "--origin": `${image.focusX}% ${p}%`,
   } as React.CSSProperties;
+}
+
+/*
+  v1.11.63: what the frame is cropping right now, read from the rendered
+  element, so the sliders can show the true starting point instead of 0 and
+  100. Inverts the same model bandStyle uses: at the current zoom and
+  object-position, which band of the original is on show.
+*/
+function measuredBand(targetKey: string): { top: number; bottom: number } | null {
+  const el = document.querySelector<HTMLImageElement>(`img[data-edit-target="${targetKey}"]`);
+  if (!el || !el.naturalWidth || !el.naturalHeight || !el.clientHeight) return null;
+  const W = el.clientWidth;
+  const H = el.clientHeight;
+  const cover = Math.max(W / el.naturalWidth, H / el.naturalHeight);
+  const style = getComputedStyle(el);
+  const zoom = Math.max(1, parseFloat(style.getPropertyValue("--zoom")) || 1);
+  const shown = el.naturalHeight * cover * zoom;
+  const posY = parseFloat(style.objectPosition.split(" ")[1] ?? "50") || 50;
+  const yOff = (posY / 100) * Math.max(shown - H, 0);
+  const top = (yOff / shown) * 100;
+  return { top: Math.round(top), bottom: Math.round(top + (H / shown) * 100) };
 }
 
 function BandImg({
@@ -474,9 +496,8 @@ export function PhotographyView({
 
   /*
     v1.11.62: the four photo sections render in the order the client sets in
-    the panel (state.sectionLayout). The two breathers are not movable: they
-    keep their slots after the second and third sections, which preserves the
-    page's rhythm whatever the order.
+    the panel. v1.11.63: the two breathers are movable slots in the same list
+    (state.pageLayout), so the whole page below the hero reorders.
   */
   const sectionJsx = (id: SectionId) => {
     if (id === "contact") {
@@ -572,7 +593,30 @@ export function PhotographyView({
     );
   };
 
-  const layout = state.sectionLayout?.length === 4 ? state.sectionLayout : defaultSectionLayout;
+  const layout = state.pageLayout?.length === defaultPageLayout.length ? state.pageLayout : defaultPageLayout;
+
+  const breatherJsx = (index: number) => (
+    <section className="photo-breather">
+      <BandImg
+        image={state.breathers[index]}
+        loading="lazy"
+        attrs={editAttrs({ kind: "breather", index })}
+        onPointerDown={editable ? onImagePointerDown : undefined}
+        onPointerMove={editable ? onImagePointerMove : undefined}
+        onPointerUp={editable ? onImagePointerUp : undefined}
+        onPointerCancel={editable ? onImagePointerCancel : undefined}
+      />
+    </section>
+  );
+
+  const slotJsx = (slot: PageSlot) =>
+    slot === "breather-0" ? breatherJsx(0) : slot === "breather-1" ? breatherJsx(1) : sectionJsx(slot);
+
+  const slotNames: Record<PageSlot, string> = {
+    ...sectionNames,
+    "breather-0": "Big picture 1",
+    "breather-1": "Big picture 2",
+  };
 
   const textProps = (fieldId: string) =>
     editable ? { "data-edit-text": true, onClick: () => focusField(fieldId) } : {};
@@ -608,36 +652,9 @@ export function PhotographyView({
         </div>
       </section>
 
-      <React.Fragment key={layout[0]}>{sectionJsx(layout[0])}</React.Fragment>
-      <React.Fragment key={layout[1]}>{sectionJsx(layout[1])}</React.Fragment>
-
-      <section className="photo-breather">
-        <BandImg
-          image={state.breathers[0]}
-          loading="lazy"
-          attrs={editAttrs({ kind: "breather", index: 0 })}
-          onPointerDown={editable ? onImagePointerDown : undefined}
-          onPointerMove={editable ? onImagePointerMove : undefined}
-          onPointerUp={editable ? onImagePointerUp : undefined}
-          onPointerCancel={editable ? onImagePointerCancel : undefined}
-        />
-      </section>
-
-      <React.Fragment key={layout[2]}>{sectionJsx(layout[2])}</React.Fragment>
-
-      <section className="photo-breather">
-        <BandImg
-          image={state.breathers[1]}
-          loading="lazy"
-          attrs={editAttrs({ kind: "breather", index: 1 })}
-          onPointerDown={editable ? onImagePointerDown : undefined}
-          onPointerMove={editable ? onImagePointerMove : undefined}
-          onPointerUp={editable ? onImagePointerUp : undefined}
-          onPointerCancel={editable ? onImagePointerCancel : undefined}
-        />
-      </section>
-
-      <React.Fragment key={layout[3]}>{sectionJsx(layout[3])}</React.Fragment>
+      {layout.map((slot) => (
+        <React.Fragment key={slot}>{slotJsx(slot)}</React.Fragment>
+      ))}
 
       {state.showClosing && state.closing && (
         <section className="photo-closing">
@@ -710,18 +727,18 @@ export function PhotographyView({
 
           <section className="editor-section">
             <h3>Page order</h3>
-            {layout.map((id, position) => (
-              <div className="photo-editor-order-row" key={id}>
-                <span>{sectionNames[id]}</span>
+            {layout.map((slot, position) => (
+              <div className="photo-editor-order-row" key={slot}>
+                <span>{slotNames[slot]}</span>
                 <div>
                   <button
                     type="button"
                     disabled={position === 0}
                     onClick={() =>
                       update((current) => {
-                        const next = [...(current.sectionLayout ?? defaultSectionLayout)];
+                        const next = [...(current.pageLayout ?? defaultPageLayout)];
                         [next[position - 1], next[position]] = [next[position], next[position - 1]];
-                        return { ...current, sectionLayout: next };
+                        return { ...current, pageLayout: next };
                       })
                     }
                   >
@@ -732,9 +749,9 @@ export function PhotographyView({
                     disabled={position === layout.length - 1}
                     onClick={() =>
                       update((current) => {
-                        const next = [...(current.sectionLayout ?? defaultSectionLayout)];
+                        const next = [...(current.pageLayout ?? defaultPageLayout)];
                         [next[position], next[position + 1]] = [next[position + 1], next[position]];
-                        return { ...current, sectionLayout: next };
+                        return { ...current, pageLayout: next };
                       })
                     }
                   >
@@ -743,7 +760,7 @@ export function PhotographyView({
                 </div>
               </div>
             ))}
-            <p className="editor-note">The two full-width breather photos keep their slots, after the second and third sections. The hero does not move.</p>
+            <p className="editor-note">Everything below the hero moves; the hero stays first. Big pictures 1 and 2 are the full-width photos between sections.</p>
           </section>
 
           {sectionOrder.slice(0, 2).map((id) => (
@@ -893,11 +910,43 @@ function ImagePicker({
   image,
   onChange,
   legend,
+  targetKey: target,
 }: {
   image: PhotoImage;
   onChange: (next: PhotoImage) => void;
   legend: string;
+  targetKey: string;
 }) {
+  /*
+    v1.11.63: until the crop points are touched, the sliders show the crop the
+    frame is already making (measured from the page), so "drop Crop top to
+    reveal more" starts from the truth rather than from 0. The first touch
+    writes both points, adopting the measured band as the starting position.
+  */
+  const [shown, setShown] = useState<{ top: number; bottom: number } | null>(null);
+  const bandSet = (image.cropTop ?? 0) > 0 || (image.cropBottom ?? 100) < 100;
+  useEffect(() => {
+    /*
+      Retries while null: a lazy image that has not entered the viewport has
+      no natural size yet, and the breathers are lazy, so one early attempt
+      would leave the sliders on 0 and 100 for ever.
+    */
+    let tries = 0;
+    let timer = 0;
+    const attempt = () => {
+      const measured = measuredBand(target);
+      if (measured) {
+        setShown(measured);
+        return;
+      }
+      if (++tries < 20) timer = window.setTimeout(attempt, 400);
+    };
+    timer = window.setTimeout(attempt, 80);
+    return () => window.clearTimeout(timer);
+    // Re-measure when anything that moves the picture changes.
+  }, [target, image.src, image.zoom, image.focusY, image.whole, image.cropTop, image.cropBottom]);
+  const topShown = bandSet ? (image.cropTop ?? 0) : (shown?.top ?? 0);
+  const bottomShown = bandSet ? (image.cropBottom ?? 100) : (shown?.bottom ?? 100);
   return (
     <>
       <label>
@@ -932,12 +981,16 @@ function ImagePicker({
               min={0}
               max={90}
               step={1}
-              value={image.cropTop ?? 0}
+              value={topShown}
               onChange={(event) =>
-                onChange({ ...image, cropTop: Math.min(Number(event.target.value), (image.cropBottom ?? 100) - 10) })
+                onChange({
+                  ...image,
+                  cropTop: Math.min(Number(event.target.value), bottomShown - 10),
+                  cropBottom: bottomShown,
+                })
               }
             />
-            <output>{image.cropTop ?? 0}%</output>
+            <output>{topShown}%</output>
           </div>
         </label>
         <label>
@@ -948,15 +1001,20 @@ function ImagePicker({
               min={10}
               max={100}
               step={1}
-              value={image.cropBottom ?? 100}
+              value={bottomShown}
               onChange={(event) =>
-                onChange({ ...image, cropBottom: Math.max(Number(event.target.value), (image.cropTop ?? 0) + 10) })
+                onChange({
+                  ...image,
+                  cropTop: topShown,
+                  cropBottom: Math.max(Number(event.target.value), topShown + 10),
+                })
               }
             />
-            <output>{image.cropBottom ?? 100}%</output>
+            <output>{bottomShown}%</output>
           </div>
         </label>
       </div>
+      <p className="editor-note">The sliders start at the crop the frame is already making. Drop Crop top to bring more of the picture in; the frame&rsquo;s own shape sets how much it can hold.</p>
     </>
   );
 }
@@ -1001,6 +1059,7 @@ function HeroControls({
         </button>
         <ImagePicker
           legend="Hero"
+          targetKey="hero"
           image={state.hero}
           onChange={(next) => update((current) => ({ ...current, hero: next }))}
         />
@@ -1038,6 +1097,7 @@ function BreatherControls({
         </button>
         <ImagePicker
           legend={`Breather ${index + 1}`}
+          targetKey={`breather-${index}`}
           image={breather}
           onChange={(next) =>
             update((current) => ({

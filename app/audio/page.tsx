@@ -298,7 +298,7 @@ export default function AudioPage() {
         </div>
       </section>
 
-      <p className="portfolio-build">Build v1.11.62</p>
+      <p className="portfolio-build">Build v1.11.63</p>
     </main>
   );
 }

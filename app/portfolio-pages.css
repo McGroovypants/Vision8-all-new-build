@@ -2398,13 +2398,15 @@
   transform: rotate(calc(var(--angle) * 0.3)) translateX(calc((var(--i) - var(--mid)) * 90px));
   transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   cursor: pointer;
-  z-index: calc(10 - var(--i));
-}
-
-/* Three photos fully visible at rest: left, middle, right. */
-.fan-card:nth-child(4),
-.fan-card:nth-child(8) {
-  z-index: 15;
+  /*
+    v1.11.63: stacked centre-out, the middle pair on top and each side
+    descending, like a held hand of cards. The mockup stacked left-on-top
+    with two cards lifted to z 15 for "three fully visible", and that pair
+    buried the card to each one's left completely: eight selected, six
+    showing, the client's report. Centre-out, every card is overlapped only
+    from its centre side and shows its outer 90px whatever the count.
+  */
+  z-index: calc(20 - max(var(--i) - var(--mid), var(--mid) - var(--i)) * 2);
 }
 
 .fan-stack:hover .fan-card {
