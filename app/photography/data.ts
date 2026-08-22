@@ -49,9 +49,21 @@ export type PhotoImage = {
   frameH?: number;
 };
 
-export type SectionId = "contact" | "fan" | "strips" | "editorial";
+/*
+  v1.11.79: the four treatments are styles a collection can have, not fixed
+  slots. A collection is any id in `collections` with a style; the four
+  built-in ids keep their old names so every layout already published to KV
+  loads unchanged. New ones are minted by the editor as `<style>-<n>`. The
+  page renders `pageLayout` in order, so the set and the order both live in
+  the data rather than in this file.
+*/
+export type CollectionStyle = "contact" | "fan" | "strips" | "editorial";
+export type SectionId = string;
+export const collectionStyles: CollectionStyle[] = ["contact", "fan", "strips", "editorial"];
+export const builtInSections: SectionId[] = ["contact", "fan", "strips", "editorial"];
 
 export type Collection = {
+  style: CollectionStyle;
   label: string;
   showLabel: boolean;
   title: string;
@@ -160,12 +172,12 @@ export const defaultState: PhotoState = {
   heroTitle: "Sometimes one frame is enough.",
   heroLede: "Photography for people, places, products and the work behind them.",
   collections: {
-    contact: { label: "Coastguard", showLabel: true, title: "Ready for anything", showTitle: true, images: contactSheet },
+    contact: { style: "contact", label: "Coastguard", showLabel: true, title: "Ready for anything", showTitle: true, images: contactSheet },
     // Labels off for these three at the client's curation; the names stay in
     // the data so the editor can turn them back on.
-    fan: { label: "Primary ITO", showLabel: false, title: "Hands on, every day", showTitle: true, images: fanned },
-    strips: { label: "OSPRI", showLabel: false, title: "Faces, places, purpose", showTitle: true, images: strips },
-    editorial: { label: "Hikoi & Observational", showLabel: false, title: "Because they just happen", showTitle: true, images: editorial },
+    fan: { style: "fan", label: "Primary ITO", showLabel: false, title: "Hands on, every day", showTitle: true, images: fanned },
+    strips: { style: "strips", label: "OSPRI", showLabel: false, title: "Faces, places, purpose", showTitle: true, images: strips },
+    editorial: { style: "editorial", label: "Hikoi & Observational", showLabel: false, title: "Because they just happen", showTitle: true, images: editorial },
   },
   breathers: [img(`${P}/z6-1786678073-6c134bec.jpg`), { ...img(`${P}/img-8268a-1785783280.jpg`), focusY: 92 }],
   closing: "Sometimes all you need is a still image.",
@@ -176,14 +188,40 @@ export const defaultState: PhotoState = {
   pageLayout: [...defaultPageLayout],
 };
 
-export const sectionOrder: SectionId[] = ["contact", "fan", "strips", "editorial"];
-
-export const sectionNames: Record<SectionId, string> = {
+export const styleNames: Record<CollectionStyle, string> = {
   contact: "Contact sheet",
   fan: "Fanned collection",
   strips: "Sliced collection",
   editorial: "Editorial grid",
 };
+
+// The ids of every collection, in page order, breathers left out.
+export function collectionIds(state: PhotoState): SectionId[] {
+  return state.pageLayout.filter((slot): slot is SectionId => slot in state.collections);
+}
+
+// "Editorial grid" while there is one of that style, "Editorial grid 2" once
+// there are two, numbered in page order, so the panel's headings and the Move
+// to list can tell them apart without the client naming anything.
+export function collectionName(state: PhotoState, id: SectionId): string {
+  const c = state.collections[id];
+  if (!c) return id;
+  const same = collectionIds(state).filter((other) => state.collections[other].style === c.style);
+  const n = same.indexOf(id);
+  return same.length > 1 && n >= 0 ? `${styleNames[c.style]} ${n + 1}` : styleNames[c.style];
+}
+
+export function emptyCollection(style: CollectionStyle): Collection {
+  return { style, label: "", showLabel: false, title: "", showTitle: true, images: [] };
+}
+
+// `<style>-2`, `<style>-3`... the first free one, never reusing an id that a
+// draft or a published layout might still carry.
+export function newCollectionId(state: PhotoState, style: CollectionStyle): SectionId {
+  let n = 2;
+  while (`${style}-${n}` in state.collections) n += 1;
+  return `${style}-${n}`;
+}
 
 // Saved or published state is merged field by field over the defaults rather
 // than taken wholesale, so JSON from an older shape (or a hand-edited one)
@@ -210,11 +248,11 @@ export function mergeSaved(saved: unknown): PhotoState {
       frameH: typeof c.frameH === "number" ? Math.min(100, Math.max(20, c.frameH)) : undefined,
     };
   };
-  const collection = (id: SectionId): Collection => {
-    const d = defaultState.collections[id];
+  const collection = (id: SectionId, d: Collection): Collection => {
     const c = s.collections?.[id];
     if (!c) return d;
     return {
+      style: d.style,
       label: typeof c.label === "string" ? c.label : d.label,
       showLabel: typeof c.showLabel === "boolean" ? c.showLabel : d.showLabel,
       title: typeof c.title === "string" ? c.title : d.title,
@@ -222,16 +260,27 @@ export function mergeSaved(saved: unknown): PhotoState {
       images: Array.isArray(c.images) ? c.images.map((entry) => image(entry, img(""))).filter((entry) => entry.src) : d.images,
     };
   };
+  /*
+    The four built-ins always exist and merge over their defaults. Any other
+    id is an added collection: kept when it names a known style, dropped
+    otherwise, so a hand-edited or older JSON cannot put an unrenderable
+    section on the page.
+  */
+  const collections: Record<SectionId, Collection> = {};
+  builtInSections.forEach((id) => {
+    collections[id] = collection(id, defaultState.collections[id]);
+  });
+  Object.entries(s.collections ?? {}).forEach(([id, c]) => {
+    if (id in collections || !c || typeof c !== "object") return;
+    const style = (c as Partial<Collection>).style;
+    if (typeof style !== "string" || !collectionStyles.includes(style as CollectionStyle)) return;
+    collections[id] = collection(id, emptyCollection(style as CollectionStyle));
+  });
   return {
     hero: image(s.hero, defaultState.hero),
     heroTitle: typeof s.heroTitle === "string" ? s.heroTitle : defaultState.heroTitle,
     heroLede: typeof s.heroLede === "string" ? s.heroLede : defaultState.heroLede,
-    collections: {
-      contact: collection("contact"),
-      fan: collection("fan"),
-      strips: collection("strips"),
-      editorial: collection("editorial"),
-    },
+    collections,
     breathers: Array.isArray(s.breathers) && s.breathers.length === 2
       ? [image(s.breathers[0], defaultState.breathers[0]), image(s.breathers[1], defaultState.breathers[1])]
       : defaultState.breathers,
@@ -240,30 +289,39 @@ export function mergeSaved(saved: unknown): PhotoState {
     ctaTitle: typeof s.ctaTitle === "string" ? s.ctaTitle : defaultState.ctaTitle,
     ctaButton: typeof s.ctaButton === "string" ? s.ctaButton : defaultState.ctaButton,
     showCta: typeof s.showCta === "boolean" ? s.showCta : defaultState.showCta,
-    pageLayout: readPageLayout(s),
+    pageLayout: readPageLayout(s, Object.keys(collections)),
   };
 }
 
 /*
-  Accepted only as a full permutation of the six slots. A v1.11.62 draft
-  carries the four-section `sectionLayout` instead; it is migrated with the
-  breathers put back in their fixed v1.11.62 places, after the second and
-  third sections. Anything else falls back to the default order.
+  v1.11.79: the saved order is kept for every slot it names that exists, in
+  that order, once each; anything it names that does not exist is dropped and
+  anything that exists but is not named is appended, built-ins in their
+  default order and added collections after. So a layout published before a
+  collection was added, or one that names a collection since removed, still
+  renders everything exactly once.
+
+  A v1.11.62 draft carries the four-section `sectionLayout` instead; it is
+  migrated with the breathers put back in their fixed v1.11.62 places, after
+  the second and third sections.
 */
-function readPageLayout(s: Partial<PhotoState> & { sectionLayout?: SectionId[] }): PageSlot[] {
-  const candidate = s.pageLayout;
-  if (
-    Array.isArray(candidate) &&
-    candidate.length === defaultPageLayout.length &&
-    defaultPageLayout.every((slot) => candidate.includes(slot))
-  ) {
-    return [...candidate];
-  }
+function readPageLayout(s: Partial<PhotoState> & { sectionLayout?: SectionId[] }, ids: SectionId[]): PageSlot[] {
+  const known = new Set<PageSlot>([...defaultPageLayout, ...ids]);
+  let candidate: unknown = s.pageLayout;
   const old = s.sectionLayout;
-  if (Array.isArray(old) && old.length === sectionOrder.length && sectionOrder.every((id) => old.includes(id))) {
-    return [old[0], old[1], "breather-0", old[2], "breather-1", old[3]];
+  if (!Array.isArray(candidate) && Array.isArray(old) && old.length === builtInSections.length && builtInSections.every((id) => old.includes(id))) {
+    candidate = [old[0], old[1], "breather-0", old[2], "breather-1", old[3]];
   }
-  return [...defaultPageLayout];
+  const ordered: PageSlot[] = [];
+  if (Array.isArray(candidate)) {
+    candidate.forEach((slot) => {
+      if (typeof slot === "string" && known.has(slot) && !ordered.includes(slot)) ordered.push(slot);
+    });
+  }
+  [...defaultPageLayout, ...ids].forEach((slot) => {
+    if (!ordered.includes(slot)) ordered.push(slot);
+  });
+  return ordered;
 }
 
 // blob: URLs die with the browser session that minted them, so they must

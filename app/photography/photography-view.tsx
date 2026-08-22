@@ -26,17 +26,22 @@ import React, { useEffect, useRef, useState } from "react";
 import { BUILD, PageHeader, SiteFooter } from "../portfolio-shell";
 import {
   type Collection,
+  type CollectionStyle,
   type PhotoImage,
   type PhotoState,
   type SectionId,
   type PageSlot,
-  defaultPageLayout,
+  builtInSections,
+  collectionIds,
+  collectionName,
+  collectionStyles,
   defaultState,
+  emptyCollection,
   img,
   mergeSaved,
+  newCollectionId,
   sanitizeState,
-  sectionNames,
-  sectionOrder,
+  styleNames,
 } from "./data";
 import { EditorialGrid } from "./editorial-grid";
 import { PortalPicker, collectionSlugOf, rememberedSlug } from "./portal-picker";
@@ -228,10 +233,10 @@ const parseTarget = (key: string | undefined): ImageTarget | null => {
   if (!key) return null;
   if (key === "hero") return { kind: "hero" };
   if (key.startsWith("breather-")) return { kind: "breather", index: Number(key.slice("breather-".length)) };
+  // v1.11.79: any id can be a collection now, so the section is checked
+  // against state where the target is used rather than against a fixed list.
   const cut = key.lastIndexOf("-");
-  const section = key.slice(0, cut) as SectionId;
-  if (!sectionOrder.includes(section)) return null;
-  return { kind: "image", section, index: Number(key.slice(cut + 1)) };
+  return { kind: "image", section: key.slice(0, cut), index: Number(key.slice(cut + 1)) };
 };
 
 export function PhotographyView({
@@ -252,6 +257,7 @@ export function PhotographyView({
   // single mode swaps the one image the panel has selected.
   const [picker, setPicker] = useState<{ section: SectionId } | { target: ImageTarget } | null>(null);
   const [copied, setCopied] = useState(false);
+  const [newStyle, setNewStyle] = useState<CollectionStyle>("editorial");
   const [publishKey, setPublishKey] = useState("");
   const [liveStatus, setLiveStatus] = useState<"unknown" | "published" | "defaults">("unknown");
   const [publishMsg, setPublishMsg] = useState("");
@@ -448,6 +454,7 @@ export function PhotographyView({
     const el = event.currentTarget;
     const target = parseTarget(el.dataset.editTarget);
     if (!target) return;
+    if (target.kind === "image" && !state.collections[target.section]) return;
     const image = getImage(target);
     const boxW = el.offsetWidth;
     const boxH = el.offsetHeight;
@@ -512,76 +519,64 @@ export function PhotographyView({
     the panel. v1.11.63: the two breathers are movable slots in the same list
     (state.pageLayout), so the whole page below the hero reorders.
   */
+  /*
+    v1.11.79: a collection renders by its style, not its id, so any number of
+    collections can share a treatment. On the public page a collection with no
+    photos renders nothing at all: a freshly added one is empty until the
+    editor fills it, and a heading over nothing is not a section. The editor
+    still shows it, because that is where it gets filled.
+  */
   const sectionJsx = (id: SectionId) => {
-    if (id === "contact") {
+    const c = state.collections[id];
+    if (!c) return null;
+    if (!editable && c.images.length === 0) return null;
+    const imgProps = (image: PhotoImage, index: number) => ({
+      src: image.src,
+      alt: "",
+      loading: "lazy" as const,
+      style: focus(image),
+      ...editAttrs({ kind: "image", section: id, index }),
+      onPointerDown: editable ? onImagePointerDown : undefined,
+      onPointerMove: editable ? onImagePointerMove : undefined,
+      onPointerUp: editable ? onImagePointerUp : undefined,
+      onPointerCancel: editable ? onImagePointerCancel : undefined,
+    });
+    if (c.style === "contact") {
       return (
         <section className="photo-section">
-          {collectionBlock("contact")}
+          {collectionBlock(id)}
           <div className="contact-grid">
-            {state.collections.contact.images.map((image, index) => (
+            {c.images.map((image, index) => (
               <div className="contact-cell" key={`${image.src}-${index}`}>
-                <img
-                  src={image.src}
-                  alt=""
-                  loading="lazy"
-                  style={focus(image)}
-                  {...editAttrs({ kind: "image", section: "contact", index })}
-                  onPointerDown={editable ? onImagePointerDown : undefined}
-                  onPointerMove={editable ? onImagePointerMove : undefined}
-                  onPointerUp={editable ? onImagePointerUp : undefined}
-                  onPointerCancel={editable ? onImagePointerCancel : undefined}
-                />
+                <img {...imgProps(image, index)} />
               </div>
             ))}
           </div>
         </section>
       );
     }
-    if (id === "fan") {
+    if (c.style === "fan") {
       return (
         <section className="photo-section">
-          {collectionBlock("fan")}
-          <div
-            className="fan-stack"
-            style={{ "--n": state.collections.fan.images.length } as React.CSSProperties}
-          >
-            {state.collections.fan.images.map((image, index) => (
+          {collectionBlock(id)}
+          <div className="fan-stack" style={{ "--n": c.images.length } as React.CSSProperties}>
+            {c.images.map((image, index) => (
               <div className="fan-card" key={`${image.src}-${index}`} style={{ "--i": index } as React.CSSProperties}>
-                <img
-                  src={image.src}
-                  alt=""
-                  loading="lazy"
-                  style={focus(image)}
-                  {...editAttrs({ kind: "image", section: "fan", index })}
-                  onPointerDown={editable ? onImagePointerDown : undefined}
-                  onPointerMove={editable ? onImagePointerMove : undefined}
-                  onPointerUp={editable ? onImagePointerUp : undefined}
-                  onPointerCancel={editable ? onImagePointerCancel : undefined}
-                />
+                <img {...imgProps(image, index)} />
               </div>
             ))}
           </div>
         </section>
       );
     }
-    if (id === "strips") {
+    if (c.style === "strips") {
       return (
         <section className="photo-section">
-          {collectionBlock("strips")}
+          {collectionBlock(id)}
           <div className="strips-container">
-            {state.collections.strips.images.map((image, index) => (
+            {c.images.map((image, index) => (
               <div className="strip" key={`${image.src}-${index}`}>
-                <img
-                  src={image.src}
-                  alt=""
-                  loading="lazy"
-                  style={focus(image)}
-                  {...editAttrs({ kind: "image", section: "strips", index })}
-                  onPointerDown={editable ? onImagePointerDown : undefined}
-                  onPointerMove={editable ? onImagePointerMove : undefined}
-                  onPointerUp={editable ? onImagePointerUp : undefined}
-                  onPointerCancel={editable ? onImagePointerCancel : undefined}
-                />
+                <img {...imgProps(image, index)} />
               </div>
             ))}
           </div>
@@ -590,12 +585,12 @@ export function PhotographyView({
     }
     return (
       <section className="photo-section">
-        {collectionBlock("editorial")}
+        {collectionBlock(id)}
         <EditorialGrid
-          images={state.collections.editorial.images.map((image, index) => ({
+          images={c.images.map((image, index) => ({
             src: image.src,
             style: focus(image),
-            attrs: editAttrs({ kind: "image", section: "editorial", index }),
+            attrs: editAttrs({ kind: "image", section: id, index }),
           }))}
           onImagePointerDown={editable ? onImagePointerDown : undefined}
           onImagePointerMove={editable ? onImagePointerMove : undefined}
@@ -606,7 +601,8 @@ export function PhotographyView({
     );
   };
 
-  const layout = state.pageLayout?.length === defaultPageLayout.length ? state.pageLayout : defaultPageLayout;
+  // mergeSaved always hands back a layout naming every slot once.
+  const layout = state.pageLayout;
 
   const breatherJsx = (index: number) => (
     <section className="photo-breather" style={frameStyle(state.breathers[index])}>
@@ -625,11 +621,8 @@ export function PhotographyView({
   const slotJsx = (slot: PageSlot) =>
     slot === "breather-0" ? breatherJsx(0) : slot === "breather-1" ? breatherJsx(1) : sectionJsx(slot);
 
-  const slotNames: Record<PageSlot, string> = {
-    ...sectionNames,
-    "breather-0": "Big picture 1",
-    "breather-1": "Big picture 2",
-  };
+  const slotName = (slot: PageSlot) =>
+    slot === "breather-0" ? "Big picture 1" : slot === "breather-1" ? "Big picture 2" : collectionName(state, slot);
 
   const textProps = (fieldId: string) =>
     editable ? { "data-edit-text": true, onClick: () => focusField(fieldId) } : {};
@@ -771,14 +764,14 @@ export function PhotographyView({
             <h3>Page order</h3>
             {layout.map((slot, position) => (
               <div className="photo-editor-order-row" key={slot}>
-                <span>{slotNames[slot]}</span>
+                <span>{slotName(slot)}</span>
                 <div>
                   <button
                     type="button"
                     disabled={position === 0}
                     onClick={() =>
                       update((current) => {
-                        const next = [...(current.pageLayout ?? defaultPageLayout)];
+                        const next = [...current.pageLayout];
                         [next[position - 1], next[position]] = [next[position], next[position - 1]];
                         return { ...current, pageLayout: next };
                       })
@@ -791,7 +784,7 @@ export function PhotographyView({
                     disabled={position === layout.length - 1}
                     onClick={() =>
                       update((current) => {
-                        const next = [...(current.pageLayout ?? defaultPageLayout)];
+                        const next = [...current.pageLayout];
                         [next[position], next[position + 1]] = [next[position + 1], next[position]];
                         return { ...current, pageLayout: next };
                       })
@@ -803,15 +796,48 @@ export function PhotographyView({
               </div>
             ))}
             <p className="editor-note">Everything below the hero moves; the hero stays first. Big pictures 1 and 2 are the full-width photos between sections.</p>
+            {/*
+              v1.11.79: a new collection in any of the four styles, on the
+              client's mark (a second editorial grid was the ask). It lands at
+              the end of the page order, empty, and the section for it appears
+              below; it is invisible on the public page until it has photos.
+            */}
+            <label>
+              Add a collection
+              <div className="editor-two-column">
+                <select value={newStyle} onChange={(event) => setNewStyle(event.target.value as CollectionStyle)}>
+                  {collectionStyles.map((style) => (
+                    <option key={style} value={style}>{styleNames[style]}</option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={() =>
+                    update((current) => {
+                      const id = newCollectionId(current, newStyle);
+                      return {
+                        ...current,
+                        collections: { ...current.collections, [id]: emptyCollection(newStyle) },
+                        pageLayout: [...current.pageLayout, id],
+                      };
+                    })
+                  }
+                >
+                  Add
+                </button>
+              </div>
+            </label>
           </section>
 
-          {sectionOrder.slice(0, 2).map((id) => (
-            <CollectionControls key={id} id={id} state={state} active={active} setActive={setActive} update={update} updateCollection={updateCollection} openPicker={setPicker} />
-          ))}
-          <BreatherControls index={0} state={state} update={update} active={active} select={select} openPicker={setPicker} />
-          <CollectionControls id="strips" state={state} active={active} setActive={setActive} update={update} updateCollection={updateCollection} openPicker={setPicker} />
-          <BreatherControls index={1} state={state} update={update} active={active} select={select} openPicker={setPicker} />
-          <CollectionControls id="editorial" state={state} active={active} setActive={setActive} update={update} updateCollection={updateCollection} openPicker={setPicker} />
+          {/* v1.11.79: the controls follow the page order, as the note at the
+              top of the panel has always said they do. */}
+          {layout.map((slot) =>
+            slot === "breather-0" || slot === "breather-1" ? (
+              <BreatherControls key={slot} index={slot === "breather-0" ? 0 : 1} state={state} update={update} active={active} select={select} openPicker={setPicker} />
+            ) : (
+              <CollectionControls key={slot} id={slot} state={state} active={active} setActive={setActive} update={update} updateCollection={updateCollection} openPicker={setPicker} />
+            ),
+          )}
 
           <section className="editor-section">
             <h3>Closing line</h3>
@@ -898,7 +924,7 @@ export function PhotographyView({
         <PortalPicker
           heading={
             "section" in picker
-              ? `${sectionNames[picker.section]}: choose photos`
+              ? `${collectionName(state, picker.section)}: choose photos`
               : "Swap this photo"
           }
           multi={"section" in picker}
@@ -1258,7 +1284,7 @@ function CollectionControls({
 
   return (
     <section className="editor-section">
-      <h3>{sectionNames[id]}</h3>
+      <h3>{collectionName(state, id)}</h3>
       <label>
         Client / source label
         <input id={`pe-in-${id}-label`} type="text" value={c.label} onChange={(event) => updateCollection(id, { label: event.target.value })} />
@@ -1353,8 +1379,8 @@ function CollectionControls({
               }}
             >
               <option value="">Choose…</option>
-              {sectionOrder.filter((other) => other !== id).map((other) => (
-                <option key={other} value={other}>{sectionNames[other]}</option>
+              {collectionIds(state).filter((other) => other !== id).map((other) => (
+                <option key={other} value={other}>{collectionName(state, other)}</option>
               ))}
               <option value="hero">Use as hero</option>
               <option value="breather-0">Use as breather 1</option>
@@ -1402,6 +1428,25 @@ function CollectionControls({
           />
         </label>
       </div>
+
+      {/* Only an added collection can be removed; the four built-ins are the
+          source defaults and the merge would put them straight back. */}
+      {!builtInSections.includes(id) && (
+        <button
+          type="button"
+          className="photo-editor-remove"
+          onClick={() => {
+            setActive(null);
+            update((current) => {
+              const collections = { ...current.collections };
+              delete collections[id];
+              return { ...current, collections, pageLayout: current.pageLayout.filter((slot) => slot !== id) };
+            });
+          }}
+        >
+          Remove this collection
+        </button>
+      )}
     </section>
   );
 }
