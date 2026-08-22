@@ -591,3 +591,63 @@
   layout question in tests/fan-geometry.test.mjs settled first.
 */
 
+
+/*
+  v1.11.78: the "puff of black" when the fan settles on Video.
+
+  Measured at 80ms steps through the settle: the active media layer's opacity
+  is continuous across the moment `.fan-cycle` comes off (0.35 to 0.37), but
+  the wash is not. During the fan it is the light gradient above, 0.18 black
+  at centre; settled it is the 0.7-at-centre gradient from the rule at line
+  247. A gradient background cannot be transitioned, so `transition` on the
+  element does nothing and the centre of the screen darkens by half in one
+  frame. That is the puff.
+
+  Fix: the element itself paints nothing, and its two pseudo-elements each
+  carry one of the gradients, unchanged. Only their opacity moves, which does
+  transition. During the fan `::before` (light) shows and `::after` (settled)
+  is held off with no transition, so the fan always starts from the right
+  wash. When `.fan-cycle` comes off the two cross over 1.4s. The settled look
+  and the fan look are exactly what they were; only the step between them is
+  gone.
+
+  `background: none` on the element must come after the line 247 rule and
+  match its specificity, which is why this sits at the end of the file.
+*/
+.home-stage .stage-wash {
+  background: none;
+}
+
+.home-stage .stage-wash::before,
+.home-stage .stage-wash::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transition: opacity 1.4s ease;
+}
+
+/* The fan wash, as in `.fan-cycle .stage-wash` above. */
+.home-stage .stage-wash::before {
+  opacity: 0;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(3, 4, 4, 0.18), rgba(3, 4, 4, 0.6) 48%, rgba(3, 4, 4, 0.92) 88%),
+    linear-gradient(to bottom, rgba(3, 4, 4, 0.36), rgba(3, 4, 4, 0.12) 44%, rgba(3, 4, 4, 0.9));
+}
+
+/* The settled wash, as in the rule at line 247. */
+.home-stage .stage-wash::after {
+  opacity: 1;
+  background:
+    radial-gradient(circle at 50% 43%, rgba(3, 4, 4, 0.7) 0, rgba(3, 4, 4, 0.38) 23%, rgba(3, 4, 4, 0.58) 52%, rgba(3, 4, 4, 0.9) 90%),
+    linear-gradient(to bottom, rgba(3, 4, 4, 0.32), rgba(3, 4, 4, 0.08) 44%, rgba(3, 4, 4, 0.88));
+}
+
+.home-stage.fan-cycle .stage-wash::before {
+  opacity: 1;
+  transition: none;
+}
+
+.home-stage.fan-cycle .stage-wash::after {
+  opacity: 0;
+  transition: none;
+}
