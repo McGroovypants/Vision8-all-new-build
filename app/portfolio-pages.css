@@ -575,6 +575,32 @@
   font-weight: 600;
 }
 
+/*
+  v1.11.76: the greeting line, under the title on Te Ao Māori & Pasifika.
+
+  [IMPORTANT] The selector must stay two levels deep. `.video-detail-copy p`
+  above is a class plus an element and outranks a lone class, so a bare
+  `.video-detail-greeting` loses its size and colour to it and the rule looks
+  like it did nothing. This shipped that way once.
+
+  Smaller than the body copy and brighter than it, 0.88 against 0.72, so it
+  reads as part of the heading block rather than as the first sentence of the
+  description. The negative top margin eats half of the title's 12px so the two
+  sit as one unit, and `text-wrap: balance` keeps the two lines close in length
+  rather than leaving one word stranded on the second.
+
+  Ranged left with everything else in the panel. The Duda page centred it, but
+  there the whole band was centred; here the title and the paragraph are both
+  left, and a centred line between them reads as a mistake.
+*/
+.video-detail-copy .video-detail-greeting {
+  margin: -6px 0 14px;
+  color: rgba(243, 244, 239, 0.88);
+  font-size: clamp(0.95rem, 1.15vw, 1.08rem);
+  line-height: 1.5;
+  text-wrap: balance;
+}
+
 .video-detail-close {
   position: absolute;
   top: 12px;

@@ -24,6 +24,18 @@ type Service = {
     render around.
   */
   description: { lead: string; body: string };
+  /*
+    v1.11.76: greetings shown under the title in the detail panel, restored from
+    the Duda site. Optional, and only Te Ao Māori & Pasifika carries them; it is
+    the one card where the greeting is the point rather than decoration.
+
+    An array rather than one pre-joined string, because the separator is
+    presentation: the render joins with a non-breaking space, a dot and an
+    ordinary space, so a line can only ever break *after* a dot and the list
+    never starts a line on a separator. Keep each greeting whole in one entry,
+    including any that are two words.
+  */
+  greetings?: string[];
   video?: string;
   poster: string;
 };
@@ -64,10 +76,28 @@ const services: Service[] = [
     title: "Te Ao Māori & Pasifika",
     slug: "te-ao-maori-pasifika",
     card: "Māori and Pasifika stories told in partnership, with care for the people, context and purpose.",
+    /*
+      v1.11.76: the client's own wording from the Duda site, replacing the
+      provisional copy written for this build. Verbatim, macrons and all.
+    */
     description: {
-      lead: "Telling Māori and Pasifika stories begins with listening.",
-      body: "Vision8 collaborates with tangata whenua, organisations, ministries and broadcasters, taking care to understand the people, context and purpose before filming begins.",
+      lead: "Honouring Indigenous culture means understanding the importance of doing things the right way.",
+      body: "Vision8 celebrates working in partnership with Tangata whenua, Kaihautu and Tautai to get to the heart of any story before it is told. This allows the story to be shared in a way that honours its origins, whether that be to audiences of Whakaata Māori, TVNZ, International broadcasters or delivered online.",
     },
+    greetings: [
+      "Kia ora koutou",
+      "Kia Orana",
+      "Bula vinaka",
+      "Ko na mauri!",
+      "Ekamowir Omo",
+      "Fakaalofa lahi atu",
+      "Gude la Orana",
+      "Tālofa lava",
+      "Fakafeiloaki",
+      "Mālo Ni",
+      "Mālō e lelei",
+      "Halo",
+    ],
     video: `${VIDEO}/Vision8_Te_Ao_Maori_Reel_1_ck0nsf.mp4`,
     poster: `${POSTER}/Vision8_Te_Ao_Maori_Reel_1_ck0nsf.jpg`,
   },
@@ -337,6 +367,14 @@ export function VideoServices({ openSlug }: { openSlug?: string } = {}) {
           <ServiceVisual service={selected} detail />
           <div className="video-detail-copy">
             <h2>{selected.title}</h2>
+            {selected.greetings && (
+              /*
+                ` · ` : the space before each dot is non-breaking and the
+                one after it is not, so the list wraps after a dot and never
+                orphans a separator onto the start of a line.
+              */
+              <p className="video-detail-greeting">{selected.greetings.join(" · ")}</p>
+            )}
             <p>
               <strong>{selected.description.lead} </strong>
               {selected.description.body}
