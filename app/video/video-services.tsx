@@ -26,16 +26,24 @@ type Service = {
   description: { lead: string; body: string };
   /*
     v1.11.76: greetings shown under the title in the detail panel, restored from
-    the Duda site. Optional, and only Te Ao Māori & Pasifika carries them; it is
+    the Duda site. Optional, and only Te Ao Maori & Pasifika carries them; it is
     the one card where the greeting is the point rather than decoration.
 
-    An array rather than one pre-joined string, because the separator is
-    presentation: the render joins with a non-breaking space, a dot and an
-    ordinary space, so a line can only ever break *after* a dot and the list
-    never starts a line on a separator. Keep each greeting whole in one entry,
-    including any that are two words.
+    v1.11.77: an array of lines rather than one list. The client wants the
+    greeting read at size on a single line, and twelve greetings do not fit one
+    line at that size, so the panel shows one line at a time and dissolves
+    between them on a loop. Each inner array is one line; the render joins it
+    with a non-breaking space, a dot and an ordinary space so a line that does
+    have to wrap on a phone can only break after a dot. Keep each greeting
+    whole in one entry, including the two-word ones.
   */
-  greetings?: string[];
+  greetings?: string[][];
+  /*
+    v1.11.77: an optional second paragraph under the main one, on the client's
+    mark. Only Te Ao Maori & Pasifika has one; the other eight are a single
+    paragraph and render nothing here.
+  */
+  more?: string;
   video?: string;
   poster: string;
 };
@@ -85,19 +93,11 @@ const services: Service[] = [
       body: "Vision8 celebrates working in partnership with Tangata whenua, Kaihautu and Tautai to get to the heart of any story before it is told. This allows the story to be shared in a way that honours its origins, whether that be to audiences of Whakaata Māori, TVNZ, International broadcasters or delivered online.",
     },
     greetings: [
-      "Kia ora koutou",
-      "Kia Orana",
-      "Bula vinaka",
-      "Ko na mauri!",
-      "Ekamowir Omo",
-      "Fakaalofa lahi atu",
-      "Gude la Orana",
-      "Tālofa lava",
-      "Fakafeiloaki",
-      "Mālo Ni",
-      "Mālō e lelei",
-      "Halo",
+      ["Kia ora koutou", "Kia Orana", "Bula vinaka", "Ko na mauri!"],
+      ["Ekamowir Omo", "Fakaalofa lahi atu", "Gude la Orana", "Tālofa lava"],
+      ["Fakafeiloaki", "Mālo Ni", "Mālō e lelei", "Halo"],
     ],
+    more: "The team at Vision8 often consult with Government Ministries, NGO\u2019s, along with Māori and Pasifika organisations to tell stories to many audiences.",
     video: `${VIDEO}/Vision8_Te_Ao_Maori_Reel_1_ck0nsf.mp4`,
     poster: `${POSTER}/Vision8_Te_Ao_Maori_Reel_1_ck0nsf.jpg`,
   },
@@ -369,16 +369,25 @@ export function VideoServices({ openSlug }: { openSlug?: string } = {}) {
             <h2>{selected.title}</h2>
             {selected.greetings && (
               /*
-                ` · ` : the space before each dot is non-breaking and the
-                one after it is not, so the list wraps after a dot and never
-                orphans a separator onto the start of a line.
+                Every line is in the DOM at once, stacked in one grid cell, and
+                the keyframe decides which one is visible. The delay steps each
+                line a third of the cycle later than the last, so line n is
+                fading out over exactly the two seconds line n+1 is fading in.
+                A cycle is fixed at 15s in the stylesheet; three lines only.
               */
-              <p className="video-detail-greeting">{selected.greetings.join(" · ")}</p>
+              <p className="video-detail-greeting" aria-label={selected.greetings.flat().join(", ")}>
+                {selected.greetings.map((line, index) => (
+                  <span key={index} style={{ animationDelay: `${index * 5}s` }} aria-hidden="true">
+                    {line.join(" · ")}
+                  </span>
+                ))}
+              </p>
             )}
             <p>
               <strong>{selected.description.lead} </strong>
               {selected.description.body}
             </p>
+            {selected.more && <p>{selected.more}</p>}
           </div>
         </>}
       </dialog>

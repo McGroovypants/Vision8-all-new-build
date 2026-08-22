@@ -576,29 +576,68 @@
 }
 
 /*
-  v1.11.76: the greeting line, under the title on Te Ao Māori & Pasifika.
+  v1.11.76: the greeting line, under the title on Te Ao Maori & Pasifika.
 
   [IMPORTANT] The selector must stay two levels deep. `.video-detail-copy p`
   above is a class plus an element and outranks a lone class, so a bare
   `.video-detail-greeting` loses its size and colour to it and the rule looks
   like it did nothing. This shipped that way once.
 
-  Smaller than the body copy and brighter than it, 0.88 against 0.72, so it
-  reads as part of the heading block rather than as the first sentence of the
-  description. The negative top margin eats half of the title's 12px so the two
-  sit as one unit, and `text-wrap: balance` keeps the two lines close in length
-  rather than leaving one word stranded on the second.
+  v1.11.77: roughly double the size, on the client's mark, and one line at a
+  time. Twelve greetings do not fit a single line at this size, so the three
+  lines stack in one grid cell and `greeting-cycle` shows them in turn. The
+  cycle is 15s: each line holds for 3s and takes 2s to dissolve, and the spans
+  are delayed 0, 5 and 10s from the markup, so a line is always fading out over
+  exactly the two seconds the next one fades in. The dissolve is opacity and
+  blur together, which is the soft-focus cross that was asked for rather than a
+  plain fade. Change the timing here and the 5s step in video-services.tsx
+  together, or two lines end up visible at once.
 
-  Ranged left with everything else in the panel. The Duda page centred it, but
-  there the whole band was centred; here the title and the paragraph are both
-  left, and a centred line between them reads as a mistake.
+  The grid cell takes the height of the tallest line, so the copy below does
+  not shift when a longer line arrives, and a line that has to wrap on a phone
+  wraps inside that cell.
+
+  Brighter than the body copy, 0.88 against 0.72, so it reads as part of the
+  heading block. Ranged left with everything else in the panel.
 */
 .video-detail-copy .video-detail-greeting {
-  margin: -6px 0 14px;
+  display: grid;
+  margin: -4px 0 16px;
   color: rgba(243, 244, 239, 0.88);
-  font-size: clamp(0.95rem, 1.15vw, 1.08rem);
-  line-height: 1.5;
-  text-wrap: balance;
+  font-size: clamp(1.35rem, 2.1vw, 1.9rem);
+  line-height: 1.3;
+}
+
+.video-detail-greeting span {
+  grid-area: 1 / 1;
+  opacity: 0;
+  filter: blur(8px);
+  animation: greeting-cycle 15s linear infinite;
+}
+
+@keyframes greeting-cycle {
+  /* 0 to 2s: arrive. 2 to 5s: hold. 5 to 7s: leave. 7 to 15s: wait. */
+  0% { opacity: 0; filter: blur(8px); }
+  13.333% { opacity: 1; filter: blur(0); }
+  33.333% { opacity: 1; filter: blur(0); }
+  46.667% { opacity: 0; filter: blur(8px); }
+  100% { opacity: 0; filter: blur(8px); }
+}
+
+/*
+  No motion: the three lines simply stack, all visible, and the grid cell
+  becomes a normal flow so they do not overprint each other.
+*/
+@media (prefers-reduced-motion: reduce) {
+  .video-detail-copy .video-detail-greeting {
+    display: block;
+  }
+  .video-detail-greeting span {
+    display: block;
+    opacity: 1;
+    filter: none;
+    animation: none;
+  }
 }
 
 .video-detail-close {
