@@ -62,43 +62,51 @@ export default function ContactPage() {
       intro="Wellington based, working anywhere in Aotearoa New Zealand."
       heroImage={HERO}
     >
+      {/* v1.11.81: the paragraph under the heading is gone on the client's
+          mark; the heading stands alone above the details. */}
       <div className="portfolio-intro-grid">
         <h2>Start with a conversation.</h2>
-        <p>
-          Most projects begin with a short call about what you are trying to
-          achieve, before anyone talks about cameras or budgets.
-        </p>
       </div>
 
-      <div className="portfolio-card-grid">
-        <article className="portfolio-card">
-          <span>Email</span>
-          <h3>
+      {/*
+        v1.11.80: three plain rows, not cards, on the client's mark ("do not
+        like the boxes"). The v1.11.68 note already said the case-study card
+        style left a lot of empty box round a phone number. A row is a label
+        and the fact, separated by the page's hairline, with the fact set large
+        enough to be the thing you read. A definition list, because that is
+        what it is: three terms and their values.
+      */}
+      <dl className="contact-lines">
+        <div>
+          <dt>Email</dt>
+          <dd>
             <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
-          </h3>
-        </article>
-        <article className="portfolio-card">
-          <span>Phone</span>
+          </dd>
+        </div>
+        <div>
+          <dt>Phone</dt>
           {/*
             Local form on screen, international in the href, so the link still
             dials correctly from any handset while the number reads as a New
             Zealand mobile. See the note in site.ts.
           */}
-          <h3>
+          <dd>
             <a href={TEL_HREF}>{CONTACT.phoneDisplay}</a>
-          </h3>
-        </article>
-        <article className="portfolio-card">
-          <span>Where we are</span>
+          </dd>
+        </div>
+        <div>
+          <dt>Where we are</dt>
           {/*
             The bilingual form is carried over from the current live site. It is
             the studio's own phrasing and a genuine point of difference, so it
             is kept rather than flattened to "Wellington".
           */}
-          <h3>Te Whanganui-a-Tara, Aotearoa</h3>
-          <p>Wellington, New Zealand</p>
-        </article>
-      </div>
+          <dd>
+            Te Whanganui-a-Tara, Aotearoa
+            <small>Wellington, New Zealand</small>
+          </dd>
+        </div>
+      </dl>
 
       <script
         type="application/ld+json"

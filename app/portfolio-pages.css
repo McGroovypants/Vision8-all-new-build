@@ -4013,3 +4013,69 @@
   color: rgba(255, 255, 255, 0.78);
   line-height: 1.62;
 }
+
+/*
+  v1.11.80: the contact details as rows rather than cards. Each row is a
+  hairline, a small teal label in the left column and the fact in the right,
+  set large because on this page the fact is the content. The label column
+  is fixed so the three facts line up; below 720px the label sits above its
+  fact instead.
+*/
+.contact-lines {
+  margin: 0;
+  border-top: 1px solid var(--line);
+}
+
+.contact-lines > div {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 12px 24px;
+  align-items: baseline;
+  padding: clamp(22px, 3vw, 34px) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+/* v1.11.81: up 50% on the client's mark, treatment A of three shown. */
+.contact-lines dt {
+  color: var(--teal-bright);
+  font-size: 1.02rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.contact-lines dd {
+  margin: 0;
+  font-size: clamp(2.25rem, 4.5vw, 3.9rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.contact-lines dd a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.contact-lines dd a:hover,
+.contact-lines dd a:focus-visible {
+  border-bottom-color: var(--teal-bright);
+}
+
+.contact-lines dd small {
+  display: block;
+  margin-top: 6px;
+  color: rgba(243, 244, 239, 0.68);
+  font-size: 0.5em;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+@media (max-width: 720px) {
+  .contact-lines > div {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
