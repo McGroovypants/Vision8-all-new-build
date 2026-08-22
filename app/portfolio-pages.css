@@ -4079,3 +4079,57 @@
     gap: 8px;
   }
 }
+
+/*
+  v1.11.82: the contact page fits one screen. At the client's 90% zoom on a Mac
+  the v1.11.81 page ended at the h2, with all three rows below the fold. The
+  hero drops from 68svh to 46svh, the content padding tightens, and the rows
+  are half the v1.11.81 size (type and row height both), on the client's mark.
+  Scoped to `.contact-shell` so no other route moves.
+*/
+.contact-shell .portfolio-hero {
+  min-height: min(46svh, 480px);
+  padding-top: clamp(32px, 4vw, 56px);
+  padding-bottom: clamp(32px, 4vw, 56px);
+}
+
+.contact-shell .portfolio-hero-copy h1 {
+  margin-bottom: 14px;
+  font-size: clamp(2.4rem, 5.2vw, 5.6rem);
+}
+
+.contact-shell .portfolio-content {
+  padding: clamp(32px, 4vw, 52px) 0 64px;
+}
+
+.contact-shell .portfolio-intro-grid {
+  margin-bottom: 24px;
+}
+
+.contact-shell .portfolio-intro-grid h2 {
+  font-size: clamp(1.5rem, 2.6vw, 2.6rem);
+}
+
+.contact-shell .contact-lines > div {
+  gap: 8px 24px;
+  padding: clamp(12px, 1.5vw, 18px) 0;
+}
+
+.contact-shell .contact-lines dt {
+  font-size: 0.78rem;
+}
+
+.contact-shell .contact-lines dd {
+  font-size: clamp(1.15rem, 2.25vw, 1.95rem);
+}
+
+.contact-shell .contact-lines dd small {
+  margin-top: 2px;
+  font-size: 0.6em;
+}
+
+@media (max-width: 720px) {
+  .contact-shell .portfolio-hero {
+    min-height: 50svh;
+  }
+}

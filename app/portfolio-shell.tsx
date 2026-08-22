@@ -6,7 +6,7 @@ const CLOUD = "https://res.cloudinary.com/deyb4o5qz";
 const LOGO = `${CLOUD}/image/upload/v1785634240/new_vision8_logo_design_clean_2_whfcvy.png`;
 // Exported for the photography editor: its localStorage key is derived from
 // the build, the same guard the homepage editor uses (trap 4 in AGENTS.md).
-export const BUILD = "v1.11.81";
+export const BUILD = "v1.11.82";
 
 // Returning to the homepage from an internal page should not replay the 3.2s
 // logo intro; it is an opening, not a transition. The homepage reads this and
@@ -46,16 +46,20 @@ export function PortfolioShell({
   title,
   intro,
   heroImage,
+  className,
   children,
 }: {
   eyebrow: string;
   title: string;
   intro: string;
   heroImage?: string;
+  // v1.11.82: an optional page class on <main>, so a route can re-proportion
+  // the shared hero and content without touching the other routes' styles.
+  className?: string;
   children: ReactNode;
 }) {
   return (
-    <main className="portfolio-shell">
+    <main className={className ? `portfolio-shell ${className}` : "portfolio-shell"}>
       <PageHeader />
 
       <section className="portfolio-hero">

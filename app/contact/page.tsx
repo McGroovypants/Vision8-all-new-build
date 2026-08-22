@@ -61,7 +61,11 @@ export default function ContactPage() {
       title="Tell us what you're thinking."
       intro="Wellington based, working anywhere in Aotearoa New Zealand."
       heroImage={HERO}
+      className="contact-shell"
     >
+      {/* v1.11.82: `contact-shell` halves the contact rows and shortens the
+          hero so the heading and all three details sit in the first screen
+          (checked at the client's 90% zoom on a Mac), with no scroll. */}
       {/* v1.11.81: the paragraph under the heading is gone on the client's
           mark; the heading stands alone above the details. */}
       <div className="portfolio-intro-grid">
