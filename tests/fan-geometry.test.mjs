@@ -172,14 +172,23 @@ async function measure(browser, vp, origin) {
     /*
       skipintro=1 clears the 3.2s logo overlay.
 
-      No wait for the opening sequence: the arms are laid out by CSS on first
-      paint and the sequence animates opacity, line width and the media stack,
-      none of which move a label. Waiting for the stage to leave .fan-cycle
-      cost fourteen minutes across these viewports and changed no measurement.
+      v1.11.78: the measurement waits for the stage to leave .fan-cycle. The
+      note that used to sit here said no wait was needed because the sequence
+      moves no label. True of the labels, not of the copy: the stage copy is
+      keyed by the active division, and when the fan settles on Video it is
+      replaced by Video's own, which on a landscape phone sits under the logo
+      core. Measuring at 250ms after fonts normally landed before the settle
+      and saw the "home" copy; on a loaded machine the same 250ms landed after
+      it and saw Video's, and the two landscape viewports failed with "logo
+      over copy". Three green runs and one red on the same build, then red on
+      every run at a load average of 11. Waiting for the settle makes the
+      measurement the same every time, and it is the settled state a visitor
+      actually lives with. The two findings it now sees are in the baseline
+      with the other twelve landscape findings, same [DECISION].
 
-      The font, though, does have to be resolved before anything is measured:
-      text width decides every label box, and the fallback's metrics are not
-      the shipped ones.
+      The font has to be resolved before anything is measured: text width
+      decides every label box, and the fallback's metrics are not the shipped
+      ones.
     */
     /*
       domcontentloaded, not load: the homepage's media comes from Cloudinary and
@@ -190,6 +199,10 @@ async function measure(browser, vp, origin) {
     await page.goto(`${origin}/?skipintro=1`, { waitUntil: "domcontentloaded" });
     await page.waitForSelector(".fan-node", { state: "attached" });
     await page.evaluate(() => document.fonts.ready);
+    await page.waitForFunction(() => {
+      const stage = document.querySelector(".home-stage");
+      return stage !== null && !stage.classList.contains("fan-cycle");
+    }, null, { timeout: 20000 });
     await page.waitForTimeout(250);
 
     return await page.evaluate(() => {
