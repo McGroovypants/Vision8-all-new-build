@@ -482,6 +482,10 @@
   Capped so the copy below always fits inside the dialog. At full width a 16/9
   frame is 675px tall, which together with the title and description overran the
   92svh ceiling and the overflow rule clipped the last line of copy.
+
+  v1.11.75: down from 62svh. The client's rewrite turned the description from
+  one sentence into a full paragraph, so the copy now needs roughly double the
+  room it did and the old cap put the longest of the nine back over the ceiling.
 */
 .video-detail video,
 .video-detail img {
@@ -490,12 +494,19 @@
   min-height: 0;
   width: 100%;
   aspect-ratio: 16 / 9;
-  max-height: 62svh;
+  max-height: 52svh;
   object-fit: cover;
 }
 
+/*
+  v1.11.75: shrinkable rather than fixed, so on a short viewport the longest
+  copy scrolls inside its own panel instead of running past the dialog's
+  `overflow: hidden` and losing its last lines with nothing to reach them by.
+  `min-height: 0` is what actually lets a flex item scroll.
+*/
 .video-detail-copy {
-  flex: 0 0 auto;
+  flex: 0 1 auto;
+  min-height: 0;
   overflow-y: auto;
   padding: clamp(22px, 4vw, 40px);
 }
@@ -551,6 +562,17 @@
   color: rgba(243, 244, 239, 0.72);
   font-size: clamp(1.05rem, 1.45vw, 1.3rem);
   line-height: 1.6;
+}
+
+/*
+  v1.11.75: the opening line of each description. Full-strength white against
+  the paragraph's 0.72 does the lifting; the weight is only 600 because the
+  contrast step is already the emphasis and bolder than that reads as a second
+  heading under the title.
+*/
+.video-detail-copy p strong {
+  color: var(--white);
+  font-weight: 600;
 }
 
 .video-detail-close {

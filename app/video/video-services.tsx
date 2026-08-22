@@ -9,11 +9,21 @@ type Service = {
   // ampersand makes a derived slug either ugly or unstable, and these appear in
   // URLs the homepage links to.
   slug: string;
-  // Shown on the card, two lines. Carried over verbatim from the GitHub Pages
-  // build, where it sat under every title and was lost when the cards moved
-  // behind the modal. `description` is the longer modal copy and is separate.
+  // Shown on the card, two lines. v1.11.75: rewritten alongside `description`
+  // rather than carried over from the GitHub Pages build, so a card and the
+  // panel its button opens no longer read in two different voices. Held to one
+  // sentence: the caption band's height is a term in the grid's fold budget.
   card: string;
-  description: string;
+  /*
+    v1.11.75: the modal copy, rewritten by the client and now two parts rather
+    than one sentence. `lead` is the opening line the panel sets in bold and
+    `body` is the paragraph that runs on from it; they are one paragraph on the
+    page, split here only so the emphasis lives in the data instead of being
+    marked up inside a string. Both are required: every one of the nine opens
+    on a lead line, so a missing one is a copy gap rather than a variant to
+    render around.
+  */
+  description: { lead: string; body: string };
   video?: string;
   poster: string;
 };
@@ -31,75 +41,111 @@ const services: Service[] = [
   {
     title: "Air & Underwater Filming",
     slug: "air-underwater-filming",
-    card: "Aerial and underwater filming add both unique and cinematic views that elevate any story.",
-    description: "Certified drone, helicopter, underwater and boat filming, planned carefully for memorable images in demanding locations.",
+    card: "Aerial and underwater filming, carefully planned, for the shot that adds something to the story.",
+    description: {
+      lead: "Some stories need a different point of view.",
+      body: "Vision8 brings experience in aerial and underwater filming, with careful planning around safety, access and the realities of working in difficult environments. From drone tracking and wide aerial landscapes to underwater photography, the aim is always the same: get the shot that adds something to the story.",
+    },
     video: `${VIDEO}/Vision8_sky_and_water_Reel_1_uzx4vi.mp4`,
     poster: `${POSTER}/Vision8_sky_and_water_Reel_1_uzx4vi.jpg`,
   },
   {
     title: "Marketing & Engagement",
     slug: "marketing-engagement",
-    card: "Strategic, imaginative campaigns for marketing teams, from concept through to delivery.",
-    description: "Strategic, imaginative campaigns from concept to delivery, created to give marketing teams material that connects.",
+    card: "Clear, engaging films for campaigns and brands, shaped around what you need people to do.",
+    description: {
+      lead: "Good marketing video starts with understanding what you need people to notice, feel or do.",
+      body: "Vision8 works with you to shape ideas into clear, engaging films for campaigns, brands and organisations. The approach is collaborative and practical, combining strong storytelling with experienced production so the finished work feels considered, useful and right for the audience it needs to reach.",
+    },
     video: `${VIDEO}/Vision8_Corp_Comms_Reels_1_czh0mh.mp4`,
     poster: `${POSTER}/Vision8_Corp_Comms_Reels_1_czh0mh.jpg`,
   },
   {
     title: "Te Ao Māori & Pasifika",
     slug: "te-ao-maori-pasifika",
-    card: "Honouring Indigenous culture means understanding the importance of doing things the right way.",
-    description: "Stories developed in partnership, with care for their origins, audiences and the right way to tell them.",
+    card: "Māori and Pasifika stories told in partnership, with care for the people, context and purpose.",
+    description: {
+      lead: "Telling Māori and Pasifika stories begins with listening.",
+      body: "Vision8 collaborates with tangata whenua, organisations, ministries and broadcasters, taking care to understand the people, context and purpose before filming begins.",
+    },
     video: `${VIDEO}/Vision8_Te_Ao_Maori_Reel_1_ck0nsf.mp4`,
     poster: `${POSTER}/Vision8_Te_Ao_Maori_Reel_1_ck0nsf.jpg`,
   },
   {
     title: "Corporate Comms",
     slug: "corporate-comms",
-    card: "Staff learn faster with engaging video. Bring out the best in your organisation with great corporate communications.",
-    description: "Clear, engaging video for induction, learning, culture change and internal communication.",
+    card: "Training, induction and culture-change video that people understand and remember.",
+    description: {
+      lead: "Internal video does not need to feel like internal video.",
+      body: "Vision8 works with HR, communications and leadership teams to make training, induction, health and safety, professional development and culture-change content clear and engaging. The focus is on helping people understand and remember what matters, using strong visuals and storytelling.",
+    },
     video: `${VIDEO}/Vision8_Corp_Comms_Reels_1_czh0mh.mp4`,
     poster: `${POSTER}/Vision8_Corp_Comms_Reels_1_czh0mh.jpg`,
   },
   {
     title: "Food Filming & Styling",
     slug: "food-filming-styling",
-    card: "Capturing the taste, colour, and scrumptiousness of food on camera is an art form.",
-    description: "Food content shaped by experience in timing, lighting, styling and making every detail look its best.",
+    card: "Styling, lighting, texture and movement, working together to make food look its best on screen.",
+    description: {
+      lead: "When it comes to food, small details make a big difference.",
+      body: "Styling, lighting, texture and movement all need to work together to make it look great on screen. Vision8 brings long experience directing and filming food, from television commercials to cooking programmes and branded content, with an eye for the moments that make people want to keep watching.",
+    },
     video: `${VIDEO}/Vision8_Food_Reel_1_pn4hog.mp4`,
     poster: `${POSTER}/Vision8_Food_Reel_1_pn4hog.jpg`,
   },
   {
     title: "Motion & Animation",
     slug: "motion-animation",
-    card: "Motion graphics and animation add professionalism and a winning edge to branding, logos, and titles.",
-    description: "Polished motion graphics, 2D and 3D animation that clarify ideas and give brands a distinctive edge.",
+    card: "Animation, titles and graphic design that explain ideas and strengthen a brand.",
+    description: {
+      lead: "Motion graphics and animation can add clarity, energy and polish when live action alone cannot tell the whole story.",
+      body: "Vision8 uses animation, titles and graphic design to explain ideas, strengthen branding and bring information to life.",
+    },
     video: `${VIDEO}/Vision8_Animation_Motion_Gfx_h0emew.mp4`,
     poster: `${POSTER}/Vision8_Animation_Motion_Gfx_h0emew.jpg`,
   },
   {
     title: "Explainer Videos",
     slug: "explainer-videos",
-    card: "Create precise, detailed working models or clarify complex topics with explainer videos that make stories easier to understand.",
-    description: "Visual explanations that make complex subjects, machinery and working models easier to understand.",
+    card: "Complex ideas made easier to see, using live action, motion graphics and animation.",
+    description: {
+      lead: "Some ideas are easier to understand when you can see them working.",
+      body: "Vision8 creates explainer films using a mix of live action, editing, motion graphics, animation and, where useful, AI-generated imagery. From machinery and processes to abstract concepts, the goal is to make complex information feel simple without oversimplifying it, and to give viewers a clear visual path through the subject.",
+    },
     video: `${VIDEO}/Vision_8_Explainer_videos_reel_nkyotq.mp4`,
     poster: `${POSTER}/Vision_8_Explainer_videos_reel_nkyotq.jpg`,
   },
   {
     title: "Testimonial Videos",
     slug: "testimonial-videos",
-    card: "Your clients, customers, staff, stakeholders, and of course, you, are the best ambassadors of your brand and message.",
-    description: "Comfortable, authentic interviews that let the people who matter carry the story.",
+    card: "Clients, staff and stakeholders, relaxed on camera and speaking for your organisation.",
+    description: {
+      lead: "The strongest message often comes from the people who already know your organisation well.",
+      body: "Vision8 has extensive experience interviewing clients, staff and stakeholders, helping people relax and speak naturally on camera. We look for the real moments, then shape the strongest material into a clear story that feels credible, human and worth listening to.",
+    },
     video: `${VIDEO}/Vision8_Testimonials_Reels_V1_udukwv.mp4`,
     poster: `${POSTER}/Vision8_Testimonials_Reels_V1_udukwv.jpg`,
   },
   {
     title: "Rural Videos",
     slug: "rural-videos",
-    card: "Honest stories from rural Aotearoa, told with a feel for the people, the land and the work behind them.",
-    description: "Honest stories from rural Aotearoa, filmed with practical know-how and a feel for the people, land and work behind them.",
+    card: "More than twenty years filming on farms across New Zealand, and the trust that comes with it.",
+    description: {
+      lead: "Good rural stories come from earning people\u2019s trust.",
+      body: "Vision8 has been filming on farms across New Zealand for more than 20 years. Ten years covering finalists for the FMG Young Farmer of the Year alone meant interviewing hundreds of farmers from Southland to the Far North. From farm families and apprentices to animal health, biosecurity and products used on farm, we know how to help people feel comfortable, speak naturally and show what they do best.",
+    },
     // v1.11.72: off Cloudinary and onto the S3 bucket, on the client's mark.
     // Absolute rather than built from CLOUD because this is the first card on
     // the new origin; the other eight are still Cloudinary.
+    //
+    // v1.11.75: the reel, supplied by the client. Until now this was the one
+    // card of nine with no `video`, so it rendered as a still and the detail
+    // panel opened on a photograph. [NOTE] It is the 1080p master at 27.5MB,
+    // where the other eight are Cloudinary `w_960,q_auto` and an order of
+    // magnitude smaller. Nothing fetches it until a play call, so it costs
+    // nothing until the row is reached, but on a phone reaching that row now
+    // pulls 27.5MB. A smaller rendition on the same path is the fix.
+    video: "https://media.vision8.co.nz/library/public/assets/rural-video-cut-2/rural-video-cut-2_1080p.mp4",
     poster: "https://media.vision8.co.nz/library/public/assets/imgc8130-1600x1067-1786739327-2756a95e/optimised.jpg",
   },
 ];
@@ -291,7 +337,10 @@ export function VideoServices({ openSlug }: { openSlug?: string } = {}) {
           <ServiceVisual service={selected} detail />
           <div className="video-detail-copy">
             <h2>{selected.title}</h2>
-            <p>{selected.description}</p>
+            <p>
+              <strong>{selected.description.lead} </strong>
+              {selected.description.body}
+            </p>
           </div>
         </>}
       </dialog>
