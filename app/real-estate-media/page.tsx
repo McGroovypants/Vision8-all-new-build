@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader, SiteFooter } from "../portfolio-shell";
+import { type PadKey } from "./padding";
+import { readPublishedRePad } from "./published";
 import { ReelHero } from "./reel-hero";
 import { ViewportPlay } from "./viewport-play";
 
@@ -157,7 +159,20 @@ export const metadata: Metadata = {
   alternates: { canonical: "/real-estate-media" },
 };
 
-export default function RealEstateMediaPage() {
+export default async function RealEstateMediaPage() {
+  /*
+    v1.11.85: published spacing from the Real Estate editor (Worker KV, same
+    discipline as the photography page). Each section carries data-pad; a
+    published number lands as inline padding-block, an absent one leaves the
+    stylesheet's clamp() standing. The editor at /real-estate-media/editor
+    renders this same component and writes the same inline property, so the
+    draft and the published page cannot disagree about what a value means.
+  */
+  const pad = (await readPublishedRePad())?.pad ?? {};
+  const padProps = (key: PadKey) => ({
+    "data-pad": key,
+    style: pad[key] != null ? { paddingBlock: pad[key] } : undefined,
+  });
   return (
     <main className="real-estate-page">
       <PageHeader division="Real Estate Media" />
@@ -191,7 +206,7 @@ export default function RealEstateMediaPage() {
         page had already shown the work, and describing it afterwards was the
         weakest thing on the page. What is left is the strongest.
       */}
-      <section className="re-section re-statement">
+      <section className="re-section re-statement" {...padProps("statement")}>
         <div className="re-inner">
           <blockquote className="re-voice re-voice-lead">
             <p>{VOICE.property}</p>
@@ -200,7 +215,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <section className="re-section re-anchor" id="video">
+      <section className="re-section re-anchor" id="video" {...padProps("people")}>
         <div className="re-inner">
           <ViewportPlay className="re-split re-flip">
             <figure>
@@ -245,7 +260,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <section className="re-section re-anchor" id="photography">
+      <section className="re-section re-anchor" id="photography" {...padProps("photography")}>
         <div className="re-inner">
           <div className="re-section-head">
             <p className="re-eyebrow">Photography</p>
@@ -318,7 +333,7 @@ export default function RealEstateMediaPage() {
         sits directly above Drone on the client's mark, after the photography.
         No label, like the floor plans: the heading is the label.
       */}
-      <section className="re-section">
+      <section className="re-section" {...padProps("experience")}>
         <div className="re-inner">
           <div className="re-experience">
             {/* v1.11.51: the strip sits under this heading, credit over each
@@ -358,7 +373,7 @@ export default function RealEstateMediaPage() {
         column: the frame is portrait, and at the 7fr width the other figures
         take it would run 850px tall.
       */}
-      <section className="re-section">
+      <section className="re-section" {...padProps("drone")}>
         <div className="re-inner">
           <div className="re-split re-drone">
             <figure>
@@ -388,7 +403,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <section className="re-section re-anchor" id="walkthroughs">
+      <section className="re-section re-anchor" id="walkthroughs" {...padProps("walkthroughs")}>
         <div className="re-inner">
           <ViewportPlay className="re-split">
             <figure>
@@ -426,7 +441,7 @@ export default function RealEstateMediaPage() {
         block inside the tours: a floor plan is not a 360 tour, and it carries
         its own h3 and no eyebrow.
       */}
-      <section className="re-section re-anchor" id="plans">
+      <section className="re-section re-anchor" id="plans" {...padProps("plans")}>
         <div className="re-inner">
           <div className="re-split">
             <figure className="re-plan">
@@ -451,7 +466,7 @@ export default function RealEstateMediaPage() {
         folded into the closing from v1.11.4x; the second sentence ("It works
         alongside the systems your agency already uses.") is gone.
       */}
-      <section className="re-section">
+      <section className="re-section" {...padProps("delivery")}>
         <div className="re-inner">
           <div className="re-split">
             <figure className="re-portal">
@@ -470,7 +485,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <section className="re-closing">
+      <section className="re-closing" {...padProps("closing")}>
         <div className="re-closing-copy">
           <h2>Let&rsquo;s make the next one good.</h2>
           <p>

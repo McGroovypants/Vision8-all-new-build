@@ -4235,3 +4235,45 @@
     animation: none;
   }
 }
+
+/*
+  v1.11.85: rows for the Real Estate editor's spacing sliders, inside the
+  global .editor-panel. Grid rather than flex so the nine value cells align
+  in a column and a changed number does not shuffle its row.
+*/
+.re-editor-row {
+  display: grid;
+  grid-template-columns: 108px 1fr 48px auto;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.re-editor-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #d8dcda;
+}
+
+.re-editor-value {
+  font-size: 0.7rem;
+  color: rgba(216, 220, 218, 0.75);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.re-editor-row button {
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 4px;
+  color: #d8dcda;
+  background: transparent;
+  cursor: pointer;
+  font: 600 0.66rem/1 var(--font);
+}
+
+.re-editor-row button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}

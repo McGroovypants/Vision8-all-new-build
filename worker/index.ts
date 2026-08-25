@@ -137,6 +137,46 @@ const worker = {
       return new Response("Method not allowed", { status: 405 });
     }
 
+    /*
+      v1.11.85: Publish to live for the Real Estate editor, the photography
+      pair exactly, in the same KV namespace under its own key and behind the
+      same publish token. The layout is a small padding map; the 16KB cap is
+      generous for that and a wall against anything that is not it.
+    */
+    if (url.pathname === "/real-estate-media/layout.json" && request.method === "GET") {
+      const raw = env.PHOTO_LAYOUT ? await env.PHOTO_LAYOUT.get("re-layout") : null;
+      if (!raw) return new Response("Not found", { status: 404 });
+      return new Response(raw, {
+        headers: { "content-type": "application/json", "cache-control": "no-store" },
+      });
+    }
+
+    if (url.pathname === "/real-estate-media/publish") {
+      if (!env.PHOTO_LAYOUT || !env.PHOTO_PUBLISH_TOKEN) {
+        return new Response("Publishing not configured", { status: 503 });
+      }
+      if (request.headers.get("authorization") !== `Bearer ${env.PHOTO_PUBLISH_TOKEN}`) {
+        return new Response("Unauthorized", { status: 401 });
+      }
+      if (request.method === "DELETE") {
+        await env.PHOTO_LAYOUT.delete("re-layout");
+        return new Response(null, { status: 204 });
+      }
+      if (request.method === "POST") {
+        const text = await request.text();
+        if (text.length > 16384) return new Response("Too large", { status: 413 });
+        try {
+          const parsed: unknown = JSON.parse(text);
+          if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("shape");
+        } catch {
+          return new Response("Invalid layout JSON", { status: 400 });
+        }
+        await env.PHOTO_LAYOUT.put("re-layout", text);
+        return new Response(null, { status: 204 });
+      }
+      return new Response("Method not allowed", { status: 405 });
+    }
+
     return handler.fetch(request, env, ctx);
   },
 };

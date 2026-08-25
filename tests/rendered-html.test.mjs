@@ -22,14 +22,14 @@ async function render(pathname = "/") {
   );
 }
 
-test("server-renders the Vision8 v1.11.84 homepage", async () => {
+test("server-renders the Vision8 v1.11.85 homepage", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /Vision8 homepage/);
-  assert.match(html, /Build <!-- -->v1\.11\.84/);
+  assert.match(html, /Build <!-- -->v1\.11\.85/);
   assert.match(html, /aria-label="Vision8 home"/);
   assert.match(html, /Audio/);
   assert.match(html, /Tech Solutions/);
@@ -65,7 +65,7 @@ for (const [pathname, expected] of routes) {
 
     const html = await response.text();
     assert.match(html, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.match(html, /Build (?:<!-- -->)?v1\.11\.84/);
+    assert.match(html, /Build (?:<!-- -->)?v1\.11\.85/);
     assert.match(html, />Home</);
     assert.match(html, />About us</);
     assert.match(html, />Our mahi</);
@@ -173,4 +173,37 @@ test("internal Video and About navigation replace the external GitHub page", asy
   assert.match(html, /href="\/video"/);
   assert.match(html, /href="\/about"/);
   assert.doesNotMatch(html, /mcgroovypants\.github\.io\/V8-website-2026/);
+});
+
+test("the real estate editor is not on the public real estate page", async () => {
+  const response = await render("/real-estate-media");
+  const html = await response.text();
+  assert.doesNotMatch(html, /Real estate editor/);
+  assert.doesNotMatch(html, /editor-panel/);
+});
+
+test("the real estate editor lives on its own route and is not indexable", async () => {
+  const response = await render("/real-estate-media/editor");
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Real estate editor/);
+  assert.match(html, /editor-panel/);
+  assert.match(html, /noindex/);
+});
+
+test("real estate layout endpoint 404s with no published layout", async () => {
+  const response = await render("/real-estate-media/layout.json");
+  assert.equal(response.status, 404);
+});
+
+test("real estate publish endpoint refuses when unconfigured", async () => {
+  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
+  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}-re-publish`);
+  const { default: worker } = await import(workerUrl.href);
+  const response = await worker.fetch(
+    new Request("http://localhost/real-estate-media/publish", { method: "POST", body: "{}" }),
+    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
+    { waitUntil() {}, passThroughOnException() {} },
+  );
+  assert.equal(response.status, 503);
 });
