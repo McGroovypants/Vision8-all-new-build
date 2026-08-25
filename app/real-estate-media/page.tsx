@@ -75,8 +75,17 @@ const HELEN_PORTRAIT =
 */
 const MATTERPORT_TOUR = "";
 
-// Five services, one line, in the client's order.
-const services = ["Video", "Photography", "3D walkthroughs", "2D Plans", "Virtual staging"];
+// Five services, one line, in the client's order. v1.11.84: four are links
+// that scroll to their sections below, on the client's mark. Virtual staging
+// has no section on the page yet, so it stays plain text rather than a link
+// to nowhere; give it an href here once there is somewhere to send it.
+const services: { label: string; href?: string }[] = [
+  { label: "Video", href: "#video" },
+  { label: "Photography", href: "#photography" },
+  { label: "3D walkthroughs", href: "#walkthroughs" },
+  { label: "2D Plans", href: "#plans" },
+  { label: "Virtual staging" },
+];
 
 /*
   Harry Eggers' testimonial, supplied by the client and used as excerpts placed
@@ -158,7 +167,9 @@ export default function RealEstateMediaPage() {
         strip={
           <ul className="re-services">
             {services.map((service) => (
-              <li key={service}>{service}</li>
+              <li key={service.label}>
+                {service.href ? <a href={service.href}>{service.label}</a> : service.label}
+              </li>
             ))}
           </ul>
         }
@@ -189,7 +200,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <section className="re-section">
+      <section className="re-section re-anchor" id="video">
         <div className="re-inner">
           <ViewportPlay className="re-split re-flip">
             <figure>
@@ -234,7 +245,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <section className="re-section">
+      <section className="re-section re-anchor" id="photography">
         <div className="re-inner">
           <div className="re-section-head">
             <p className="re-eyebrow">Photography</p>
@@ -377,7 +388,7 @@ export default function RealEstateMediaPage() {
         </div>
       </section>
 
-      <section className="re-section">
+      <section className="re-section re-anchor" id="walkthroughs">
         <div className="re-inner">
           <ViewportPlay className="re-split">
             <figure>
@@ -415,7 +426,7 @@ export default function RealEstateMediaPage() {
         block inside the tours: a floor plan is not a 360 tour, and it carries
         its own h3 and no eyebrow.
       */}
-      <section className="re-section">
+      <section className="re-section re-anchor" id="plans">
         <div className="re-inner">
           <div className="re-split">
             <figure className="re-plan">

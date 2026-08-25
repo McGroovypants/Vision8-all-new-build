@@ -4141,7 +4141,97 @@
   alpha as .re-credit: quiet by opacity, not size, and on the 50% floor.
 */
 .real-estate-page .re-photo-credit {
+  /* v1.11.84: centred and 20% brighter (0.55 to 0.66) on the client's mark. */
   margin: 14px 0 0;
-  color: rgba(243, 244, 239, 0.55);
+  color: rgba(243, 244, 239, 0.66);
   font-size: 1.05rem;
+  text-align: center;
+}
+
+/*
+  v1.11.84: the hero services row becomes links. Four of the five scroll to
+  their sections; Virtual staging is plain text until it has a destination.
+  The rollover is the site's teal, the same accent as the separator dots.
+  The page, not the document, is the scroll container (trap 8), so smooth
+  scrolling is declared on .real-estate-page and each target carries
+  .re-anchor with scroll-margin for the sticky header.
+*/
+.real-estate-page {
+  scroll-behavior: smooth;
+}
+
+.real-estate-page .re-anchor {
+  scroll-margin-top: 80px;
+}
+
+.real-estate-page .re-services a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.real-estate-page .re-services a:hover,
+.real-estate-page .re-services a:focus-visible {
+  color: var(--teal-bright);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .real-estate-page {
+    scroll-behavior: auto;
+  }
+}
+
+/*
+  v1.11.84: the hero scroll cue. A teal chevron centred in the clear band
+  between the services row (bottom of .re-hero-copy, 58px up at the least)
+  and the scrub line, so it overlaps neither. It mounts at 15 seconds and
+  fades in, so the opening 15 seconds are untouched, and unmounts on first
+  scroll. The bob is 6px and slow; under prefers-reduced-motion it holds
+  still and simply appears.
+*/
+.re-scroll-cue {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--teal-bright);
+  cursor: pointer;
+  transform: translateX(-50%);
+  animation:
+    cue-arrive 900ms ease-out both,
+    cue-bob 2.6s ease-in-out 900ms infinite;
+}
+
+.re-scroll-cue svg {
+  width: 26px;
+  height: 13px;
+}
+
+.re-scroll-cue:hover,
+.re-scroll-cue:focus-visible {
+  color: var(--white);
+}
+
+@keyframes cue-arrive {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes cue-bob {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .re-scroll-cue {
+    animation: none;
+  }
 }

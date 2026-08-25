@@ -17,9 +17,43 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 */
 export function ReelHero({ src, children, strip }: { src: string; children: ReactNode; strip?: ReactNode }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const [soundOn, setSoundOn] = useState(false);
   const [playing, setPlaying] = useState(true);
   const [percent, setPercent] = useState(0);
+  // v1.11.84: the scroll cue. The client's report: the hero reads as a video
+  // page, and people may not know there is a page below it. The cue fades in
+  // at 15 seconds, absolutely positioned, so the opening 15 seconds render
+  // exactly as they did (the client's mark), and it goes for good the moment
+  // the visitor scrolls, since a visitor who has scrolled has got the message.
+  const [cue, setCue] = useState(false);
+  const scrolledRef = useRef(false);
+
+  useEffect(() => {
+    // The page, not the document, is the scroll container (trap 8 in
+    // AGENTS.md), so the listener goes on the enclosing <main>.
+    const main = sectionRef.current?.closest("main");
+    const timer = window.setTimeout(() => {
+      if (!scrolledRef.current) setCue(true);
+    }, 15000);
+    const onScroll = () => {
+      if ((main?.scrollTop ?? 0) < 40) return;
+      scrolledRef.current = true;
+      setCue(false);
+      main?.removeEventListener("scroll", onScroll);
+    };
+    main?.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.clearTimeout(timer);
+      main?.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  function scrollPastHero() {
+    // The statement section is the hero's next sibling; scrollIntoView walks
+    // the ancestor chain, so it scrolls the <main> container correctly.
+    sectionRef.current?.nextElementSibling?.scrollIntoView({ behavior: "smooth" });
+  }
 
   // The element is the source of truth, not our state: it can pause itself when
   // the tab is hidden or the network stalls, and the control has to follow.
@@ -69,7 +103,7 @@ export function ReelHero({ src, children, strip }: { src: string; children: Reac
   }
 
   return (
-    <section className="re-hero">
+    <section className="re-hero" ref={sectionRef}>
       <div className="re-hero-video">
         {/* muted and playsInline are both load-bearing: without muted the
             autoplay is refused outright, and without playsInline iOS takes the
@@ -90,6 +124,17 @@ export function ReelHero({ src, children, strip }: { src: string; children: Reac
         {children}
         <div className="re-hero-foot">{strip}</div>
       </div>
+
+      {/* Rendered only once cued: mounting it hidden from the start would put
+          it in the accessibility tree through the untouched first 15s. */}
+      {cue && (
+        <button type="button" className="re-scroll-cue" onClick={scrollPastHero}>
+          <span className="sr-only">There&rsquo;s more below, scroll or select to continue</span>
+          <svg viewBox="0 0 24 12" aria-hidden="true" focusable="false">
+            <path d="M2 2l10 8 10-8" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      )}
 
       <div className="re-playbar">
         <button type="button" className="re-playtoggle" onClick={togglePlay}>
