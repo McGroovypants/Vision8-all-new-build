@@ -255,6 +255,10 @@ export default function RealEstateMediaPage() {
             <img src="/real-estate/villa-entrance.jpg" alt="Villa entrance with clipped hedges and stone driveway" loading="lazy" />
             <img src="/real-estate/karaka-dusk.jpg" alt="Covered deck at dusk with lit timber walls and rural outlook" loading="lazy" />
           </div>
+          {/* v1.11.83: the credit under the six frames, on the client's mark.
+              Set as a caption to the grid, not an attribution between quotes:
+              left-ranged and tight under the frames, unlike .re-credit. */}
+          <p className="re-photo-credit">All photos above courtesy of photographer Helen Gwyther.</p>
           {/*
             v1.11.44 put the Experience copy here, above the pair; v1.11.53
             moved it, with the strip, to its own section above People on the

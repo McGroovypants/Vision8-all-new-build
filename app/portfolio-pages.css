@@ -4133,3 +4133,15 @@
     min-height: 50svh;
   }
 }
+
+/*
+  v1.11.83: the credit under the six photography frames. A caption to the
+  grid, so it ranges left under the frames and sits close to them, unlike
+  .re-credit, which is a centred attribution between quote blocks. Same 0.55
+  alpha as .re-credit: quiet by opacity, not size, and on the 50% floor.
+*/
+.real-estate-page .re-photo-credit {
+  margin: 14px 0 0;
+  color: rgba(243, 244, 239, 0.55);
+  font-size: 1.05rem;
+}
