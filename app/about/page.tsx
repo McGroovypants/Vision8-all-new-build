@@ -40,6 +40,22 @@ const people = [
     ],
   },
   {
+    /*
+      v1.11.90: the client supplied the sauce line, "Rocket Sauce", a nod to
+      Rocket Rentals in the copy below. Live AV came out of the role with it,
+      so this reads as two crafts and a sauce like every other line here;
+      the breadth it named is still in the second paragraph.
+    */
+    name: "Paul Holland",
+    role: "Lighting Cameraman / DOP / Rocket Sauce",
+    image: PAUL_PORTRAIT,
+    bio: [
+      "Paul is one of those rare people who, when he turns his hand to something, tends to master it. Growing up in Te Whanganui-a-Tara, Wellington, he followed his passion for capturing media and began working alongside professional camera crews, starting out packing gear at Rocket Rentals before becoming a sought-after freelance lighting cameraman and DOP.",
+      "His work has since expanded into social media campaigns, live AV for touring professional speakers and, more recently, building purpose-made business apps.",
+      "Away from work, the pattern continues. He has learned to fly, raced cars and worked hard at guitar and bass, his band recently placing runner-up in two battle of the bands finals, no mean feat. That breadth of knowledge, combined with good judgement and a calm head, makes Paul a trusted confidant and an excellent person to have alongside you on a project.",
+    ],
+  },
+  {
     name: "Kat Greagar",
     role: "Photography / Underwater Camera / Stylish Sauce",
     image: `${CLOUD}/image/upload/w_900,q_auto,f_auto/Kat_ljp1ow.jpg`,
@@ -55,21 +71,7 @@ const people = [
       "Jeramiah is a composer, producer and sound designer with an extraordinary ear for creating worlds through sound. His work has reached everything from music and interactive media to major international creative projects, including collaborations with Weta Workshop, DreamWorks, RESN, PIKPOK, Activision and Magic Leap.",
     ],
   },
-  {
-    /*
-      [CHECK] The role line is drawn from the supplied copy. The other four
-      close on a sauce joke the client writes; this one does not, because
-      inventing one puts words in the client's mouth. Replace when supplied.
-    */
-    name: "Paul Holland",
-    role: "Lighting Cameraman / DOP / Live AV",
-    image: PAUL_PORTRAIT,
-    bio: [
-      "Paul is one of those rare people who, when he turns his hand to something, tends to master it. Growing up in Te Whanganui-a-Tara, Wellington, he followed his passion for capturing media and began working alongside professional camera crews, starting out packing gear at Rocket Rentals before becoming a sought-after freelance lighting cameraman and DOP.",
-      "His work has since expanded into social media campaigns, live AV for touring professional speakers and, more recently, building purpose-made business apps.",
-      "Away from work, the pattern continues. He has learned to fly, raced cars and worked hard at guitar and bass, his band recently placing runner-up in two battle of the bands finals, no mean feat. That breadth of knowledge, combined with good judgement and a calm head, makes Paul a trusted confidant and an excellent person to have alongside you on a project.",
-    ],
-  },
+
 ];
 
 export const metadata: Metadata = {
