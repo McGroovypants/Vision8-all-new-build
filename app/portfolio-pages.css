@@ -671,12 +671,21 @@
   align-items: center;
 }
 
-.person-card:nth-child(even) {
+/* v1.11.87: the alternation starts with the picture on the right, on the
+   client's mark. It was nth-child(even); moving the flip to the odd cards
+   turns the whole run over rather than reordering anyone. */
+.person-card:nth-child(odd) {
   direction: rtl;
 }
 
-.person-card:nth-child(even) > * {
+.person-card:nth-child(odd) > * {
   direction: ltr;
+}
+
+/* Paul's is the one bio of more than one paragraph; the others render a
+   single <p> and are unaffected by this gap. */
+.person-card p + p {
+  margin-top: 1em;
 }
 
 .person-card img {
@@ -1314,7 +1323,7 @@
   }
 
   .person-card,
-  .person-card:nth-child(even) {
+  .person-card:nth-child(odd) {
     grid-template-columns: 1fr;
     direction: ltr;
   }
