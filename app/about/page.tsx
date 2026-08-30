@@ -7,6 +7,9 @@ const PAUL_PORTRAIT =
   "https://media.vision8.co.nz/library/public/assets/paulie-pic-1788132348-47a9f9ed/optimised.jpg";
 
 /*
+  v1.11.89: all four original bios replaced with the client's rewritten copy,
+  verbatim. The roles, including the sauce jokes, are unchanged.
+
   v1.11.87: Paul Holland added, and `bio` becomes an array of paragraphs.
   Every other bio is a single paragraph and stayed one; Paul's supplied copy
   is three, and one code path that renders a list beats a second one that
@@ -25,7 +28,7 @@ const people = [
     role: "Director / Producer / Chef",
     image: `${CLOUD}/image/upload/w_900,q_auto,f_auto/Andy_tazlv6.jpg`,
     bio: [
-      "Andy is renowned for making videos easy, fun and memorable. An experienced TV industry director, cameraman and series editor, he brings together more than 25 years of professional video and television craft.",
+      "Andy has spent more than 25 years directing, filming and editing television, documentaries, branded content and everything in between. Just as important as the technical craft is his ability to make people feel comfortable in front of a camera, creating an atmosphere where good performances and genuine moments happen naturally.",
     ],
   },
   {
@@ -33,7 +36,7 @@ const people = [
     role: "Graphic FX Director / Hot Sauce",
     image: `${CLOUD}/image/upload/w_900,q_auto,f_auto/v1785752269/Gary_for_website_svohzo.jpg`,
     bio: [
-      "Gary provides specialist motion graphics, animation and compositing for advertising, branding and promos, alongside a wide range of Vision8 client projects.",
+      "Gary is the person Vision8 turns to when an idea needs another visual dimension. A highly experienced motion graphics artist, animator and compositor, he has spent years creating work for advertising, branding, television and promos, bringing both technical precision and a very good eye to the projects he works on.",
     ],
   },
   {
@@ -41,7 +44,7 @@ const people = [
     role: "Photography / Underwater Camera / Stylish Sauce",
     image: `${CLOUD}/image/upload/w_900,q_auto,f_auto/Kat_ljp1ow.jpg`,
     bio: [
-      "Kat brings more than 20 years of experience in commercial and creative photography, design, sales management and branding. Her lifelong connection with the moana informs a distinctive underwater-camera practice.",
+      "Kat has spent more than 20 years working across photography, design, branding and the commercial world, giving her a particularly strong instinct for what makes an image communicate. Her lifelong connection with the moana has also taken her photography underwater, where she has developed a distinctive way of capturing people and the natural world.",
     ],
   },
   {
@@ -49,7 +52,7 @@ const people = [
     role: "Audio Design / Composition / Saucy Sounds",
     image: `${CLOUD}/image/upload/w_900,q_auto,f_auto/Jeramiah_abo1wn.jpg`,
     bio: [
-      "Jeramiah provides sound design and music composition for award-winning creative companies, including Weta Workshop, Dreamworks, RESN, PIKPOK, Activision and Magic Leap.",
+      "Jeramiah is a composer, producer and sound designer with an extraordinary ear for creating worlds through sound. His work has reached everything from music and interactive media to major international creative projects, including collaborations with Weta Workshop, DreamWorks, RESN, PIKPOK, Activision and Magic Leap.",
     ],
   },
   {
