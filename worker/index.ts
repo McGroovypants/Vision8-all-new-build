@@ -177,7 +177,38 @@ const worker = {
       return new Response("Method not allowed", { status: 405 });
     }
 
-    return handler.fetch(request, env, ctx);
+    /*
+      v1.11.91: documents must revalidate.
+
+      Nothing set `cache-control` on a page response, and a response with no
+      freshness information at all is not "do not cache" to a browser: it is
+      an invitation to apply heuristic freshness and decide for itself how
+      long to hold the page. That is how a hard-won deploy can be live,
+      verifiable with curl, and still absent on the client's own refresh,
+      which cost a session on 31 August 2026.
+
+      `no-cache` is the right instruction rather than `no-store`: the browser
+      may keep its copy, but it must ask the server before reusing it. With
+      an ETag on the response that question is answered by a 304, so this
+      costs a conditional request, not a re-download of the page.
+
+      Documents only. Everything under /_next and the rest of the static
+      assets is content-hashed and served by the assets binding ahead of this
+      worker, so their long-lived caching is untouched. The API endpoints
+      above return before this point and keep their own `no-store`.
+    */
+    const response = await handler.fetch(request, env, ctx);
+    const type = response.headers.get("content-type") ?? "";
+    const isDocument = /text\/html|text\/x-component/i.test(type);
+    if (!isDocument || response.headers.has("cache-control")) return response;
+
+    const headers = new Headers(response.headers);
+    headers.set("cache-control", "no-cache");
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
   },
 };
 

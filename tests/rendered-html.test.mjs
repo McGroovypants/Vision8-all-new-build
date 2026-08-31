@@ -22,14 +22,14 @@ async function render(pathname = "/") {
   );
 }
 
-test("server-renders the Vision8 v1.11.90 homepage", async () => {
+test("server-renders the Vision8 v1.11.91 homepage", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /Vision8 homepage/);
-  assert.match(html, /Build <!-- -->v1\.11\.90/);
+  assert.match(html, /Build <!-- -->v1\.11\.91/);
   assert.match(html, /aria-label="Vision8 home"/);
   assert.match(html, /Audio/);
   assert.match(html, /Tech Solutions/);
@@ -65,7 +65,7 @@ for (const [pathname, expected] of routes) {
 
     const html = await response.text();
     assert.match(html, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.match(html, /Build (?:<!-- -->)?v1\.11\.90/);
+    assert.match(html, /Build (?:<!-- -->)?v1\.11\.91/);
     assert.match(html, />Home</);
     assert.match(html, />About us</);
     assert.match(html, />Our mahi</);
@@ -206,4 +206,32 @@ test("real estate publish endpoint refuses when unconfigured", async () => {
     { waitUntil() {}, passThroughOnException() {} },
   );
   assert.equal(response.status, 503);
+});
+
+test("no page is served without freshness instructions", async () => {
+  /*
+    v1.11.91. The bug this guards: `/` is dynamic and the framework already
+    sends it `no-store, must-revalidate`, but the prerendered pages went out
+    with no cache-control at all. A response with no freshness information
+    is not "do not cache" to a browser, it is permission to guess, so a live
+    deploy could still be invisible on the client's refresh. Every document
+    must now carry an instruction to ask the server.
+  */
+  for (const pathname of ["/", "/about", "/real-estate-media", "/photography", "/video", "/contact"]) {
+    const response = await render(pathname);
+    assert.equal(response.status, 200, pathname);
+    assert.match(response.headers.get("cache-control") ?? "", /no-cache|no-store/, pathname);
+  }
+});
+
+test("a page with its own cache-control keeps it", async () => {
+  // `/` is dynamic and the framework's no-store is stronger than the
+  // no-cache added for the prerendered pages; the worker must not overwrite.
+  const response = await render("/");
+  assert.match(response.headers.get("cache-control") ?? "", /no-store/);
+});
+
+test("the layout endpoints keep their own no-store", async () => {
+  const response = await render("/photography/layout.json");
+  assert.equal(response.status, 404);
 });
