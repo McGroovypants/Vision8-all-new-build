@@ -4150,10 +4150,12 @@
   alpha as .re-credit: quiet by opacity, not size, and on the 50% floor.
 */
 .real-estate-page .re-photo-credit {
-  /* v1.11.84: centred and 20% brighter (0.55 to 0.66) on the client's mark. */
+  /* v1.11.84: centred and 20% brighter (0.55 to 0.66) on the client's mark.
+     v1.11.93: 50% larger, 1.05rem to 1.575rem, also on the client's mark. It
+     reads as a caption at the old size and he wants it read as a credit. */
   margin: 14px 0 0;
   color: rgba(243, 244, 239, 0.66);
-  font-size: 1.05rem;
+  font-size: 1.575rem;
   text-align: center;
 }
 

@@ -266,8 +266,11 @@ export default async function RealEstateMediaPage() {
             <p className="re-eyebrow">Photography</p>
             <h2>The essentials still matter.</h2>
           </div>
+          {/* v1.11.93: the "Photography" subheading removed on the client's
+              mark. It repeated the eyebrow directly above it word for word,
+              so the section said its own name twice before saying anything.
+              The lead line stays in its own div for the section's spacing. */}
           <div>
-            <h3>Photography</h3>
             <p>Clean, considered property photography with an eye for the details that make a home feel right.</p>
           </div>
           {/* Six, as the brief asked. Every image here was opened at full size
