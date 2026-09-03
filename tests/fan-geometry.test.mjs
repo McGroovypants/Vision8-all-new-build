@@ -61,6 +61,11 @@ const VIEWPORTS = [
   { name: "laptop 1366x768", width: 1366, height: 768 },
   { name: "short 1280x700", width: 1280, height: 700 },
   { name: "short 1280x660", width: 1280, height: 660 },
+  /* v1.11.99: a 1366x768 PC laptop at Windows' default 125% scaling, as the
+     browser sees it. The first fan fault reported from the field (the Video
+     label under the header) happened at exactly this viewport, and nothing
+     else in this list is both this narrow and this short. */
+  { name: "PC laptop 125pc 1093x614", width: 1093, height: 614 },
   { name: "iPad portrait 820x1180", width: 820, height: 1180 },
   { name: "iPad landscape 1180x820", width: 1180, height: 820 },
   { name: "iPhone 390x844", width: 390, height: 844 },

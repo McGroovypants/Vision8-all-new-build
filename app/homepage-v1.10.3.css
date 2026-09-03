@@ -651,3 +651,32 @@
   opacity: 0;
   transition: none;
 }
+
+/*
+  v1.11.99: the Video label under the header on short desktop windows.
+
+  Reported from the field on a 1366x768 PC laptop at Windows' default 125%
+  scaling, which the browser sees as 1093x614: the fan is anchored near the
+  top of the stage and the arms' vh guards measure from the fan's own box,
+  never from the fixed header, so the vertical Video arm put its label under
+  the opaque header bar. The same fault is the four "under header" entries
+  the baseline carried at 1280x700 and 1280x660 since v1.11.67.
+
+  Measured at 1280x700 / 1280x660 / 1093x614: the labels sat 56/36/38px too
+  high while 123/83/69px of clear space lay between the logo core and the
+  copy block. So the whole assembly moves down into that space: the container
+  grows and everything anchored to its bottom edge drops together. Internal
+  arm and label spacing is untouched, which is what keeps every pairwise
+  overlap exactly as it was.
+
+  min-width 1000px, not a bare max-height guard: the max-height 700px tier
+  also catches landscape phones at 844x390 and 736x414, and phone geometry is
+  settled (v1.11.27) and must not move. This block must stay after the
+  max-height 700px .fan rule at line 483; same selector, same specificity,
+  the later rule wins where both apply.
+*/
+@media (min-width: 1000px) and (max-height: 700px) {
+  .fan {
+    height: min(66vh, 444px);
+  }
+}
