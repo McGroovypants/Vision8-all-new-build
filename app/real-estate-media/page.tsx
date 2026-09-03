@@ -514,7 +514,7 @@ export default async function RealEstateMediaPage() {
           <p className="re-pending">Pricing is available privately rather than published on the website.</p>
           {/* Credited once, here, rather than beside each excerpt. */}
           <p className="re-credit">
-            With thanks to Harry Eggers, Lowe &amp; Co Realty, for allowing us to share these comments from his
+            Big thanks to Harry Eggers, Lowe &amp; Co Realty, for allowing us to share these comments from his
             experience working with Vision8.
           </p>
         </div>

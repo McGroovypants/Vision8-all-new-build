@@ -1485,7 +1485,12 @@
 
 .re-section-head {
   max-width: 760px;
-  margin-bottom: clamp(32px, 4vw, 56px);
+  /* v1.11.96: clamp(32px, 4vw, 56px) to clamp(12px, 1.4vw, 20px), on the
+     client's mark (an arrow from the lead line up to the heading). The lead
+     reads as part of the heading rather than a separate block, and everything
+     below lifts by the same amount, keeping its spacing relative to the lead.
+     Used once, by the Photography section on /real-estate-media. */
+  margin-bottom: clamp(12px, 1.4vw, 20px);
 }
 
 /*
