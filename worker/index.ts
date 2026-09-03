@@ -1,6 +1,7 @@
 /** Cloudflare Worker entry point for the vinext-starter template. */
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
+import { SITE_URL } from "../app/site";
 
 interface Env {
   ASSETS: Fetcher;
@@ -69,9 +70,52 @@ const LEGACY_REDIRECTS: Record<string, string> = {
   "/testimonials": "/video?service=testimonial-videos",
 };
 
+/*
+  One host answers, the rest send you to it (v1.11.92).
+
+  At cutover this Worker starts answering on three names at once: the real
+  domain, the bare apex, and the workers.dev address it was built on. All three
+  would serve a complete copy of every page, which is the textbook way to split
+  your own ranking three ways and have Google pick the winner for you.
+
+  The canonical host is read from `SITE_URL`, the same one line that already
+  drives canonicals, the sitemap and `noindex`, so there is no second place to
+  remember. Today `SITE_URL` is still the workers.dev address, so that host
+  matches and nothing redirects: this block is a no-op until the line changes.
+
+  Only known aliases fold in, rather than "anything that is not canonical".
+  localhost has to keep working for `npm run dev` and for the route tests,
+  which fetch the built Worker on `http://localhost`, and a rule broad enough
+  to catch every future preview host would catch those too.
+
+  GET and HEAD only. A 301 on a POST is allowed to arrive as a GET with the
+  body dropped, and the editors publish by POST; a publish that silently turns
+  into a page load looks like a save that did nothing.
+*/
+const CANONICAL_HOST = new URL(SITE_URL).host;
+
+function aliasHost(host: string): boolean {
+  return host === "vision8.co.nz" || host.endsWith(".workers.dev");
+}
+
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+
+    /*
+      Ahead of the legacy paths so an old URL on the apex lands on the
+      canonical host first and is redirected onward from there, rather than
+      needing every legacy entry written twice.
+    */
+    if (
+      (request.method === "GET" || request.method === "HEAD") &&
+      url.host !== CANONICAL_HOST &&
+      aliasHost(url.host)
+    ) {
+      url.host = CANONICAL_HOST;
+      url.protocol = "https:";
+      return Response.redirect(url.toString(), 301);
+    }
 
     /*
       Ahead of everything else so a legacy path never reaches the app router and

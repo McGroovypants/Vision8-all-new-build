@@ -58,9 +58,10 @@ export const OG_IMAGE =
   checked 20 August 2026. They appear nowhere in this build, which is why an
   LLM asked for a video company in Wellington has nothing to cite.
 
-  [NOTE] Confirm these are still current before the site goes live. A wrong
-  number in structured data propagates further than a wrong number in body copy,
-  because aggregators and models copy it verbatim.
+  [NOTE] Confirmed still current on 3 September 2026, ahead of the domain
+  cutover. Re-confirm before changing either one: a wrong number in structured
+  data propagates further than a wrong number in body copy, because aggregators
+  and models copy it verbatim.
 */
 export const CONTACT = {
   email: "info@vision8.co.nz",

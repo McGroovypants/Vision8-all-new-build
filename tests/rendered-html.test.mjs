@@ -22,14 +22,14 @@ async function render(pathname = "/") {
   );
 }
 
-test("server-renders the Vision8 v1.11.91 homepage", async () => {
+test("server-renders the Vision8 v1.11.92 homepage", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /Vision8 homepage/);
-  assert.match(html, /Build <!-- -->v1\.11\.91/);
+  assert.match(html, /Build <!-- -->v1\.11\.92/);
   assert.match(html, /aria-label="Vision8 home"/);
   assert.match(html, /Audio/);
   assert.match(html, /Tech Solutions/);
@@ -65,7 +65,7 @@ for (const [pathname, expected] of routes) {
 
     const html = await response.text();
     assert.match(html, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.match(html, /Build (?:<!-- -->)?v1\.11\.91/);
+    assert.match(html, /Build (?:<!-- -->)?v1\.11\.92/);
     assert.match(html, />Home</);
     assert.match(html, />About us</);
     assert.match(html, />Our mahi</);
@@ -234,4 +234,61 @@ test("a page with its own cache-control keeps it", async () => {
 test("the layout endpoints keep their own no-store", async () => {
   const response = await render("/photography/layout.json");
   assert.equal(response.status, 404);
+});
+
+/*
+  Host canonicalisation, v1.11.92.
+
+  The canonical host is not written here. It is read back out of the site's own
+  robots.txt, which builds its Sitemap line from `SITE_URL`, so these tests keep
+  telling the truth across cutover instead of having to be edited on the day
+  along with everything else.
+*/
+async function fetchOn(urlString, init) {
+  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
+  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}-${urlString}`);
+  const { default: worker } = await import(workerUrl.href);
+  return worker.fetch(
+    new Request(urlString, init),
+    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
+    { waitUntil() {}, passThroughOnException() {} },
+  );
+}
+
+async function canonicalHost() {
+  const body = await (await fetchOn("http://localhost/robots.txt")).text();
+  return new URL(body.match(/^Sitemap: (\S+)/m)[1]).host;
+}
+
+test("an alias host is folded into the canonical host, with the path kept", async () => {
+  const expected = await canonicalHost();
+  const response = await fetchOn("https://some-other-preview.workers.dev/video?service=explainer-videos");
+  assert.equal(response.status, 301);
+  const location = new URL(response.headers.get("location"));
+  assert.equal(location.host, expected);
+  assert.equal(location.protocol, "https:");
+  assert.equal(location.pathname, "/video");
+  assert.equal(location.search, "?service=explainer-videos");
+});
+
+test("the canonical host serves rather than redirecting to itself", async () => {
+  const response = await fetchOn(`https://${await canonicalHost()}/about`);
+  assert.equal(response.status, 200);
+});
+
+test("localhost is never redirected", async () => {
+  // npm run dev and every other test in this file arrive on localhost. A rule
+  // broad enough to catch any future preview host would break both.
+  const response = await fetchOn("http://localhost/about");
+  assert.equal(response.status, 200);
+});
+
+test("a publish POST on an alias host is not turned into a GET", async () => {
+  // A 301 may legally arrive as a GET with the body dropped, which would read
+  // as a save that silently did nothing. Non-GET skips canonicalisation.
+  const response = await fetchOn("https://some-other-preview.workers.dev/photography/publish", {
+    method: "POST",
+    body: "{}",
+  });
+  assert.equal(response.status, 503);
 });

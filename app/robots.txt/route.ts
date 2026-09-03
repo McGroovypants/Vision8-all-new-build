@@ -37,6 +37,7 @@ Allow: /
 Disallow: /editor
 Disallow: /photography/editor
 Disallow: /photography/preview
+Disallow: /real-estate-media/editor
 
 Sitemap: ${SITE_URL}/sitemap.xml
 `;
