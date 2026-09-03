@@ -273,22 +273,15 @@ export default async function RealEstateMediaPage() {
           <div>
             <p>Clean, considered property photography with an eye for the details that make a home feel right.</p>
           </div>
-          {/* Six, as the brief asked. Every image here was opened at full size
-              before shipping; that check has now rejected three supplied files
-              across the site, including a watermarked one from this batch. */}
-          <div className="re-photo-grid" aria-label="Property photography">
-            <img src="/real-estate/crawford-exterior.jpg" alt="Modern hillside home with glass corner living room and deck" loading="lazy" />
-            <img src="/real-estate/crawford-living.jpg" alt="Open living and dining room with timber ceiling and harbour view" loading="lazy" />
-            <img src="/real-estate/drone-aerial.jpg" alt="Aerial view of a modernist home on a bush-clad hillside" loading="lazy" />
-            <img src="/real-estate/homewood-living.jpg" alt="Bright living room with skylights and garden doors" loading="lazy" />
-            <img src="/real-estate/villa-entrance.jpg" alt="Villa entrance with clipped hedges and stone driveway" loading="lazy" />
-            <img src="/real-estate/karaka-dusk.jpg" alt="Covered deck at dusk with lit timber walls and rural outlook" loading="lazy" />
-          </div>
-          {/* v1.11.83: the credit under the six frames, on the client's mark.
-              Set as a caption to the grid, not an attribution between quotes:
-              left-ranged and tight under the frames, unlike .re-credit. */}
-          <p className="re-photo-credit">Featured photographs courtesy of Helen Gwyther.</p>
           {/*
+            v1.11.95: the pair and its note sit between the lead line and the
+            six frames, on the client's annotated mark: an arrow from Helen's
+            portrait up to the heading, and the credit left under the frames.
+            The section now reads intro, who shoots, the photographs, the
+            credit. Same top margin as the grid, so the spacing lead to pair
+            and pair to grid is one value. From v1.11.44 to v1.11.94 the pair
+            came after the credit.
+
             v1.11.44 put the Experience copy here, above the pair; v1.11.53
             moved it, with the strip, to its own section above People on the
             client's mark. The pair and its note stay with the photography.
@@ -324,6 +317,21 @@ export default async function RealEstateMediaPage() {
               <figcaption>Andy McGrath - <span>Video Producer</span></figcaption>
             </figure>
           </div>
+          {/* Six, as the brief asked. Every image here was opened at full size
+              before shipping; that check has now rejected three supplied files
+              across the site, including a watermarked one from this batch. */}
+          <div className="re-photo-grid" aria-label="Property photography">
+            <img src="/real-estate/crawford-exterior.jpg" alt="Modern hillside home with glass corner living room and deck" loading="lazy" />
+            <img src="/real-estate/crawford-living.jpg" alt="Open living and dining room with timber ceiling and harbour view" loading="lazy" />
+            <img src="/real-estate/drone-aerial.jpg" alt="Aerial view of a modernist home on a bush-clad hillside" loading="lazy" />
+            <img src="/real-estate/homewood-living.jpg" alt="Bright living room with skylights and garden doors" loading="lazy" />
+            <img src="/real-estate/villa-entrance.jpg" alt="Villa entrance with clipped hedges and stone driveway" loading="lazy" />
+            <img src="/real-estate/karaka-dusk.jpg" alt="Covered deck at dusk with lit timber walls and rural outlook" loading="lazy" />
+          </div>
+          {/* v1.11.83: the credit under the six frames, on the client's mark.
+              Set as a caption to the grid, not an attribution between quotes:
+              left-ranged and tight under the frames, unlike .re-credit. */}
+          <p className="re-photo-credit">Featured photographs courtesy of Helen Gwyther.</p>
 
         </div>
       </section>
