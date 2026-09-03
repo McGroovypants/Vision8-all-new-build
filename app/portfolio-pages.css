@@ -4151,11 +4151,19 @@
 */
 .real-estate-page .re-photo-credit {
   /* v1.11.84: centred and 20% brighter (0.55 to 0.66) on the client's mark.
-     v1.11.93: 50% larger, 1.05rem to 1.575rem, also on the client's mark. It
-     reads as a caption at the old size and he wants it read as a credit. */
+
+     v1.11.94: back to 1.05rem. It went to 1.575rem at v1.11.93 and was wrong
+     on a phone, where 393px of viewport wraps it to two lines and it becomes
+     the loudest thing on the screen. The size is in rem and nothing scales it
+     down, so it was the same 25.2px on the desktop, 1.26 times the body copy
+     and larger than the section's own 17.2px lead line: a credit outranking
+     the copy it credits. Reverted on the client's mark rather than capped at
+     a breakpoint, because the desktop reading was the same problem with more
+     room to hide in. If it wants to grow again, it has to stay under the lead
+     line, so roughly 1.2rem is the ceiling. */
   margin: 14px 0 0;
   color: rgba(243, 244, 239, 0.66);
-  font-size: 1.575rem;
+  font-size: 1.05rem;
   text-align: center;
 }
 
