@@ -3,19 +3,27 @@
   structured data all have to agree on a single origin, and they are written in
   three different files, so the origin lives here rather than being repeated.
 
-  [IMPORTANT] SITE_URL is deliberately still the workers.dev address. Pointing
-  canonicals at vision8.co.nz before the domain cuts over would tell Google that
-  the authoritative copy of every page is the *old* Duda site, which is what
-  answers there today. Change this one line at cutover, after the domain
-  resolves to this Worker, and canonicals, sitemap and JSON-LD all follow.
+  [IMPORTANT] Changed at cutover, from the workers.dev address to the real
+  domain. It must not move ahead of the DNS: canonicals aimed here while www
+  still answered from Duda would have told Google the authoritative copy of
+  every page was the old site. `www` rather than the apex because that is what
+  the old site used and what the links in the wild point at; the apex already
+  301s to www at the DNS level and is untouched.
+
+  Since v1.11.92 this line also decides which host the Worker itself treats as
+  canonical, so the workers.dev address now 301s here rather than serving a
+  second complete copy of the site.
 */
-export const SITE_URL = "https://vision8-all-new-build.andy-96d.workers.dev";
+export const SITE_URL = "https://www.vision8.co.nz";
 
 export const SITE_NAME = "Vision8";
 
 /*
   True while the site is answering on the workers.dev address, which is the dev
-  site until the nameservers move. It drives a site-wide `noindex`.
+  site until `www` is pointed at this Worker. It drives a site-wide `noindex`.
+
+  [NOTE] Not "until the nameservers move". vision8.co.nz was already a zone on
+  Cloudflare; cutover replaced one `www` record. See vision8-handover-v1.11.95.md.
 
   Without it the dev site is fully indexable, and a workers.dev copy of every
   page sitting in the index is a duplicate that competes with vision8.co.nz the
