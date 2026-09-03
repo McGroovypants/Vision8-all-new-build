@@ -22,14 +22,14 @@ async function render(pathname = "/") {
   );
 }
 
-test("server-renders the Vision8 v1.11.96 homepage", async () => {
+test("server-renders the Vision8 v1.11.97 homepage", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
   assert.match(html, /Vision8 homepage/);
-  assert.match(html, /Build <!-- -->v1\.11\.96/);
+  assert.match(html, /Build <!-- -->v1\.11\.97/);
   assert.match(html, /aria-label="Vision8 home"/);
   assert.match(html, /Audio/);
   assert.match(html, /Tech Solutions/);
@@ -65,7 +65,7 @@ for (const [pathname, expected] of routes) {
 
     const html = await response.text();
     assert.match(html, new RegExp(expected.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.match(html, /Build (?:<!-- -->)?v1\.11\.96/);
+    assert.match(html, /Build (?:<!-- -->)?v1\.11\.97/);
     assert.match(html, />Home</);
     assert.match(html, />About us</);
     assert.match(html, />Our mahi</);
@@ -82,18 +82,22 @@ test("real-estate page embeds only cleared media", async () => {
   const response = await render("/real-estate-media");
   const html = await response.text();
   // All three sources asserted positively, so a silent swap to a different cut
-  // is a test failure rather than a surprise. `download.mp4` is the stopgap in
-  // force since v1.11.28: the 14 Aug portal republish dropped the `web.mp4`
-  // renditions and only the delivery masters are published. When the web
-  // renditions return, the page and these three assertions change together.
+  // is a test failure rather than a surprise. v1.11.97: the web renditions
+  // returned (encoded and published 4 Sep 2026), so the delivery-master
+  // stopgap in force since v1.11.28 ends here: the page and these three
+  // assertions changed together, as the note left at v1.11.28 said they would.
   // v1.11.49: the hero is Promo V6 from the public assets prefix.
-  assert.match(html, /library\/public\/assets\/vision8-real-estate-promo-v6\/vision8-real-estate-promo-v6_1080p\.mp4/);
+  assert.match(html, /library\/public\/assets\/vision8-real-estate-promo-v6\/web\.mp4/);
   // v1.11.56: the 360 reel is Matterport Examples 2 from the public assets
   // prefix. No media on this page comes from the collection now.
-  assert.match(html, /library\/public\/assets\/matterport-examples-2\/matterport-examples-2_1080p\.mp4/);
+  assert.match(html, /library\/public\/assets\/matterport-examples-2\/web\.mp4/);
   // v1.11.54: the people reel is Testimonial 2026 Web 2 from the public assets
   // prefix, off the collection.
-  assert.match(html, /library\/public\/assets\/testimonial-2026-web-2\/testimonial-2026-web-2_1080p\.mp4/);
+  assert.match(html, /library\/public\/assets\/testimonial-2026-web-2\/web\.mp4/);
+  // No page may embed a delivery master: the web rendition is roughly half
+  // the weight and _1080p.mp4 slipping back in is the portal handing out the
+  // wrong file again.
+  assert.doesNotMatch(html, /_1080p\.mp4/);
   // Nothing on this page may load from the signed prefix: it answers 403 to any
   // request without a key, which a <video src> cannot carry.
   assert.doesNotMatch(html, /media\.vision8\.co\.nz\/library\/(?!public\/)/);

@@ -170,12 +170,11 @@ const services: Service[] = [
     //
     // v1.11.75: the reel, supplied by the client. Until now this was the one
     // card of nine with no `video`, so it rendered as a still and the detail
-    // panel opened on a photograph. [NOTE] It is the 1080p master at 27.5MB,
-    // where the other eight are Cloudinary `w_960,q_auto` and an order of
-    // magnitude smaller. Nothing fetches it until a play call, so it costs
-    // nothing until the row is reached, but on a phone reaching that row now
-    // pulls 27.5MB. A smaller rendition on the same path is the fix.
-    video: "https://media.vision8.co.nz/library/public/assets/rural-video-cut-2/rural-video-cut-2_1080p.mp4",
+    // panel opened on a photograph.
+    // v1.11.97: the smaller rendition the v1.11.75 note asked for: the web
+    // encode at 14.8MB in place of the 27.6MB master. Verified from outside
+    // before wiring in: 200, `video/mp4`, range 206, faststart.
+    video: "https://media.vision8.co.nz/library/public/assets/rural-video-cut-2/web.mp4",
     poster: "https://media.vision8.co.nz/library/public/assets/imgc8130-1600x1067-1786739327-2756a95e/optimised.jpg",
   },
 ];

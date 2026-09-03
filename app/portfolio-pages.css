@@ -1489,8 +1489,23 @@
      client's mark (an arrow from the lead line up to the heading). The lead
      reads as part of the heading rather than a separate block, and everything
      below lifts by the same amount, keeping its spacing relative to the lead.
-     Used once, by the Photography section on /real-estate-media. */
-  margin-bottom: clamp(12px, 1.4vw, 20px);
+     Used once, by the Photography section on /real-estate-media.
+
+     v1.11.97: tightened again to half, on the client's mark. The v1.11.96
+     clamp never actually took effect: the h2's own 22px bottom margin
+     collapses through this box and floored the gap at 22px at every width,
+     which is why both 20px and 12px measured as 22. The h2 margin is zeroed
+     below so this rule owns the gap, flat 11px. */
+  margin-bottom: 11px;
+}
+
+/* See the note above: without this, the h2's 22px bottom margin from
+   `.real-estate-page h2` collapses through .re-section-head and silently
+   sets the real gap. Prefixed, per the specificity note further down this
+   file: that rule is written later at equal specificity and would win over
+   a bare `.re-section-head h2`. */
+.real-estate-page .re-section-head h2 {
+  margin-bottom: 0;
 }
 
 /*
@@ -1890,7 +1905,10 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
-  margin-top: clamp(40px, 5vw, 64px);
+  /* v1.11.97: halved from clamp(40px, 5vw, 64px), on the client's mark, in
+     step with .re-collab below so the pair stays equidistant between the
+     lead line and the frames. */
+  margin-top: clamp(20px, 2.5vw, 32px);
 }
 
 /* Cropped to the slot rather than letting six mixed ratios rag the rows. */
@@ -1941,7 +1959,10 @@
     deliberate: the client asked for it centred.
   */
   max-width: 940px;
-  margin: clamp(40px, 5vw, 64px) auto 0;
+  /* v1.11.97: top margin halved from clamp(40px, 5vw, 64px), on the client's
+     mark, in step with .re-photo-grid so lead-to-pair and pair-to-frames stay
+     equal. */
+  margin: clamp(20px, 2.5vw, 32px) auto 0;
 }
 
 .re-collab figure {

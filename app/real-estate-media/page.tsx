@@ -42,23 +42,29 @@ const MEDIA = "https://media.vision8.co.nz/library/public/collections-media/visi
   `web.mp4` and verify all three, not just the one that moved.
 */
 // v1.11.49: the hero is Promo V6, published to the public assets prefix on
-// 19 Aug 2026 (`/library/public/assets/...`, not the collection). Verified from
-// outside before wiring in: bare fetch 200, `video/mp4`, 54.7MB, `Accept-Ranges:
-// bytes`. Promo V2 reduced stays in the collection but is no longer used here.
-const PROPERTY_REEL = "https://media.vision8.co.nz/library/public/assets/vision8-real-estate-promo-v6/vision8-real-estate-promo-v6_1080p.mp4";
+// 19 Aug 2026 (`/library/public/assets/...`, not the collection). Promo V2
+// reduced stays in the collection but is no longer used here.
+// v1.11.97: the web rendition (1080p30 CRF 23), not the 54.7MB delivery
+// master, which every visitor pulled because the hero autoplays. Encoded and
+// published 4 Sep 2026; the portal's share_source_key now prefers webUrl so
+// future publishes stay light. Verified from outside before wiring in: bare
+// fetch 200, `video/mp4`, 28.3MB, range request 206, faststart.
+const PROPERTY_REEL = "https://media.vision8.co.nz/library/public/assets/vision8-real-estate-promo-v6/web.mp4";
 // v1.11.54: the people reel is "Testimonial 2026 Web 2" from the public assets
 // prefix, not the vision8-website collection, so it no longer depends on that
-// collection staying published. Verified from outside before wiring in: range
-// request 206, `video/mp4`, 14.5MB. The collection cut it replaces,
+// collection staying published. The collection cut it replaces,
 // `testimonial-2026c-2/download.mp4`, is no longer referenced here.
+// v1.11.97: the web rendition, not the 14.5MB master. Verified from outside
+// before wiring in: 200, `video/mp4`, 7.9MB, range 206, faststart.
 const PEOPLE_VIDEO =
-  "https://media.vision8.co.nz/library/public/assets/testimonial-2026-web-2/testimonial-2026-web-2_1080p.mp4";
-// v1.11.56: "Matterport Examples 2" from the public assets prefix, verified
-// from outside before wiring in: range request 206, `video/mp4`, 16.8MB. With
+  "https://media.vision8.co.nz/library/public/assets/testimonial-2026-web-2/web.mp4";
+// v1.11.56: "Matterport Examples 2" from the public assets prefix. With
 // this the page loads nothing from the `vision8-website` collection at all, so
 // the collection-publish caveat above no longer applies to any of the three.
+// v1.11.97: the web rendition, not the 16.8MB master. Verified from outside
+// before wiring in: 200, `video/mp4`, 9.7MB, range 206, faststart.
 const MATTERPORT_VIDEO =
-  "https://media.vision8.co.nz/library/public/assets/matterport-examples-2/matterport-examples-2_1080p.mp4";
+  "https://media.vision8.co.nz/library/public/assets/matterport-examples-2/web.mp4";
 /*
   Helen's portrait sits in the v8-photos collection rather than vision8-website,
   so it does not hang off MEDIA above. Same 300 second max-age and the same
